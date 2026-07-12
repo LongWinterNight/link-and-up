@@ -1,4 +1,49 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
+
+/* FE-6: единый стиль контролов — вместо дублей inp/selStyle по вкладкам */
+const ctl: CSSProperties = {
+  background: 'var(--surface-2)',
+  border: '1px solid var(--border)',
+  borderRadius: 'var(--radius-ctl)',
+  padding: '8px 10px',
+  color: 'var(--text-1)',
+  fontSize: 'var(--fs-md)',
+  width: '100%',
+};
+
+const fieldLabel: CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 4,
+  fontSize: 'var(--fs-2xs)',
+  color: 'var(--text-3)',
+};
+
+export function Input({ label, style, ...rest }: InputHTMLAttributes<HTMLInputElement> & { label?: string }) {
+  const el = <input {...rest} style={{ ...ctl, ...style }} />;
+  if (!label) return el;
+  return (
+    <label style={fieldLabel} htmlFor={rest.id}>
+      {label}
+      {el}
+    </label>
+  );
+}
+
+export function Select({ label, style, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
+  const el = (
+    <select {...rest} style={{ ...ctl, ...style }}>
+      {children}
+    </select>
+  );
+  if (!label) return el;
+  return (
+    <label style={fieldLabel} htmlFor={rest.id}>
+      {label}
+      {el}
+    </label>
+  );
+}
 
 export function Panel({ children, style, title }: { children: ReactNode; style?: CSSProperties; title?: string }) {
   return (

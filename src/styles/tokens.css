@@ -37,6 +37,16 @@
   --radius-pill: 20px;
   --radius-ctl: 8px;
   --shadow-modal: 0 6px 24px rgba(0, 0, 0, 0.3);
+
+  /* FE-6: типографическая шкала — новые экраны и примитивы используют её, не сырые числа */
+  --fs-2xs: 11px;
+  --fs-xs: 12px;
+  --fs-sm: 12.5px;
+  --fs-md: 13px;
+  --fs-lg: 14px;
+  --fs-xl: 16px;
+  --fs-2xl: 20px;
+  --fs-num: 30px;
 }
 
 :root[data-theme='light'] {
