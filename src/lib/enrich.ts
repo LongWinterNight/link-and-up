@@ -135,13 +135,17 @@ export function tagPost(p: RawPost): Tags {
   return { hook_type: hook, structure, cta_type: cta, emotion, flags, formatText };
 }
 
-/** Определить язык поста. `(EN)` в авторе ИЛИ латиница без кириллицы в первых 60 символах → EN. */
+/**
+ * Определить язык поста. `(EN)` в авторе → EN.
+ * COR-6: иначе смотрим первые 80 БУКВ после вычистки URL (не первые 60 символов) —
+ * RU-пост, начинающийся со ссылки или латинского бренда, больше не считается EN.
+ */
 export function detectLang(p: RawPost): Lang {
-  const author = p.author || '';
-  const head = (p.text || '').slice(0, 60);
-  if (/\(EN\)/i.test(author)) return 'EN';
-  if (/[a-z]/i.test(head) && !/[а-я]/i.test(head)) return 'EN';
-  return 'RU';
+  if (/\(EN\)/i.test(p.author || '')) return 'EN';
+  const stripped = (p.text || '').replace(/https?:\/\/\S+|www\.\S+/gi, ' ');
+  const letters = (stripped.match(/\p{L}/gu) || []).slice(0, 80).join('');
+  if (!letters) return 'RU';
+  return /[а-яё]/i.test(letters) ? 'RU' : 'EN';
 }
 
 /** Обогатить сырой пост: метрики, подписчики, язык, ER, кластер, теги. */

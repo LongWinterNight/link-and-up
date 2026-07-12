@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
 import { analyzeIngest, diceSim, dedupKey } from './dedup';
-import { backtest, forecast, recalcCalibration } from './forecast';
+import { backtest, effectiveCalibration, forecast, recalcCalibration } from './forecast';
 import { validateIdea, validateContent, hasHardFlag, DEFAULT_RULES } from './guardrails';
 import { csvCell } from './exports';
 import type { Rule } from '@/types';
@@ -42,6 +42,14 @@ describe('detectLang', () => {
     expect(detectLang({ author: 'Denis (EN)', text: 'Привет' })).toBe('EN');
     expect(detectLang({ author: 'John', text: 'This is an english post about hooks' })).toBe('EN');
     expect(detectLang({ author: 'Мария', text: 'Контекст важнее промпта' })).toBe('RU');
+  });
+  it('COR-6: RU-пост, начинающийся с URL или латинского бренда, — RU', () => {
+    expect(detectLang({ author: 'Пётр', text: 'https://example.com/very/long/path?q=1 Разбираю кейс автоматизации на реальном проекте' })).toBe('RU');
+    expect(detectLang({ author: 'Оля', text: 'ChatGPT Turbo benchmark показал неожиданный результат на русскоязычных задачах' })).toBe('RU');
+  });
+  it('COR-6: пустой текст — RU по умолчанию, EN-пост с поздней RU-аннотацией — EN', () => {
+    expect(detectLang({ author: 'X', text: '' })).toBe('RU');
+    expect(detectLang({ author: 'Kate', text: 'I shipped an automation that applies to jobs better than most humans and here is what happened next. Формат: список.' })).toBe('EN');
   });
 });
 
@@ -185,13 +193,45 @@ describe('recalcCalibration', () => {
     expect(c.calibration).toBeCloseTo(2, 5);
     expect(c.count).toBe(1);
   });
+  it('Q-3: экстремальный факт клипуется к 3, mape>1 даёт accuracy=0', () => {
+    const mkIdea = (predicted: number, comments: number): Idea =>
+      ({ id: 'x', title: '', hook: '', cluster: 'spec', formula: 'arch', source: '', channel: 'LinkedIn', status: 'published', date: '', refPostId: '', predicted, actual: { reactions: 0, comments, leads: 0, interviews: 0, date: '' } });
+    const clipped = recalcCalibration([mkIdea(10, 100)], 1); // ratio 10 → клип 3
+    expect(clipped.calibration).toBe(3);
+    const bad = recalcCalibration([mkIdea(100, 10)], 1); // |10-100|/10 = 9 → mape>1 → accuracy 0
+    expect(bad.accuracy).toBe(0);
+  });
+  it('COR-8: effectiveCalibration активна только от 3 фактов', () => {
+    expect(effectiveCalibration(2, 0)).toBe(1);
+    expect(effectiveCalibration(2, 2)).toBe(1);
+    expect(effectiveCalibration(2, 3)).toBe(2);
+    expect(effectiveCalibration(0, 5)).toBe(1); // защита от нуля
+  });
 });
 
 describe('backtest leave-one-out', () => {
+  const mkPosts = (n: number): Post[] =>
+    Array.from({ length: n }, (_, i) =>
+      enrich({ query: 'spec', author: 'A' + i, headline: '10 000 подписчиков', reactions: 10, comments: 30 + i, text: 'пост номер ' + i }),
+    );
   it('недостоверен при <8 постах', () => {
     const r = backtest([]);
     expect(r.mape).toBeNull();
     expect(r.note).toContain('недостоверен');
+  });
+  it('Q-3: граница достоверности — 7 недостоверен, ровно 8 считается', () => {
+    const r7 = backtest(mkPosts(7));
+    expect(r7.n).toBe(7);
+    expect(r7.mape).toBeNull();
+    const r8 = backtest(mkPosts(8));
+    expect(r8.n).toBe(8);
+    expect(r8.mape).not.toBeNull();
+    expect(r8.within2x).not.toBeNull();
+  });
+  it('Q-3: один пост — недостоверен, не падает', () => {
+    const r1 = backtest(mkPosts(1));
+    expect(r1.n).toBe(1);
+    expect(r1.mape).toBeNull();
   });
   it('считает метрики при достаточном корпусе', () => {
     const posts: Post[] = Array.from({ length: 12 }, (_, i) =>

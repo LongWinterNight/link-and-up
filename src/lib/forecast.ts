@@ -155,6 +155,15 @@ export function forecast(
   };
 }
 
+/**
+ * COR-8: калибровка становится множителем только от CALIBRATION_MIN_FACTS фактов.
+ * Один-два факта — статистический шум; коэффициент показываем, но не применяем.
+ */
+export const CALIBRATION_MIN_FACTS = 3;
+export function effectiveCalibration(cal: number, factCount: number): number {
+  return factCount >= CALIBRATION_MIN_FACTS ? cal || 1 : 1;
+}
+
 /** Калибровка + точность по опубликованным своим идеям с фактами. */
 export function recalcCalibration(ideas: Idea[], currentCal: number): Calibration {
   const pub = ideas.filter(
