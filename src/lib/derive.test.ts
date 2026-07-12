@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { corpusFreshness, filterPosts } from './derive';
+import { corpusFreshness, filterPosts, isPostingDay } from './derive';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
 import type { Post } from '@/types';
@@ -93,6 +93,15 @@ describe('filterPosts — golden-set', () => {
 
   it('пустая строка в числовом фильтре = фильтр выключен', () => {
     expect(filterPosts(POSTS, '', f({ minC: '', maxC: '', minER: '' }))).toHaveLength(3);
+  });
+});
+
+describe('isPostingDay (P-6)', () => {
+  it('вт и чт — дни публикации, остальные — нет', () => {
+    expect(isPostingDay(new Date('2026-07-14'))).toBe(true); // вторник
+    expect(isPostingDay(new Date('2026-07-16'))).toBe(true); // четверг
+    expect(isPostingDay(new Date('2026-07-12'))).toBe(false); // воскресенье
+    expect(isPostingDay(new Date('2026-07-13'))).toBe(false); // понедельник
   });
 });
 

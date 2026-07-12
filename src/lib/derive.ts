@@ -119,6 +119,12 @@ export function distributionBy(posts: Post[], key: 'hook_type' | 'structure' | '
   return [...m.entries()].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
 }
 
+/** P-6: день публикации по каденсу (вт/чт) — триггер «что публикуем сегодня». */
+export function isPostingDay(d = new Date()): boolean {
+  const w = d.getDay();
+  return w === 2 || w === 4;
+}
+
 export interface CorpusFreshness {
   latest: string | null;
   ageDays: number | null;

@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { useStore } from '@/store';
-import { clusterStats, collectionByMonth, kpis, topByComments, topByRate } from '@/lib/derive';
+import { clusterStats, collectionByMonth, isPostingDay, kpis, topByComments, topByRate } from '@/lib/derive';
 import { median, nf } from '@/lib/stats';
 import { Bars, Donut } from '@/components/charts';
-import { Kpi, Panel } from '@/components/ui';
+import { Btn, Kpi, Panel, Pill } from '@/components/ui';
+import { CLUSTER_LABEL } from '@/lib/constants';
 import EmptyCorpus from '@/components/EmptyCorpus';
 
 function startOfWeek(d: Date): Date {
@@ -16,6 +17,7 @@ function startOfWeek(d: Date): Date {
 
 export default function Overview() {
   const posts = useStore((s) => s.posts);
+  const ideas = useStore((s) => s.ideas);
   const openPost = useStore((s) => s.openPost);
   const setTab = useStore((s) => s.setTab);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
@@ -34,6 +36,11 @@ export default function Overview() {
   const pct = Math.min(100, Math.round((ownThisWeek / goal) * 100));
   const ownComments = own.filter((p) => p.has_metrics).map((p) => p.comments);
   const ownMed = ownComments.length ? nf(median(ownComments)) : '—';
+
+  // P-6: retention-триггер — в день публикации предлагаем идеи из банка
+  const postingDay = isPostingDay();
+  const candidateIdeas = useMemo(() => ideas.filter((i) => i.status !== 'published').slice(0, 3), [ideas]);
+  const showCadenceNudge = postingDay && ownThisWeek < goal;
 
   if (posts.length === 0) {
     return <EmptyCorpus title="Начните с загрузки постов" hint="Демо-корпус очищен. Загрузите свой экспорт (JSON-массив постов) — здесь появятся KPI, распределения по кластерам и топы. Или верните демо, чтобы изучить возможности." />;
@@ -72,6 +79,33 @@ export default function Overview() {
           </div>
         </div>
       </section>
+
+      {/* P-6: день публикации — идеи из банка под руку */}
+      {showCadenceNudge && (
+        <section style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent)', borderRadius: 'var(--radius-card)', padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ fontSize: 13.5, fontWeight: 700 }}>Сегодня день публикации по вашему каденсу</div>
+          {candidateIdeas.length > 0 ? (
+            <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {candidateIdeas.map((i) => (
+                  <div key={i.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}>
+                    <span style={{ fontWeight: 500 }}>{i.title || 'Без названия'}</span>
+                    <Pill kind="cluster">{CLUSTER_LABEL[i.cluster] || i.cluster}</Pill>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <Btn variant="accent" onClick={() => setTab('ideas')}>К идеям и черновику →</Btn>
+              </div>
+            </>
+          ) : (
+            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Банк идей пуст — заведите первую, черновик соберётся по формуле.</span>
+              <Btn variant="accent" onClick={() => setTab('ideas')}>Создать идею</Btn>
+            </div>
+          )}
+        </section>
+      )}
 
       {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
