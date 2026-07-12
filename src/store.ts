@@ -6,6 +6,7 @@ import { enrich, enrichAll, tagPost } from '@/lib/enrich';
 import { analyzeIngest, mergeIngest, type IngestReport } from '@/lib/dedup';
 import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { DEFAULT_RULES } from '@/lib/guardrails';
+import { detectLocale, ensureLocale, type Locale } from '@/i18n';
 import type { IdeaActual, Tags } from '@/types';
 
 export type TabId = 'today' | 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
@@ -56,6 +57,10 @@ interface State {
   posts: Post[];
   ideas: Idea[];
   theme: Theme;
+  /** FE-3: язык интерфейса; словарь en грузится ленивым чанком. */
+  locale: Locale;
+  /** Бамп после догрузки словаря (не персистится) — форсит ре-рендер useT-подписчиков. */
+  i18nVersion: number;
   tab: TabId;
   search: string;
   filters: Filters;
@@ -82,6 +87,7 @@ interface State {
   // actions
   setTheme: (t: Theme) => void;
   toggleTheme: () => void;
+  setLocale: (l: Locale) => Promise<void>;
   setTab: (t: TabId) => void;
   setSearch: (s: string) => void;
   setFilters: (patch: Partial<Filters>) => void;
@@ -155,6 +161,8 @@ export const useStore = create<State>()(
       posts: [],
       ideas: [],
       theme: initialTheme(),
+      locale: detectLocale(),
+      i18nVersion: 0,
       tab: 'today', // P-1: дефолт — «что публикуем сегодня», не ретро-аналитика
       search: '',
       filters: { ...DEFAULT_FILTERS },
@@ -178,6 +186,10 @@ export const useStore = create<State>()(
 
       setTheme: (theme) => set({ theme }),
       toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
+      setLocale: async (locale) => {
+        await ensureLocale(locale); // словарь до переключения — без мигания ключей
+        set({ locale, i18nVersion: get().i18nVersion + 1 });
+      },
       setTab: (tab) => set({ tab }),
       setSearch: (search) => set({ search }),
       setFilters: (patch) => set({ filters: { ...get().filters, ...patch } }),
@@ -395,6 +407,7 @@ export const useStore = create<State>()(
         posts: s.posts,
         ideas: s.ideas,
         theme: s.theme,
+        locale: s.locale,
         calibration: s.calibration,
         calibrationCount: s.calibrationCount,
         isDemo: s.isDemo,

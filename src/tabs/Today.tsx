@@ -9,6 +9,7 @@ import { download } from '@/lib/download';
 import { nf } from '@/lib/stats';
 import { Btn, EmptyState, Panel, Pill, Select } from '@/components/ui';
 import EmptyCorpus from '@/components/EmptyCorpus';
+import { useT } from '@/i18n/useT';
 
 function startOfWeek(d: Date): Date {
   const x = new Date(d);
@@ -35,6 +36,7 @@ export default function Today() {
   const scheduleIdea = useStore((s) => s.scheduleIdea);
   const moveIdeaStatus = useStore((s) => s.moveIdeaStatus);
   const flash = useStore((s) => s.flash);
+  const t = useT();
 
   const candidates = useMemo(() => ideas.filter((i) => i.status !== 'published'), [ideas]);
   const [selectedId, setSelectedId] = useState('');
@@ -51,32 +53,32 @@ export default function Today() {
   const postingDay = isPostingDay();
 
   if (posts.length === 0) {
-    return <EmptyCorpus title="Начните с данных" hint="Загрузите свой корпус или посмотрите демо — тогда «Сегодня» соберёт черновик, оценку и проверку бренда для вашего следующего поста." />;
+    return <EmptyCorpus title={t('today.empty.title')} hint={t('today.empty.hint')} />;
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {/* статус каденса */}
       <section style={{ display: 'flex', gap: 14, alignItems: 'baseline', flexWrap: 'wrap' }}>
-        <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800 }}>Что публикуем сегодня</h2>
+        <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800 }}>{t('today.h1')}</h2>
         <span style={{ fontSize: 'var(--fs-md)', color: 'var(--text-3)' }}>
-          неделя: <span className="num" style={{ color: 'var(--text-1)' }}>{ownThisWeek}</span>/{cadenceGoal}
-          {postingDay ? ' · сегодня день публикации (вт/чт)' : ' · следующая публикация — вт/чт'}
+          {t('today.week')}<span className="num" style={{ color: 'var(--text-1)' }}>{ownThisWeek}</span>/{cadenceGoal}
+          {postingDay ? t('today.postingDay') : t('today.nextDay')}
         </span>
       </section>
 
       {candidates.length === 0 ? (
         <Panel>
-          <EmptyState>Банк идей пуст. Создайте идею — черновик соберётся по формуле-эталону, оценка — по постам-аналогам.</EmptyState>
-          <Btn variant="accent" onClick={() => setTab('ideas')}>Создать идею</Btn>
+          <EmptyState>{t('today.noIdeas')}</EmptyState>
+          <Btn variant="accent" onClick={() => setTab('ideas')}>{t('today.createIdea')}</Btn>
         </Panel>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16, alignItems: 'start' }}>
           {/* левая колонка: идея + гардрейлы + действия */}
-          <Panel title="Идея">
+          <Panel title={t('today.panel.idea')}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               <Select
-                label="Из банка идей"
+                label={t('today.select.label')}
                 id="today-idea"
                 name="today-idea"
                 value={idea?.id || ''}
@@ -84,7 +86,7 @@ export default function Today() {
               >
                 {candidates.map((i) => (
                   <option key={i.id} value={i.id}>
-                    {(i.title || 'Без названия').slice(0, 70)} · {STATUS_LABEL[i.status]}
+                    {(i.title || t('today.untitled')).slice(0, 70)} · {STATUS_LABEL[i.status]}
                   </option>
                 ))}
               </Select>
@@ -94,7 +96,7 @@ export default function Today() {
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     <Pill kind="cluster">{CLUSTER_LABEL[idea.cluster] || idea.cluster}</Pill>
                     <Pill>{idea.channel}</Pill>
-                    {idea.date && <Pill>план: {idea.date}</Pill>}
+                    {idea.date && <Pill>{t('today.plan')}{idea.date}</Pill>}
                   </div>
                   {idea.hook && <div style={{ fontSize: 'var(--fs-md)', color: 'var(--text-2)', lineHeight: 1.55 }}>{idea.hook}</div>}
 
@@ -102,32 +104,32 @@ export default function Today() {
                   {flags.length > 0 && (
                     <div style={{ background: hard ? 'var(--critical-soft)' : 'var(--warning-soft)', border: `1px solid ${hard ? 'var(--critical)' : 'var(--border-warning)'}`, borderRadius: 8, padding: '8px 10px' }}>
                       <div style={{ fontSize: 'var(--fs-2xs)', fontWeight: 700, color: hard ? 'var(--critical)' : 'var(--warning)', marginBottom: 4 }}>
-                        {hard ? 'Гардрейлы блокируют публикацию' : 'Гардрейлы предупреждают'}
+                        {hard ? t('today.guard.block') : t('today.guard.warn')}
                       </div>
                       {flags.map((f, i) => (
                         <div key={i} style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-2)' }}>• {f.message}</div>
                       ))}
                     </div>
                   )}
-                  {flags.length === 0 && <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--positive)' }}>Гардрейлы: нарушений нет</div>}
+                  {flags.length === 0 && <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--positive)' }}>{t('today.guard.clean')}</div>}
 
                   {!readOnly && (
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                      <Btn onClick={() => scheduleIdea(idea.id)}>Запланировать (вт/чт)</Btn>
+                      <Btn onClick={() => scheduleIdea(idea.id)}>{t('today.schedule')}</Btn>
                       <Btn
                         variant="accent"
                         disabled={hard}
-                        title={hard ? 'Сначала уберите блокирующие нарушения' : undefined}
+                        title={hard ? t('today.publish.blocked') : undefined}
                         onClick={() => {
                           moveIdeaStatus(idea.id, 'published');
-                          flash('Идея отмечена опубликованной — внесите факт для калибровки');
+                          flash(t('today.published.toast'));
                           setForecastId(idea.id);
                           setTab('forecast');
                         }}
                       >
-                        Опубликовано → внести факт
+                        {t('today.publish')}
                       </Btn>
-                      <Btn onClick={() => setTab('ideas')}>Редактировать в «Идеях»</Btn>
+                      <Btn onClick={() => setTab('ideas')}>{t('today.editInIdeas')}</Btn>
                     </div>
                   )}
                 </>
@@ -138,41 +140,35 @@ export default function Today() {
           {/* правая колонка: черновик + оценка */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {fc && (
-              <Panel title="Оценка вовлечения (диапазон, не обещание)">
+              <Panel title={t('today.panel.estimate')}>
                 {fc.lowData ? (
-                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--warning)' }}>
-                    Недостаточно данных для оценки — нет постов с метриками в кластере. Число будет заглушкой; добавьте корпус или референс.
-                  </div>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--warning)' }}>{t('today.lowdata')}</div>
                 ) : (
                   <div style={{ display: 'flex', gap: 16, alignItems: 'baseline', flexWrap: 'wrap' }}>
                     <div className="num" style={{ fontSize: 'var(--fs-num)', fontWeight: 800 }}>
                       {nf(fc.low)}<span style={{ color: 'var(--text-3)', fontWeight: 400 }}>–</span>{nf(fc.high)}
                     </div>
                     <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-3)' }}>
-                      комментариев · центр ≈ <span className="num">{nf(fc.expected)}</span> · по {fc.poolSize} аналогам
-                      {calibrationCount < CALIBRATION_MIN_FACTS && ' · калибровка не применяется (мало фактов)'}
+                      {t('today.comments.by')}<span className="num">{nf(fc.expected)}</span>{t('today.analogs')}{fc.poolSize}{t('today.analogs2')}
+                      {calibrationCount < CALIBRATION_MIN_FACTS && t('today.noCalib')}
                     </span>
                   </div>
                 )}
-                <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginTop: 8 }}>
-                  Полное разложение и бэктест — во вкладке «Прогноз».
-                </div>
+                <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginTop: 8 }}>{t('today.fullBreakdown')}</div>
               </Panel>
             )}
 
             {draft && (
-              <Panel title="Черновик по формуле">
+              <Panel title={t('today.panel.draft')}>
                 {draft.blocked && (
-                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--critical)', marginBottom: 8 }}>
-                    Черновик содержит блокирующие гардрейлы — исправьте перед публикацией.
-                  </div>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--critical)', marginBottom: 8 }}>{t('today.draft.blocked')}</div>
                 )}
                 <pre style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, padding: 12, fontSize: 'var(--fs-sm)', lineHeight: 1.55, whiteSpace: 'pre-wrap', fontFamily: 'var(--mono)', margin: 0, maxHeight: '44vh', overflowY: 'auto' }}>
                   {draft.text}
                 </pre>
                 <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'flex-end' }}>
-                  <Btn onClick={() => { navigator.clipboard?.writeText(draft.text); flash('Черновик скопирован'); }}>Копировать</Btn>
-                  <Btn onClick={() => download(((idea?.title || 'draft').slice(0, 40)) + '.md', draft.text, 'text/markdown')}>Скачать .md</Btn>
+                  <Btn onClick={() => { navigator.clipboard?.writeText(draft.text); flash(t('today.copied')); }}>{t('today.copy')}</Btn>
+                  <Btn onClick={() => download(((idea?.title || 'draft').slice(0, 40)) + '.md', draft.text, 'text/markdown')}>{t('today.download')}</Btn>
                 </div>
               </Panel>
             )}

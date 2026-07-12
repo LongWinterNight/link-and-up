@@ -6,6 +6,7 @@ import { Bars, Donut } from '@/components/charts';
 import { Btn, Kpi, Panel, Pill } from '@/components/ui';
 import { CLUSTER_LABEL } from '@/lib/constants';
 import EmptyCorpus from '@/components/EmptyCorpus';
+import { useT } from '@/i18n/useT';
 
 function startOfWeek(d: Date): Date {
   const x = new Date(d);
@@ -21,6 +22,7 @@ export default function Overview() {
   const openPost = useStore((s) => s.openPost);
   const setTab = useStore((s) => s.setTab);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
+  const t = useT();
 
   const k = useMemo(() => kpis(posts), [posts]);
   const clusters = useMemo(() => clusterStats(posts), [posts]);
@@ -43,7 +45,7 @@ export default function Overview() {
   const showCadenceNudge = postingDay && ownThisWeek < goal;
 
   if (posts.length === 0) {
-    return <EmptyCorpus title="Начните с загрузки постов" hint="Демо-корпус очищен. Загрузите свой экспорт (JSON-массив постов) — здесь появятся KPI, распределения по кластерам и топы. Или верните демо, чтобы изучить возможности." />;
+    return <EmptyCorpus title={t('ov.empty.title')} hint={t('ov.empty.hint')} />;
   }
 
   return (
@@ -63,7 +65,7 @@ export default function Overview() {
         }}
       >
         <div>
-          <div style={{ fontSize: 12, color: 'var(--text-3)' }}>Опубликовано своих постов на этой неделе</div>
+          <div style={{ fontSize: 12, color: 'var(--text-3)' }}>{t('ov.northstar.label')}</div>
           <div className="num" style={{ fontSize: 40, fontWeight: 800, lineHeight: 1 }}>
             {ownThisWeek}
             <span style={{ fontSize: 18, color: 'var(--text-3)', fontWeight: 600 }}> / {goal}</span>
@@ -74,8 +76,8 @@ export default function Overview() {
             <div style={{ width: pct + '%', height: '100%', background: ownThisWeek >= 3 ? 'var(--positive)' : 'var(--warning)' }} />
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 8 }}>
-            Цель — 3–5 постов/нед (вт–чт). Медиана откликов своих постов: <span className="num">{ownMed}</span> комм.
-            {own.length === 0 && ' Пока нет опубликованных своих постов — заведите идею и внесите факт во вкладке «Прогноз».'}
+            {t('ov.northstar.goalNote')}<span className="num">{ownMed}</span>{t('ov.northstar.comm')}
+            {own.length === 0 && t('ov.northstar.none')}
           </div>
         </div>
       </section>
@@ -83,25 +85,25 @@ export default function Overview() {
       {/* P-6: день публикации — идеи из банка под руку */}
       {showCadenceNudge && (
         <section style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent)', borderRadius: 'var(--radius-card)', padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <div style={{ fontSize: 13.5, fontWeight: 700 }}>Сегодня день публикации по вашему каденсу</div>
+          <div style={{ fontSize: 13.5, fontWeight: 700 }}>{t('ov.nudge.title')}</div>
           {candidateIdeas.length > 0 ? (
             <>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {candidateIdeas.map((i) => (
                   <div key={i.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}>
-                    <span style={{ fontWeight: 500 }}>{i.title || 'Без названия'}</span>
+                    <span style={{ fontWeight: 500 }}>{i.title || t('today.untitled')}</span>
                     <Pill kind="cluster">{CLUSTER_LABEL[i.cluster] || i.cluster}</Pill>
                   </div>
                 ))}
               </div>
               <div>
-                <Btn variant="accent" onClick={() => setTab('today')}>К посту сегодня →</Btn>
+                <Btn variant="accent" onClick={() => setTab('today')}>{t('ov.nudge.cta')}</Btn>
               </div>
             </>
           ) : (
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>Банк идей пуст — заведите первую, черновик соберётся по формуле.</span>
-              <Btn variant="accent" onClick={() => setTab('ideas')}>Создать идею</Btn>
+              <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{t('ov.nudge.empty')}</span>
+              <Btn variant="accent" onClick={() => setTab('ideas')}>{t('ov.nudge.create')}</Btn>
             </div>
           )}
         </section>
@@ -109,20 +111,20 @@ export default function Overview() {
 
       {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
-        <Kpi label="Всего постов" value={nf(k.total)} />
-        <Kpi label="С метриками" value={nf(k.withMetrics)} sub={`${k.withMetricsPct}% корпуса`} tone="positive" />
-        <Kpi label="Уникальных углов" value={nf(k.angles)} />
-        <Kpi label="RU / EN" value={`${nf(k.ru)} / ${nf(k.en)}`} />
-        <Kpi label="Медиана комментариев" value={k.medComments == null ? '—' : nf(k.medComments)} sub="только посты с метриками" />
-        <Kpi label="Максимум комментариев" value={k.maxComments == null ? '—' : nf(k.maxComments)} />
-        <Kpi label="Медиана ER, %" value={k.medRatePct == null ? '—' : k.medRatePct} sub="комм./подписчики" />
+        <Kpi label={t('ov.kpi.total')} value={nf(k.total)} />
+        <Kpi label={t('ov.kpi.withMetrics')} value={nf(k.withMetrics)} sub={`${k.withMetricsPct}${t('ov.kpi.corpus')}`} tone="positive" />
+        <Kpi label={t('ov.kpi.angles')} value={nf(k.angles)} />
+        <Kpi label={t('ov.kpi.langs')} value={`${nf(k.ru)} / ${nf(k.en)}`} />
+        <Kpi label={t('ov.kpi.medComments')} value={k.medComments == null ? '—' : nf(k.medComments)} sub={t('ov.kpi.medComments.sub')} />
+        <Kpi label={t('ov.kpi.maxComments')} value={k.maxComments == null ? '—' : nf(k.maxComments)} />
+        <Kpi label={t('ov.kpi.medEr')} value={k.medRatePct == null ? '—' : k.medRatePct} sub={t('ov.kpi.medEr.sub')} />
       </div>
 
       {/* Charts */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 16 }}>
-        <Panel title="Распределение по мета-кластерам">
+        <Panel title={t('ov.panel.clusters')}>
           <Bars
-            caption="Число постов по мета-кластерам"
+            caption={t('ov.panel.clusters.caption')}
             items={clusters.map((c) => ({
               label: c.label,
               value: c.count,
@@ -131,22 +133,21 @@ export default function Overview() {
           />
         </Panel>
 
-        <Panel title="Язык корпуса">
+        <Panel title={t('ov.panel.lang')}>
           <Donut
-            caption="Распределение по языку"
+            caption={t('ov.panel.lang.caption')}
             segments={[
               { label: 'RU', value: k.ru, color: 'var(--accent)' },
               { label: 'EN', value: k.en, color: 'var(--warning)' },
             ]}
           />
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>
-            RU — основной язык корпуса; EN — бенчмарк формата.
-          </div>
+{t('ov.panel.lang.note')}</div>
         </Panel>
 
-        <Panel title="Топ по комментариям">
+        <Panel title={t('ov.panel.topC')}>
           <Bars
-            caption="Топ постов по числу комментариев"
+            caption={t('ov.panel.topC.caption')}
             color="var(--positive)"
             items={topC.map((p) => ({
               label: p.author,
@@ -156,9 +157,9 @@ export default function Overview() {
           />
         </Panel>
 
-        <Panel title="Топ по engagement-rate">
+        <Panel title={t('ov.panel.topR')}>
           <Bars
-            caption="Топ постов по engagement-rate"
+            caption={t('ov.panel.topR.caption')}
             color="var(--text-accent)"
             items={topR.map((p) => ({
               label: p.author,
@@ -168,12 +169,11 @@ export default function Overview() {
             }))}
           />
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>
-            ER считается только там, где в headline есть число подписчиков.
-          </div>
+{t('ov.panel.topR.note')}</div>
         </Panel>
 
-        <Panel title="Динамика сбора по месяцам">
-          <Bars caption="Число собранных постов по месяцам" items={byMonth} />
+        <Panel title={t('ov.panel.months')}>
+          <Bars caption={t('ov.panel.months.caption')} items={byMonth} />
         </Panel>
       </div>
     </div>

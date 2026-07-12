@@ -1,4 +1,5 @@
 import { useStore } from '@/store';
+import { useT } from '@/i18n/useT';
 import { Btn } from './ui';
 
 /** Пустое состояние для нового пользователя, начавшего с чистого корпуса. */
@@ -6,6 +7,7 @@ export default function EmptyCorpus({ title, hint }: { title?: string; hint?: st
   const setImportOpen = useStore((s) => s.setImportOpen);
   const reset = useStore((s) => s.reset);
   const readOnly = useStore((s) => s.readOnly);
+  const t = useT();
   return (
     <div
       style={{
@@ -20,13 +22,13 @@ export default function EmptyCorpus({ title, hint }: { title?: string; hint?: st
         padding: '40px 24px',
       }}
     >
-      <div style={{ fontSize: 15, fontWeight: 700 }}>{title || 'Корпус пуст'}</div>
+      <div style={{ fontSize: 15, fontWeight: 700 }}>{title || t('empty.title')}</div>
       <div style={{ fontSize: 13, color: 'var(--text-3)', maxWidth: 420, lineHeight: 1.55 }}>
-        {hint || 'Загрузите свой экспорт постов (JSON-массив) — появится аналитика, паттерны и прогноз. Или вернитесь к демо-корпусу, чтобы посмотреть возможности на живых данных.'}
+        {hint || t('empty.hint')}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 }}>
-        {!readOnly && <Btn variant="accent" onClick={() => setImportOpen(true)}>Загрузить свои посты</Btn>}
-        <Btn onClick={() => reset()}>Показать демо-корпус</Btn>
+        {!readOnly && <Btn variant="accent" onClick={() => setImportOpen(true)}>{t('empty.cta.import')}</Btn>}
+        <Btn onClick={() => void reset()}>{t('empty.cta.demo')}</Btn>
       </div>
     </div>
   );

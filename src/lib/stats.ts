@@ -15,10 +15,16 @@ export function quantile(sorted: number[], q: number): number {
   return sorted[b + 1] !== undefined ? sorted[b] + rest * (sorted[b + 1] - sorted[b]) : sorted[b];
 }
 
-/** Форматирование числа для RU. null → «—». */
+/** FE-3: локаль форматирования настраивается при смене языка (см. App). */
+let numberFormat = new Intl.NumberFormat('ru-RU');
+export function setNumberLocale(locale: string): void {
+  numberFormat = new Intl.NumberFormat(locale);
+}
+
+/** Форматирование числа в текущей локали. null → «—». */
 export function nf(n: number | null | undefined): string {
   if (n == null) return '—';
-  return new Intl.NumberFormat('ru-RU').format(Math.round(n));
+  return numberFormat.format(Math.round(n));
 }
 
 /** Ограничить значение диапазоном. */

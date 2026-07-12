@@ -14,18 +14,13 @@ import SettingsModal from './components/SettingsModal';
 import OnboardingModal from './components/OnboardingModal';
 import PrintReport from './components/PrintReport';
 import { download } from './lib/download';
+import { setNumberLocale } from './lib/stats';
 import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from './lib/exports';
-import { PRODUCT_NAME, PRODUCT_TAGLINE } from './lib/constants';
+import { PRODUCT_NAME } from './lib/constants';
+import { ensureLocale, intlLocale, type DictKey } from './i18n';
+import { useT } from './i18n/useT';
 
-const TABS: [TabId, string][] = [
-  ['today', 'Сегодня'],
-  ['overview', 'Обзор'],
-  ['analytics', 'Аналитика'],
-  ['explorer', 'Посты'],
-  ['clusters', 'Кластеры и знания'],
-  ['ideas', 'Идеи и контент-план'],
-  ['forecast', 'Прогноз'],
-];
+const TAB_IDS: TabId[] = ['today', 'overview', 'analytics', 'explorer', 'clusters', 'ideas', 'forecast'];
 
 const hdrBtn: React.CSSProperties = {
   background: 'var(--surface-2)',
@@ -40,6 +35,8 @@ const hdrBtn: React.CSSProperties = {
 export default function App() {
   const theme = useStore((s) => s.theme);
   const toggleTheme = useStore((s) => s.toggleTheme);
+  const locale = useStore((s) => s.locale);
+  const setLocale = useStore((s) => s.setLocale);
   const tab = useStore((s) => s.tab);
   const setTab = useStore((s) => s.setTab);
   const toast = useStore((s) => s.toast);
@@ -53,6 +50,7 @@ export default function App() {
   const rules = useStore((s) => s.rules);
   const flash = useStore((s) => s.flash);
   const setSettingsOpen = useStore((s) => s.setSettingsOpen);
+  const t = useT();
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
 
@@ -91,6 +89,15 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
+  // FE-3: локаль — html lang, формат чисел, догрузка словаря (persist мог восстановить en)
+  useEffect(() => {
+    document.documentElement.lang = locale;
+    setNumberLocale(intlLocale(locale));
+    void ensureLocale(locale).then(() =>
+      useStore.setState((s) => ({ i18nVersion: s.i18nVersion + 1 })),
+    );
+  }, [locale]);
+
   // FE-2: первый запуск (нет онбординга и нет персистентного корпуса) — демо грузится отдельным чанком
   useEffect(() => {
     const s = useStore.getState();
@@ -99,10 +106,10 @@ export default function App() {
 
   const doExport = (kind: 'json' | 'csv' | 'ideas' | 'obsidian') => {
     setExportOpen(false);
-    if (kind === 'json') { download('linkedin_baza.json', exportPostsJson(posts, rules)); flash('Экспортировано постов: ' + posts.length); }
-    if (kind === 'csv') { download('linkedin_baza.csv', exportPostsCsv(posts, rules), 'text/csv;charset=utf-8'); flash('CSV экспортирован'); }
-    if (kind === 'ideas') { download('idei.csv', exportIdeasCsv(ideas, posts, rules), 'text/csv;charset=utf-8'); flash('CSV идей экспортирован'); }
-    if (kind === 'obsidian') { download('link-and-up-ideas.md', exportObsidian(ideas, rules), 'text/markdown'); flash('Markdown сформирован'); }
+    if (kind === 'json') { download('linkedin_baza.json', exportPostsJson(posts, rules)); flash(t('toast.posts.exported') + posts.length); }
+    if (kind === 'csv') { download('linkedin_baza.csv', exportPostsCsv(posts, rules), 'text/csv;charset=utf-8'); flash(t('toast.csv.exported')); }
+    if (kind === 'ideas') { download('idei.csv', exportIdeasCsv(ideas, posts, rules), 'text/csv;charset=utf-8'); flash(t('toast.ideas.exported')); }
+    if (kind === 'obsidian') { download('link-and-up-ideas.md', exportObsidian(ideas, rules), 'text/markdown'); flash(t('toast.md.exported')); }
   };
 
   return (
@@ -113,58 +120,63 @@ export default function App() {
       >
         <h1 style={{ fontSize: 16, fontWeight: 700 }}>
           {PRODUCT_NAME}
-          <span style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 400, marginLeft: 10 }}>{PRODUCT_TAGLINE}</span>
+          <span style={{ fontSize: 12, color: 'var(--text-3)', fontWeight: 400, marginLeft: 10 }}>{t('app.tagline')}</span>
         </h1>
-        {isDemo && posts.length > 0 && <span title="Демонстрационный корпус публичных постов. Загрузите свои — бейдж исчезнет." style={{ fontSize: 11, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--accent-soft)', border: '1px solid var(--border)', color: 'var(--text-accent)' }}>демо-корпус</span>}
-        {readOnly && <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', color: 'var(--warning)' }}>только просмотр</span>}
+        {isDemo && posts.length > 0 && <span title={t('app.demo.badge.title')} style={{ fontSize: 11, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--accent-soft)', border: '1px solid var(--border)', color: 'var(--text-accent)' }}>{t('app.demo.badge')}</span>}
+        {readOnly && <span style={{ fontSize: 11, padding: '3px 10px', borderRadius: 'var(--radius-pill)', background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', color: 'var(--warning)' }}>{t('app.readonly.badge')}</span>}
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {!readOnly && <button type="button" style={hdrBtn} onClick={() => setImportOpen(true)}>Загрузить</button>}
+          {!readOnly && <button type="button" style={hdrBtn} onClick={() => setImportOpen(true)}>{t('app.load')}</button>}
           <div ref={exportRef} style={{ position: 'relative' }}>
-            <button type="button" style={hdrBtn} onClick={() => setExportOpen((v) => !v)} aria-expanded={exportOpen} aria-haspopup="menu">Экспорт ▾</button>
+            <button type="button" style={hdrBtn} onClick={() => setExportOpen((v) => !v)} aria-expanded={exportOpen} aria-haspopup="menu">{t('app.export')}</button>
             {exportOpen && (
               <div role="menu" style={{ position: 'absolute', right: 0, top: '110%', background: 'var(--surface-1)', border: '1px solid var(--border-strong)', borderRadius: 8, boxShadow: 'var(--shadow-modal)', minWidth: 200, zIndex: 30, overflow: 'hidden' }}>
-                {[
-                  ['json', 'Посты → JSON'],
-                  ['csv', 'Посты → CSV'],
-                  ['ideas', 'Идеи → CSV'],
-                  ['obsidian', 'В Obsidian (.md, с редакцией)'],
-                ].map(([k, l]) => (
+                {(
+                  [
+                    ['json', 'app.export.json'],
+                    ['csv', 'app.export.csv'],
+                    ['ideas', 'app.export.ideas'],
+                    ['obsidian', 'app.export.obsidian'],
+                  ] as [string, DictKey][]
+                ).map(([k, key]) => (
                   <button key={k} role="menuitem" type="button" onClick={() => doExport(k as 'json')} style={{ display: 'block', width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: '9px 12px', cursor: 'pointer', color: 'var(--text-1)', fontSize: 13 }}>
-                    {l}
+                    {t(key)}
                   </button>
                 ))}
               </div>
             )}
           </div>
-          <button type="button" style={hdrBtn} onClick={() => window.print()}>Отчёт недели</button>
-          <button type="button" style={hdrBtn} onClick={() => setSettingsOpen(true)}>⚙ Настройки</button>
-          <button type="button" style={hdrBtn} onClick={() => setReadOnly(!readOnly)} aria-pressed={readOnly}>{readOnly ? 'Выключить просмотр' : 'Только просмотр'}</button>
-          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { if (confirm('Сбросить к демо-корпусу (289 постов)? Идеи и факты будут потеряны.')) void reset(); }}>Сброс</button>}
-          <button type="button" style={hdrBtn} onClick={toggleTheme} aria-label="Переключить тему">{theme === 'dark' ? '☾ Тёмная' : '☀ Светлая'}</button>
+          <button type="button" style={hdrBtn} onClick={() => window.print()}>{t('app.report')}</button>
+          <button type="button" style={hdrBtn} onClick={() => setSettingsOpen(true)}>{t('app.settings')}</button>
+          <button type="button" style={hdrBtn} onClick={() => setReadOnly(!readOnly)} aria-pressed={readOnly}>{readOnly ? t('app.readonly.off') : t('app.readonly.on')}</button>
+          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { if (confirm(t('app.reset.confirm'))) void reset(); }}>{t('app.reset')}</button>}
+          <button type="button" style={hdrBtn} onClick={() => void setLocale(locale === 'ru' ? 'en' : 'ru')} aria-label={t('app.lang.aria')}>
+            {locale === 'ru' ? 'EN' : 'RU'}
+          </button>
+          <button type="button" style={hdrBtn} onClick={toggleTheme} aria-label={t('app.theme.aria')}>{theme === 'dark' ? t('app.theme.dark') : t('app.theme.light')}</button>
         </div>
       </header>
 
       <div className="no-print" style={{ borderBottom: '1px solid var(--border)', padding: '0 20px', background: 'var(--surface-0)' }}>
         <div
           role="tablist"
-          aria-label="Разделы дашборда"
+          aria-label={t('app.tabs.aria')}
           style={{ display: 'flex', gap: 4, overflowX: 'auto' }}
           // FE-4: WAI-ARIA tabs — стрелки листают разделы, roving tabindex
           onKeyDown={(e) => {
             if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
             e.preventDefault();
-            const idx = TABS.findIndex(([id]) => id === tab);
+            const idx = TAB_IDS.indexOf(tab);
             const next =
-              e.key === 'ArrowRight' ? (idx + 1) % TABS.length
-              : e.key === 'ArrowLeft' ? (idx - 1 + TABS.length) % TABS.length
+              e.key === 'ArrowRight' ? (idx + 1) % TAB_IDS.length
+              : e.key === 'ArrowLeft' ? (idx - 1 + TAB_IDS.length) % TAB_IDS.length
               : e.key === 'Home' ? 0
-              : TABS.length - 1;
-            setTab(TABS[next][0]);
+              : TAB_IDS.length - 1;
+            setTab(TAB_IDS[next]);
             (e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]')[next])?.focus();
           }}
         >
-          {TABS.map(([id, label]) => {
+          {TAB_IDS.map((id) => {
             const active = tab === id;
             return (
               <button
@@ -177,7 +189,7 @@ export default function App() {
                 onClick={() => setTab(id)}
                 style={{ background: active ? 'var(--surface-3)' : 'transparent', border: `1px solid ${active ? 'var(--border-strong)' : 'transparent'}`, borderBottom: active ? '1px solid var(--surface-3)' : '1px solid transparent', color: active ? 'var(--text-1)' : 'var(--text-2)', borderRadius: '8px 8px 0 0', padding: '9px 16px', cursor: 'pointer', fontSize: 13.5, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap' }}
               >
-                {label}
+                {t(('tab.' + id) as DictKey)}
               </button>
             );
           })}
@@ -185,7 +197,7 @@ export default function App() {
       </div>
 
       <main id="tabpanel" role="tabpanel" aria-labelledby={'tab-' + tab} className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
-        <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>Загрузка…</div>}>
+        <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>{t('app.loading')}</div>}>
           {tab === 'today' && <Today />}
           {tab === 'overview' && <Overview />}
           {tab === 'analytics' && <Analytics />}
