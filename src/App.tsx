@@ -99,8 +99,8 @@ export default function App() {
 
   const doExport = (kind: 'json' | 'csv' | 'ideas' | 'obsidian') => {
     setExportOpen(false);
-    if (kind === 'json') { download('linkedin_baza.json', exportPostsJson(posts)); flash('Экспортировано постов: ' + posts.length); }
-    if (kind === 'csv') { download('linkedin_baza.csv', exportPostsCsv(posts), 'text/csv;charset=utf-8'); flash('CSV экспортирован'); }
+    if (kind === 'json') { download('linkedin_baza.json', exportPostsJson(posts, rules)); flash('Экспортировано постов: ' + posts.length); }
+    if (kind === 'csv') { download('linkedin_baza.csv', exportPostsCsv(posts, rules), 'text/csv;charset=utf-8'); flash('CSV экспортирован'); }
     if (kind === 'ideas') { download('idei.csv', exportIdeasCsv(ideas, posts, rules), 'text/csv;charset=utf-8'); flash('CSV идей экспортирован'); }
     if (kind === 'obsidian') { download('link-and-up-ideas.md', exportObsidian(ideas, rules), 'text/markdown'); flash('Markdown сформирован'); }
   };

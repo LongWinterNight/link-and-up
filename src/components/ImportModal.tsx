@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '@/store';
+import { MAX_IMPORT_BYTES } from '@/lib/dedup';
 import { Btn } from './ui';
 import { Modal } from './Modal';
 
@@ -18,6 +19,11 @@ export default function ImportModal() {
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
+    // SEC-4: кап размера файла до чтения — защита от зависания вкладки
+    if (f.size > MAX_IMPORT_BYTES) {
+      setError(`Файл слишком большой (${(f.size / 1048576).toFixed(1)} МБ). Лимит ${MAX_IMPORT_BYTES / 1048576} МБ — разбейте экспорт на части.`);
+      return;
+    }
     const rd = new FileReader();
     rd.onload = () => { setText(String(rd.result)); setError(''); clearImport(); };
     rd.onerror = () => setError('Не удалось прочитать файл');

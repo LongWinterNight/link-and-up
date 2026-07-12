@@ -1,18 +1,19 @@
 import type { Idea, Post, Rule } from '@/types';
 import { CLUSTER_LABEL, FORMULAS, SCHEMA_VERSION, STATUS_LABEL } from './constants';
-import { validateIdea, hasHardFlag } from './guardrails';
+import { validateContent, hasHardFlag, redactHard } from './guardrails';
 
 // ---------- JSON ----------
-export function exportPostsJson(posts: Post[]): string {
+/** SEC-3: hard-термины маскируются и в текстах постов, не только в идеях. */
+export function exportPostsJson(posts: Post[], rules?: Rule[]): string {
   const out = posts.map((p) => ({
     query: p.query,
-    author: p.author,
-    headline: p.headline,
+    author: redactHard(p.author, rules),
+    headline: redactHard(p.headline, rules),
     age: p.age,
     reactions: p.reactions,
     comments: p.comments,
     reposts: p.reposts,
-    text: p.text,
+    text: redactHard(p.text, rules),
     url: p.url,
     collected_at: p.collected_at,
     schema_version: SCHEMA_VERSION,
@@ -35,14 +36,14 @@ export function csvCell(v: unknown): string {
   return /[",\n;]/.test(s) ? '"' + s + '"' : s;
 }
 
-export function exportPostsCsv(posts: Post[]): string {
+export function exportPostsCsv(posts: Post[], rules?: Rule[]): string {
   const head = [
     'Автор', 'Заголовок', 'Язык', 'Кластер', 'Хук', 'Структура', 'CTA', 'Эмоция', 'Приёмы',
     'Реакции', 'Комментарии', 'Репосты', 'Подписчики', 'ER,%', 'Есть метрики', 'Свой', 'Дата сбора', 'URL', 'Угол',
   ];
   const rows = posts.map((p) =>
     [
-      p.author, p.headline, p.lang, CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
+      redactHard(p.author, rules), redactHard(p.headline, rules), p.lang, CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
       p.tags.hook_type, p.tags.structure, p.tags.cta_type, p.tags.emotion, p.tags.flags.join('|'),
       p.has_metrics ? p.reactions : '', p.has_metrics ? p.comments : '', p.reposts,
       p.followers == null ? '' : p.followers, p.rate == null ? '' : (p.rate * 100).toFixed(3),
@@ -62,9 +63,9 @@ interface RedactedIdea {
   note: string;
 }
 
-/** Идея с блокирующими (hard) нарушениями гардрейлов не выгружается наружу. */
+/** Идея с блокирующими (hard) нарушениями гардрейлов не выгружается наружу. SEC-3: source тоже проверяется. */
 export function redactIdea(idea: Idea, rules?: Rule[]): RedactedIdea {
-  const flags = validateIdea(idea, rules);
+  const flags = validateContent((idea.title || '') + ' ' + (idea.hook || '') + ' ' + (idea.source || ''), rules);
   if (hasHardFlag(flags)) {
     return {
       title: '[скрыто: блокирующие гардрейлы]',
@@ -84,7 +85,7 @@ export function exportIdeasCsv(ideas: Idea[], posts: Post[], rules?: Rule[]): st
     return [
       r.title, r.hook, CLUSTER_LABEL[i.cluster] || i.cluster,
       FORMULAS.find((f) => f.id === i.formula)?.title || i.formula,
-      i.source, i.channel, STATUS_LABEL[i.status] || i.status, i.date, rp?.author || '',
+      r.redacted ? '' : redactHard(i.source, rules), i.channel, STATUS_LABEL[i.status] || i.status, i.date, rp?.author || '',
       i.predicted || '', i.actual ? i.actual.comments : '', r.note,
     ]
       .map(csvCell)
@@ -106,10 +107,18 @@ export function exportObsidian(ideas: Idea[], rules?: Rule[]): string {
     md += '- Хук: ' + (r.hook || '') + '\n';
     md += '- Кластер: [[' + (CLUSTER_LABEL[i.cluster] || i.cluster) + ']]\n';
     md += '- Формула: [[' + (FORMULAS.find((f) => f.id === i.formula)?.title || i.formula) + ']]\n';
-    md += '- Источник: ' + (i.source || '—') + '\n';
+    md += '- Источник: ' + (r.redacted ? '—' : redactHard(i.source, rules) || '—') + '\n';
     md += '- Канал: ' + i.channel + ' · Статус: ' + (STATUS_LABEL[i.status] || i.status);
     if (r.redacted) md += ' · ⚠️ скрыто (гардрейлы)';
     md += '\n\n';
   }
   return md;
+}
+
+// ---------- OBS-1: журнал действий ----------
+/** Локальный audit-log в CSV. Честная маркировка «локальный» — серверный аудит появится с командным режимом. */
+export function exportAuditCsv(log: { t: string; msg: string }[]): string {
+  const head = ['Время (ISO)', 'Событие'];
+  const rows = log.map((e) => [e.t, e.msg].map(csvCell).join(','));
+  return '﻿' + head.join(',') + '\n' + rows.join('\n');
 }

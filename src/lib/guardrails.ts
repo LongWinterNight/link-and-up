@@ -102,6 +102,26 @@ export function validateIdea(idea: Pick<Idea, 'title' | 'hook'>, rules: Rule[] =
   return validateContent((idea.title || '') + ' ' + (idea.hook || ''), rules);
 }
 
+/**
+ * SEC-3: замаскировать в тексте фрагменты, совпавшие с hard-правилами.
+ * Для экспортов: запрещённый термин не должен покидать устройство даже внутри
+ * текста поста. Матчим паттерн как написан и его ё→е вариант.
+ */
+export function redactHard(text: string, rules: Rule[] = DEFAULT_RULES): string {
+  let out = text || '';
+  for (const r of rules) {
+    if (!r.enabled || r.severity !== 'hard') continue;
+    for (const pat of new Set([r.pattern, foldYo(r.pattern)])) {
+      try {
+        out = out.replace(new RegExp(pat, 'giu'), '[удалено: ' + r.label + ']');
+      } catch {
+        continue; // битый пользовательский паттерн — пропускаем
+      }
+    }
+  }
+  return out;
+}
+
 export function hasHardFlag(flags: GuardrailFlag[]): boolean {
   return flags.some((f) => f.severity === 'hard');
 }

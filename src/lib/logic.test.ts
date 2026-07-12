@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
-import { analyzeIngest, diceSim, dedupKey } from './dedup';
+import { analyzeIngest, diceSim, dedupKey, MAX_IMPORT_RECORDS } from './dedup';
 import { backtest, effectiveCalibration, forecast, recalcCalibration } from './forecast';
 import { validateIdea, validateContent, validatePattern, hasHardFlag, DEFAULT_RULES, MAX_PATTERN_LENGTH } from './guardrails';
-import { csvCell } from './exports';
+import { redactHard } from './guardrails';
+import { csvCell, exportAuditCsv, exportIdeasCsv, exportPostsCsv, redactIdea } from './exports';
 import type { Rule } from '@/types';
 import type { Idea, Post, RawPost } from '@/types';
 
@@ -296,6 +297,65 @@ describe('SEC-2: validatePattern — защита от ReDoS', () => {
     expect(validatePattern('a'.repeat(MAX_PATTERN_LENGTH + 1))).toContain('длиннее');
     expect(validatePattern('(')).toContain('Некорректное');
     expect(validatePattern('  ')).toBe('Пустой паттерн');
+  });
+});
+
+describe('SEC-3: редакция hard-терминов в экспортах', () => {
+  const nda: Rule = { id: 'nda', label: 'NDA', pattern: 'секретныйклиент', severity: 'hard', message: 'NDA', enabled: true };
+  const rules: Rule[] = [...DEFAULT_RULES, nda];
+
+  it('redactHard маскирует термин, включая ё-вариант, и не трогает чистый текст', () => {
+    expect(redactHard('кейс СекретныйКлиент вырос', rules)).toBe('кейс [удалено: NDA] вырос');
+    expect(redactHard('обычный текст', rules)).toBe('обычный текст');
+  });
+
+  it('термин в headline не попадает в CSV, в тексте — не попадает в JSON', async () => {
+    const p = enrich({ author: 'A', headline: 'CMO у СекретныйКлиент', text: 'внедрили у СекретныйКлиент за месяц', reactions: 1, comments: 1 });
+    const csv = exportPostsCsv([p], rules);
+    expect(csv).not.toContain('СекретныйКлиент');
+    expect(csv).toContain('[удалено: NDA]');
+    const { exportPostsJson } = await import('./exports');
+    const json = exportPostsJson([p], rules);
+    expect(json).not.toContain('СекретныйКлиент');
+    expect(json).toContain('[удалено: NDA]');
+  });
+
+  it('термин в idea.source прячет идею целиком (redactIdea учитывает source)', () => {
+    const idea: Idea = { id: 'x', title: 'Чистый заголовок', hook: '', cluster: 'spec', formula: 'arch', source: 'кейс СекретныйКлиент', channel: 'LinkedIn', status: 'draft', date: '', refPostId: '', predicted: 0, actual: null };
+    expect(redactIdea(idea, rules).redacted).toBe(true);
+    const csv = exportIdeasCsv([idea], [], rules);
+    expect(csv).not.toContain('СекретныйКлиент');
+  });
+});
+
+describe('SEC-4: лимиты импорта', () => {
+  it('входной массив капится MAX_IMPORT_RECORDS с объяснением', () => {
+    const incoming = Array.from({ length: MAX_IMPORT_RECORDS + 5 }, (_, i) => ({ author: 'A' + i, text: 'уникальный текст номер ' + i + ' про инженерию' }));
+    const r = analyzeIngest([], incoming);
+    expect(r.added).toBe(MAX_IMPORT_RECORDS);
+    expect(r.reasons.some((x) => x.includes('ограничен'))).toBe(true);
+  });
+
+  it('бакетизация по автору не сломала near-dup детекцию', () => {
+    const base = [enrich({ author: 'Игорь Ветров', text: 'Спека до кода — и Claude Code перестал фантазировать полностью совсем', reactions: 1, comments: 1 })];
+    const near = { author: 'Игорь Ветров', text: 'Спека до кода — и Claude Code перестал фантазировать почти совсем' };
+    const r = analyzeIngest(base, [near]);
+    expect(r.nearDupes).toBe(1);
+    // другой автор с тем же текстом — НЕ near-dup (бакет другой)
+    const other = analyzeIngest(base, [{ author: 'Другой Автор', text: near.text }]);
+    expect(other.added).toBe(1);
+  });
+});
+
+describe('OBS-1: экспорт журнала', () => {
+  it('CSV с заголовком, событиями и защитой от формул', () => {
+    const csv = exportAuditCsv([
+      { t: '2026-07-12T10:00:00Z', msg: 'Импорт: добавлено 5 постов' },
+      { t: '2026-07-12T11:00:00Z', msg: '=HYPERLINK("evil")' },
+    ]);
+    expect(csv).toContain('Время (ISO)');
+    expect(csv).toContain('Импорт: добавлено 5 постов');
+    expect(csv).toContain("'=HYPERLINK");
   });
 });
 

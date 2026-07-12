@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useStore } from '@/store';
 import { validatePattern } from '@/lib/guardrails';
+import { exportAuditCsv } from '@/lib/exports';
+import { download } from '@/lib/download';
 import type { Rule } from '@/types';
 import { Btn } from './ui';
 import { Modal } from './Modal';
@@ -56,6 +58,7 @@ export default function SettingsModal() {
   const setOwnAuthor = useStore((s) => s.setOwnAuthor);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
   const setCadenceGoal = useStore((s) => s.setCadenceGoal);
+  const auditLog = useStore((s) => s.auditLog);
   const flash = useStore((s) => s.flash);
 
   const [nLabel, setNLabel] = useState('');
@@ -141,6 +144,20 @@ export default function SettingsModal() {
           {patternErr && <div style={{ color: 'var(--critical)', fontSize: 12, marginTop: 8 }}>{patternErr}</div>}
           <div style={{ marginTop: 10, textAlign: 'right' }}>
             <Btn variant="accent" onClick={addCustom}>Добавить правило</Btn>
+          </div>
+        </div>
+
+        {/* OBS-1: локальный журнал действий */}
+        <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>Журнал действий (локальный)</h3>
+            <Btn disabled={!auditLog.length} onClick={() => { download('audit-log.csv', exportAuditCsv(auditLog), 'text/csv;charset=utf-8'); flash('Журнал экспортирован'); }}>
+              Экспорт CSV ({auditLog.length})
+            </Btn>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 6 }}>
+            Импорты, идеи, публикации — последние 100 событий. Журнал хранится только в этом браузере и
+            стирается его очисткой; неизменяемый серверный аудит появится в командном режиме.
           </div>
         </div>
 
