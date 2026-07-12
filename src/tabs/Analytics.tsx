@@ -1,9 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { dataQuality, distributionBy, effectivenessBy } from '@/lib/derive';
 import { CHART_PALETTE } from '@/lib/constants';
 import { Bars, Donut, Scatter } from '@/components/charts';
 import { EmptyState, Panel } from '@/components/ui';
+import { Modal } from '@/components/Modal';
 import EmptyCorpus from '@/components/EmptyCorpus';
 
 function QualityBar({ label, pct }: { label: string; pct: number }) {
@@ -24,6 +25,7 @@ function QualityBar({ label, pct }: { label: string; pct: number }) {
 export default function Analytics() {
   const posts = useStore((s) => s.posts);
   const openPost = useStore((s) => s.openPost);
+  const [scatterZoom, setScatterZoom] = useState(false);
 
   const dq = useMemo(() => dataQuality(posts), [posts]);
   const byHook = useMemo(() => effectivenessBy(posts, 'hook_type'), [posts]);
@@ -71,13 +73,47 @@ export default function Analytics() {
         </Panel>
 
         <Panel title="Реакции ↔ комментарии">
-          {scatter.length ? <Scatter caption="Реакции против комментариев" points={scatter} /> : <EmptyState>Нет постов с метриками</EmptyState>}
+          {scatter.length ? (
+            <>
+              {/* клик по графику или кнопке — увеличенная версия поверх экрана */}
+              <div
+                onClick={() => setScatterZoom(true)}
+                style={{ cursor: 'zoom-in' }}
+                title="Увеличить график"
+              >
+                <Scatter caption="Реакции против комментариев" points={scatter} />
+              </div>
+              <button
+                type="button"
+                onClick={() => setScatterZoom(true)}
+                style={{ fontSize: 12, background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', padding: 0, marginTop: 6 }}
+              >
+                ⤢ Увеличить
+              </button>
+            </>
+          ) : (
+            <EmptyState>Нет постов с метриками</EmptyState>
+          )}
         </Panel>
 
         <Panel title="Распределение по эмоции">
           <Donut caption="Посты по эмоции" segments={emotionDist.map((s, i) => ({ label: s.label, value: s.value, color: CHART_PALETTE[i % CHART_PALETTE.length] }))} />
         </Panel>
       </div>
+
+      {/* увеличенный scatter поверх экрана; клик по точке открывает пост (PostModal выше по z) */}
+      {scatterZoom && (
+        <Modal onClose={() => setScatterZoom(false)} label="Реакции ↔ комментарии (увеличено)" width={1100} zIndex={40}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <h2 style={{ fontSize: 16, fontWeight: 700 }}>Реакции ↔ комментарии</h2>
+            <button type="button" onClick={() => setScatterZoom(false)} aria-label="Закрыть" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
+          </div>
+          <Scatter caption="Реакции против комментариев (увеличено)" points={scatter} width={1040} height={560} />
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
+            Обе оси — логарифмические (вовлечение распределено лог-нормально). Клик по точке — открыть пост.
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

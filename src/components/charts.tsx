@@ -81,25 +81,47 @@ export interface ScatterPoint {
   onClick?: () => void;
 }
 
-/** Диаграмма рассеяния (реакции ↔ комментарии). */
-export function Scatter({ points, caption }: { points: ScatterPoint[]; caption: string }) {
+/**
+ * Диаграмма рассеяния (реакции ↔ комментарии).
+ * Лог-шкала по обеим осям: вовлечение распределено лог-нормально, на линейной шкале
+ * выбросы сжимают 90% точек в слипшееся пятно у нуля. Тики — честные значения 1/10/100/1000.
+ */
+export function Scatter({ points, caption, width = 340, height = 220 }: { points: ScatterPoint[]; caption: string; width?: number; height?: number }) {
   if (!points.length) return <EmptyState>Нет данных</EmptyState>;
-  const W = 340;
-  const H = 220;
-  const pad = 36;
-  const maxX = Math.max(1, ...points.map((p) => p.x));
-  const maxY = Math.max(1, ...points.map((p) => p.y));
-  const sx = (x: number) => pad + (x / maxX) * (W - pad - 10);
-  const sy = (y: number) => H - pad - (y / maxY) * (H - pad - 12);
+  const W = width;
+  const H = height;
+  const pad = 40;
+  const lg = (v: number) => Math.log10(1 + Math.max(0, v));
+  const rawMaxX = Math.max(1, ...points.map((p) => p.x));
+  const rawMaxY = Math.max(1, ...points.map((p) => p.y));
+  const maxLX = lg(rawMaxX);
+  const maxLY = lg(rawMaxY);
+  const sx = (x: number) => pad + (lg(x) / maxLX) * (W - pad - 12);
+  const sy = (y: number) => H - pad - (lg(y) / maxLY) * (H - pad - 16);
+  const ticks = (rawMax: number) => [1, 10, 100, 1000, 10000].filter((t) => t <= rawMax * 1.05);
+  const r = Math.max(4, Math.min(6, Math.round(W / 90)));
   return (
     <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={caption} style={{ maxWidth: '100%', height: 'auto' }}>
+      {/* сетка по лог-тикам */}
+      {ticks(rawMaxX).map((t) => (
+        <g key={'x' + t}>
+          <line x1={sx(t)} y1={12} x2={sx(t)} y2={H - pad} stroke="var(--border)" strokeDasharray="2 3" />
+          <text x={sx(t)} y={H - pad + 14} textAnchor="middle" fill="var(--text-3)" fontSize={9} className="num">{nf(t)}</text>
+        </g>
+      ))}
+      {ticks(rawMaxY).map((t) => (
+        <g key={'y' + t}>
+          <line x1={pad} y1={sy(t)} x2={W - 8} y2={sy(t)} stroke="var(--border)" strokeDasharray="2 3" />
+          <text x={pad - 4} y={sy(t) + 3} textAnchor="end" fill="var(--text-3)" fontSize={9} className="num">{nf(t)}</text>
+        </g>
+      ))}
       <line x1={pad} y1={H - pad} x2={W - 6} y2={H - pad} stroke="var(--border-strong)" />
       <line x1={pad} y1={8} x2={pad} y2={H - pad} stroke="var(--border-strong)" />
-      <text x={W / 2} y={H - 6} textAnchor="middle" fill="var(--text-3)" fontSize={11}>реакции →</text>
-      <text x={8} y={14} fill="var(--text-3)" fontSize={11}>↑ коммент.</text>
+      <text x={W / 2} y={H - 4} textAnchor="middle" fill="var(--text-3)" fontSize={10}>реакции → (лог)</text>
+      <text x={8} y={12} fill="var(--text-3)" fontSize={10}>↑ коммент. (лог)</text>
       {points.map((p, i) => (
-        <circle key={i} cx={sx(p.x)} cy={sy(p.y)} r={5} fill="var(--accent)" fillOpacity={0.72} stroke="var(--surface-1)" strokeWidth={1} style={{ cursor: p.onClick ? 'pointer' : 'default' }} onClick={p.onClick}>
+        <circle key={i} cx={sx(p.x)} cy={sy(p.y)} r={r} fill="var(--accent)" fillOpacity={0.55} stroke="var(--surface-1)" strokeWidth={1} style={{ cursor: p.onClick ? 'pointer' : 'default' }} onClick={p.onClick}>
           <title>{p.label + ' · ♥' + p.x + ' 💬' + p.y}</title>
         </circle>
       ))}
