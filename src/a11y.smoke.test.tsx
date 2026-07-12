@@ -1,5 +1,5 @@
 import { beforeAll, describe, expect, it, afterEach } from 'vitest';
-import { cleanup, render } from '@testing-library/react';
+import { act, cleanup, render } from '@testing-library/react';
 import axe from 'axe-core';
 import { useStore } from '@/store';
 import Overview from '@/tabs/Overview';
@@ -31,9 +31,9 @@ describe('a11y smoke (axe-core)', () => {
   });
 
   it('Настройки (гардрейл-редактор): без critical/serious нарушений', async () => {
-    useStore.setState({ settingsOpen: true });
+    act(() => useStore.setState({ settingsOpen: true }));
     const { container } = render(<SettingsModal />);
     expect(await violations(container)).toEqual([]);
-    useStore.setState({ settingsOpen: false });
+    act(() => useStore.setState({ settingsOpen: false }));
   });
 });

@@ -92,6 +92,7 @@ export function Scatter({ points, caption }: { points: ScatterPoint[]; caption: 
   const sx = (x: number) => pad + (x / maxX) * (W - pad - 10);
   const sy = (y: number) => H - pad - (y / maxY) * (H - pad - 12);
   return (
+    <>
     <svg width="100%" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={caption} style={{ maxWidth: '100%', height: 'auto' }}>
       <line x1={pad} y1={H - pad} x2={W - 6} y2={H - pad} stroke="var(--border-strong)" />
       <line x1={pad} y1={8} x2={pad} y2={H - pad} stroke="var(--border-strong)" />
@@ -103,6 +104,27 @@ export function Scatter({ points, caption }: { points: ScatterPoint[]; caption: 
         </circle>
       ))}
     </svg>
+      {/* FE-4: данные scatter доступны скринридеру, как у Bars/Donut */}
+      <table className="sr-only">
+        <caption>{caption}</caption>
+        <thead>
+          <tr>
+            <th>Автор</th>
+            <th>Реакции</th>
+            <th>Комментарии</th>
+          </tr>
+        </thead>
+        <tbody>
+          {points.map((p, i) => (
+            <tr key={i}>
+              <td>{p.label}</td>
+              <td>{p.x}</td>
+              <td>{p.y}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 }
 

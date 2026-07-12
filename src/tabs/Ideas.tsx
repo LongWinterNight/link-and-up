@@ -220,7 +220,7 @@ function Kanban() {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+    <div className="kanban-grid">
       {cols.map((col) => (
         <div
           key={col}
@@ -274,7 +274,9 @@ function Calendar() {
   return (
     <div>
       <div style={{ fontSize: 13, color: 'var(--text-2)', marginBottom: 10 }}>{first.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })} · целевые дни постинга — вт/чт</div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 6 }}>
+      {/* FE-5: на узких экранах календарь скроллится внутри контейнера */}
+      <div className="scroll-x">
+      <div className="calendar-grid">
         {['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].map((d) => (
           <div key={d} style={{ fontSize: 11, color: 'var(--text-3)', textAlign: 'center' }}>{d}</div>
         ))}
@@ -294,6 +296,7 @@ function Calendar() {
             </div>
           );
         })}
+      </div>
       </div>
     </div>
   );

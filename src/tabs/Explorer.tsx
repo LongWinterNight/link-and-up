@@ -98,10 +98,10 @@ function TableView({ list, openPost }: { list: Post[]; openPost: (id: string) =>
   });
   const cell: React.CSSProperties = { padding: '0 8px', fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' };
   return (
-    <div style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
+    <div role="table" aria-label="Таблица постов" aria-rowcount={list.length + 1} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
       <div style={{ overflowX: 'auto' }}>
         <div style={{ minWidth: 860 }}>
-          <div role="row" style={{ display: 'grid', gridTemplateColumns: GRID, background: 'var(--surface-2)', borderBottom: '1px solid var(--border)', height: 38, fontSize: 11, fontWeight: 600, color: 'var(--text-3)' }}>
+          <div role="row" aria-rowindex={1} style={{ display: 'grid', gridTemplateColumns: GRID, background: 'var(--surface-2)', borderBottom: '1px solid var(--border)', height: 38, fontSize: 11, fontWeight: 600, color: 'var(--text-3)' }}>
             {COLS.map(([k, l]) => (
               <div key={k} role="columnheader" style={{ ...cell, fontSize: 11 }}>{l}</div>
             ))}
@@ -114,6 +114,7 @@ function TableView({ list, openPost }: { list: Post[]; openPost: (id: string) =>
                   <div
                     key={p.id}
                     role="row"
+                    aria-rowindex={vi.index + 2}
                     tabIndex={0}
                     onClick={() => openPost(p.id)}
                     onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPost(p.id); } }}
@@ -149,6 +150,8 @@ function Presets() {
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
         <input
+          id="preset-name"
+          name="preset-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           onKeyDown={(e) => { if (e.key === 'Enter') save(); }}
@@ -209,6 +212,8 @@ export default function Explorer() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       <input
         type="search"
+        id="post-search"
+        name="post-search"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Поиск по автору, тексту, углу…"

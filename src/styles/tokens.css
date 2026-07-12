@@ -13,8 +13,8 @@
   --surface-3: #242d38;
 
   --text-1: #e6edf3;
-  --text-2: #9aa7b4;
-  --text-3: #8b98a6;
+  --text-2: #a8b5c2; /* FE-8: разведено с text-3 для читаемой иерархии */
+  --text-3: #8593a1;
   --text-accent: #8fbcff;
 
   --border: #2b333d;
@@ -59,7 +59,7 @@
   --accent-soft: rgba(47, 111, 219, 0.1);
   --positive: #1f8a5b;
   --positive-soft: rgba(31, 138, 91, 0.1);
-  --warning: #9a6b12;
+  --warning: #8a5f10; /* FE-8: запас контраста AA на surface-2 для 11px текста */
   --warning-soft: rgba(154, 107, 18, 0.1);
   --critical: #c23b3b;
   --critical-soft: rgba(194, 59, 59, 0.1);
@@ -133,6 +133,24 @@ button {
 .scroll-x {
   overflow-x: auto;
   max-width: 100%;
+}
+
+/* FE-5: мобильные раскладки — kanban стеком, календарь скроллится внутри контейнера */
+.kanban-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  min-width: 640px;
+}
+@media (max-width: 719px) {
+  .kanban-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* печатный отчёт недели */

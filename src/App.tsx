@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useStore, type TabId } from './store';
 // FE-2: вкладки — ленивые чанки; на первом экране нужен только «Обзор»
 const Overview = lazy(() => import('./tabs/Overview'));
@@ -52,6 +52,38 @@ export default function App() {
   const flash = useStore((s) => s.flash);
   const setSettingsOpen = useStore((s) => s.setSettingsOpen);
   const [exportOpen, setExportOpen] = useState(false);
+  const exportRef = useRef<HTMLDivElement>(null);
+
+  // FE-4: меню «Экспорт» — Escape, стрелки, клик-вне, автофокус первого пункта
+  useEffect(() => {
+    if (!exportOpen) return;
+    const items = () => [...(exportRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') || [])];
+    requestAnimationFrame(() => items()[0]?.focus());
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setExportOpen(false);
+        exportRef.current?.querySelector<HTMLElement>('button[aria-haspopup]')?.focus();
+        return;
+      }
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const f = items();
+        if (!f.length) return;
+        const idx = f.indexOf(document.activeElement as HTMLElement);
+        const next = e.key === 'ArrowDown' ? (idx + 1) % f.length : (idx - 1 + f.length) % f.length;
+        f[next].focus();
+      }
+    };
+    const onDown = (e: PointerEvent) => {
+      if (exportRef.current && !exportRef.current.contains(e.target as Node)) setExportOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
+  }, [exportOpen]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -86,7 +118,7 @@ export default function App() {
 
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           {!readOnly && <button type="button" style={hdrBtn} onClick={() => setImportOpen(true)}>Загрузить</button>}
-          <div style={{ position: 'relative' }}>
+          <div ref={exportRef} style={{ position: 'relative' }}>
             <button type="button" style={hdrBtn} onClick={() => setExportOpen((v) => !v)} aria-expanded={exportOpen} aria-haspopup="menu">Экспорт ▾</button>
             {exportOpen && (
               <div role="menu" style={{ position: 'absolute', right: 0, top: '110%', background: 'var(--surface-1)', border: '1px solid var(--border-strong)', borderRadius: 8, boxShadow: 'var(--shadow-modal)', minWidth: 200, zIndex: 30, overflow: 'hidden' }}>
@@ -112,14 +144,34 @@ export default function App() {
       </header>
 
       <div className="no-print" style={{ borderBottom: '1px solid var(--border)', padding: '0 20px', background: 'var(--surface-0)' }}>
-        <div role="tablist" aria-label="Разделы дашборда" style={{ display: 'flex', gap: 4, overflowX: 'auto' }}>
+        <div
+          role="tablist"
+          aria-label="Разделы дашборда"
+          style={{ display: 'flex', gap: 4, overflowX: 'auto' }}
+          // FE-4: WAI-ARIA tabs — стрелки листают разделы, roving tabindex
+          onKeyDown={(e) => {
+            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
+            e.preventDefault();
+            const idx = TABS.findIndex(([id]) => id === tab);
+            const next =
+              e.key === 'ArrowRight' ? (idx + 1) % TABS.length
+              : e.key === 'ArrowLeft' ? (idx - 1 + TABS.length) % TABS.length
+              : e.key === 'Home' ? 0
+              : TABS.length - 1;
+            setTab(TABS[next][0]);
+            (e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]')[next])?.focus();
+          }}
+        >
           {TABS.map(([id, label]) => {
             const active = tab === id;
             return (
               <button
                 key={id}
+                id={'tab-' + id}
                 role="tab"
                 aria-selected={active}
+                aria-controls="tabpanel"
+                tabIndex={active ? 0 : -1}
                 onClick={() => setTab(id)}
                 style={{ background: active ? 'var(--surface-3)' : 'transparent', border: `1px solid ${active ? 'var(--border-strong)' : 'transparent'}`, borderBottom: active ? '1px solid var(--surface-3)' : '1px solid transparent', color: active ? 'var(--text-1)' : 'var(--text-2)', borderRadius: '8px 8px 0 0', padding: '9px 16px', cursor: 'pointer', fontSize: 13.5, fontWeight: active ? 600 : 400, whiteSpace: 'nowrap' }}
               >
@@ -130,7 +182,7 @@ export default function App() {
         </div>
       </div>
 
-      <main className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
+      <main id="tabpanel" role="tabpanel" aria-labelledby={'tab-' + tab} className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
         <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>Загрузка…</div>}>
           {tab === 'overview' && <Overview />}
           {tab === 'analytics' && <Analytics />}
