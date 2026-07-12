@@ -14,7 +14,9 @@ export function Bars({ items, color = 'var(--accent)', caption }: { items: BarIt
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
     <div>
-      <div role="img" aria-label={caption} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      {/* контейнер без role="img": внутри интерактивные ряды (axe: nested-interactive);
+          данные для скринридера — в sr-only таблице ниже */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {items.map((it, idx) => {
           const pct = Math.max(2, (it.value / max) * 100);
           const clickable = !!it.onClick;
@@ -23,6 +25,7 @@ export function Bars({ items, color = 'var(--accent)', caption }: { items: BarIt
               key={idx}
               role={clickable ? 'button' : undefined}
               tabIndex={clickable ? 0 : undefined}
+              aria-label={clickable ? it.label + ': ' + (it.display ?? nf(it.value)) : undefined}
               onClick={it.onClick}
               onKeyDown={
                 clickable
@@ -115,22 +118,21 @@ export function Donut({ segments, caption }: { segments: Segment[]; caption: str
   const r = 54;
   const sw = 20;
   const c = 2 * Math.PI * r;
-  let acc = 0;
+  // офсеты сегментов считаются заранее (чистый рендер, без мутации аккумулятора)
+  const visible = segments.filter((s) => s.value > 0);
+  const arcs = visible.map((s, i) => {
+    const len = (s.value / total) * c;
+    const offset = visible.slice(0, i).reduce((a, x) => a + (x.value / total) * c, 0);
+    return { ...s, len, offset };
+  });
   return (
     <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
       <svg width={140} height={140} viewBox="0 0 140 140" role="img" aria-label={caption + ': ' + segments.map((s) => s.label + ' ' + s.value).join(', ')}>
         <circle cx={70} cy={70} r={r} fill="none" stroke="var(--surface-2)" strokeWidth={sw} />
         <g transform="rotate(-90 70 70)">
-          {segments
-            .filter((s) => s.value > 0)
-            .map((s, i) => {
-              const len = (s.value / total) * c;
-              const el = (
-                <circle key={i} cx={70} cy={70} r={r} fill="none" stroke={s.color} strokeWidth={sw} strokeLinecap="butt" strokeDasharray={`${len} ${c - len}`} strokeDashoffset={-acc} />
-              );
-              acc += len;
-              return el;
-            })}
+          {arcs.map((s, i) => (
+            <circle key={i} cx={70} cy={70} r={r} fill="none" stroke={s.color} strokeWidth={sw} strokeLinecap="butt" strokeDasharray={`${s.len} ${c - s.len}`} strokeDashoffset={-s.offset} />
+          ))}
         </g>
         <text x={70} y={70} textAnchor="middle" dominantBaseline="central" fill="var(--text-1)" fontSize={26} fontWeight={700} fontFamily="var(--mono)">
           {total}

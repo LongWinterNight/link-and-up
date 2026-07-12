@@ -5,11 +5,11 @@
 реально собирает отклик, какие паттерны переиспользовать, что публиковать следующим — и
 прогноз, который честно показывает свою неопределённость, а не прячет её.
 
+[![CI](https://github.com/LongWinterNight/link-and-up/actions/workflows/ci.yml/badge.svg)](https://github.com/LongWinterNight/link-and-up/actions/workflows/ci.yml)
 ![Статус](https://img.shields.io/badge/статус-alpha-orange)
 ![React](https://img.shields.io/badge/React-18.3-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178c6)
 ![Vite](https://img.shields.io/badge/Vite-5-646cff)
-![Тесты](https://img.shields.io/badge/тесты-55%20passing-success)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
 Между «сырой аналитикой» и «постить по наитию» есть разрыв: цифры есть, а решения под
@@ -56,6 +56,7 @@ npm run dev        # dev-сервер
 npm run build      # type-check + продакшн-сборка
 npm run typecheck  # tsc --noEmit
 npm test           # запуск тестов
+npm run ci         # локально то же, что в CI: typecheck → lint → coverage → build → бюджет бандла
 ```
 
 ## Структура проекта
@@ -70,11 +71,13 @@ src/
   types.ts     общие типы
 ```
 
-## Тесты
+## Тесты и качество
 
 Покрыты чистая логика (прогноз, калибровка, бэктест, дедуп, обогащение, гардрейлы,
-экранирование CSV), интеграция стора (онбординг, пресеты, импорт, петля обучения) и
-примитив модалки (focus-trap, Escape, возврат фокуса). Запуск — `npm test`.
+экранирование CSV), фильтры, интеграция стора (онбординг, пресеты, импорт, петля обучения),
+примитив модалки (focus-trap, Escape, возврат фокуса), data-guard демо-корпуса и axe-smoke
+доступности. CI гейтит typecheck, ESLint, порог покрытия `src/lib` и бюджет размера
+initial-бандла. Запуск — `npm test`, полный локальный прогон — `npm run ci`.
 
 ## Статус
 
