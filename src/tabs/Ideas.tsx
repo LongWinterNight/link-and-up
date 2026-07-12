@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { CHANNELS, CLUSTER_LABEL, CLUSTERS, FORMULAS, STATUS, STATUS_LABEL } from '@/lib/constants';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
@@ -35,7 +35,8 @@ const emptyIdea = (): Idea => ({
 
 function GuardrailBox({ idea }: { idea: Idea }) {
   const rules = useStore((s) => s.rules);
-  const flags = validateIdea(idea, rules);
+  // FE-7: regex-прогон всех правил мемоизирован — не считаем на каждый ре-рендер
+  const flags = useMemo(() => validateIdea(idea, rules), [idea, rules]);
   if (!flags.length) return null;
   const hard = hasHardFlag(flags);
   return (
@@ -100,7 +101,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
   const rules = useStore((s) => s.rules);
   const [idea, setIdea] = useState<Idea>(initial);
   const upd = (patch: Partial<Idea>) => setIdea((i) => ({ ...i, ...patch }));
-  const flags = validateIdea(idea, rules);
+  const flags = useMemo(() => validateIdea(idea, rules), [idea, rules]);
   const publishBlocked = idea.status === 'published' && hasHardFlag(flags);
 
   return (
@@ -202,11 +203,16 @@ function Kanban() {
   const rules = useStore((s) => s.rules);
   const [dragId, setDragId] = useState<string | null>(null);
 
+  // FE-7: hard-флаги считаются один раз на [ideas, rules], а не regex-прогоном на каждую карточку в каждом рендере
+  const hardIds = useMemo(() => {
+    const s = new Set<string>();
+    for (const i of ideas) if (hasHardFlag(validateIdea(i, rules))) s.add(i.id);
+    return s;
+  }, [ideas, rules]);
+
   const cols: IdeaStatus[] = ['draft', 'inwork', 'published'];
   const tryMove = (id: string, status: IdeaStatus) => {
-    const idea = ideas.find((i) => i.id === id);
-    if (!idea) return;
-    if (status === 'published' && hasHardFlag(validateIdea(idea, rules))) {
+    if (status === 'published' && hardIds.has(id)) {
       flash('Нельзя опубликовать: блокирующие гардрейлы');
       return;
     }
@@ -234,7 +240,7 @@ function Kanban() {
                   style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, padding: 10, fontSize: 12.5 }}
                 >
                   <div style={{ fontWeight: 600, marginBottom: 4 }}>{i.title || 'Без названия'}</div>
-                  {hasHardFlag(validateIdea(i, rules)) && <div style={{ fontSize: 11, color: 'var(--critical)', marginBottom: 4 }}>🚫 гардрейлы</div>}
+                  {hardIds.has(i.id) && <div style={{ fontSize: 11, color: 'var(--critical)', marginBottom: 4 }}>🚫 гардрейлы</div>}
                   {/* клавиатурная альтернатива drag-n-drop (a11y) */}
                   <div style={{ display: 'flex', gap: 4 }}>
                     <button type="button" disabled={readOnly || idx === 0} onClick={() => tryMove(i.id, cols[idx - 1])} aria-label="Переместить влево" style={{ ...miniBtn }}>←</button>

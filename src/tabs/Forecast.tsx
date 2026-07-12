@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
-import { backtest, forecast, recalcCalibration } from '@/lib/forecast';
+import { backtest, CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { CLUSTER_LABEL } from '@/lib/constants';
 import { nf } from '@/lib/stats';
 import type { IdeaActual } from '@/types';
@@ -31,6 +31,7 @@ export default function Forecast() {
   const forecastId = useStore((s) => s.forecastId);
   const setForecastId = useStore((s) => s.setForecastId);
   const calibration = useStore((s) => s.calibration);
+  const calibrationCount = useStore((s) => s.calibrationCount);
   const openPost = useStore((s) => s.openPost);
   const saveReal = useStore((s) => s.saveReal);
   const scheduleIdea = useStore((s) => s.scheduleIdea);
@@ -38,7 +39,9 @@ export default function Forecast() {
 
   const bt = useMemo(() => backtest(posts), [posts]);
   const idea = ideas.find((i) => i.id === forecastId) || null;
-  const fc = useMemo(() => forecast(idea, posts, calibration), [idea, posts, calibration]);
+  // COR-8: множитель калибровки активен только от CALIBRATION_MIN_FACTS фактов
+  const effCal = effectiveCalibration(calibration, calibrationCount);
+  const fc = useMemo(() => forecast(idea, posts, effCal), [idea, posts, effCal]);
   const cal = useMemo(() => recalcCalibration(ideas, calibration), [ideas, calibration]);
 
   const published = useMemo(() => ideas.filter((i) => i.status === 'published' && i.actual && i.predicted > 0), [ideas]);
@@ -56,8 +59,13 @@ export default function Forecast() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
         <Kpi label="Опубликовано своих" value={nf(own.length)} />
         <Kpi label="Точность прогноза" value={cal.accuracy == null ? '—' : cal.accuracy + '%'} sub={cal.count ? `по ${cal.count} постам` : 'нет фактов'} tone={cal.accuracy != null && cal.accuracy >= 60 ? 'positive' : undefined} />
-        <Kpi label="Калибровка модели" value={'×' + calibration.toFixed(2)} sub="факт/прогноз" />
-        <Kpi label="Карьерный результат" value={nf(leads + interviews)} sub={`${leads} лидов · ${interviews} собесов`} tone="positive" />
+        <Kpi
+          label="Калибровка модели"
+          value={'×' + calibration.toFixed(2)}
+          sub={calibrationCount >= CALIBRATION_MIN_FACTS ? `применяется (${calibrationCount} фактов)` : `наблюдение ${calibrationCount}/${CALIBRATION_MIN_FACTS} — не применяется`}
+          tone={calibrationCount >= CALIBRATION_MIN_FACTS ? 'positive' : undefined}
+        />
+        <Kpi label="Бизнес-результат" value={nf(leads + interviews)} sub={`${leads} лидов · ${interviews} интервью`} tone="positive" />
       </div>
 
       {/* Честность модели: бэктест */}
@@ -152,7 +160,7 @@ export default function Forecast() {
                 <NumField label="Реакции" value={String(form.reactions || '')} onChange={(v) => set('reactions', v)} />
                 <NumField label="Комментарии" value={String(form.comments || '')} onChange={(v) => set('comments', v)} />
                 <NumField label="Лиды" value={String(form.leads || '')} onChange={(v) => set('leads', v)} />
-                <NumField label="Собеседования" value={String(form.interviews || '')} onChange={(v) => set('interviews', v)} />
+                <NumField label="Интервью" value={String(form.interviews || '')} onChange={(v) => set('interviews', v)} />
                 <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
                   Дата
                   <input type="date" value={form.date} onChange={(e) => set('date', e.target.value)} style={inp} aria-label="Дата публикации" />

@@ -35,6 +35,7 @@ beforeEach(() => {
     filters: { ...DEFAULT_FILTERS },
     presets: [],
     calibration: 1,
+    calibrationCount: 0,
     readOnly: false,
   });
 });
@@ -120,6 +121,8 @@ describe('store: петля фактов (saveReal)', () => {
     expect(own).toHaveLength(1);
     expect(own[0].comments).toBe(40);
     expect(typeof S().calibration).toBe('number');
+    // COR-8: один факт зафиксирован, но множитель ещё не активен
+    expect(S().calibrationCount).toBe(1);
   });
 
   it('saveReal не падает на пустом корпусе (forecast=null)', () => {
@@ -130,10 +133,10 @@ describe('store: петля фактов (saveReal)', () => {
 });
 
 describe('store: reset возвращает демо-корпус', () => {
-  it('reset наполняет posts и ставит isDemo=true', () => {
+  it('reset наполняет posts и ставит isDemo=true (FE-2: сид грузится динамическим чанком)', async () => {
     useStore.setState({ posts: [], isDemo: false });
-    S().reset();
-    expect(S().posts.length).toBeGreaterThan(0);
+    await S().reset();
+    expect(S().posts.length).toBe(289);
     expect(S().isDemo).toBe(true);
   });
 });

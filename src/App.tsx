@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { useStore, type TabId } from './store';
-import Overview from './tabs/Overview';
-import Explorer from './tabs/Explorer';
-import Analytics from './tabs/Analytics';
-import Clusters from './tabs/Clusters';
-import Ideas from './tabs/Ideas';
-import Forecast from './tabs/Forecast';
+// FE-2: вкладки — ленивые чанки; на первом экране нужен только «Обзор»
+const Overview = lazy(() => import('./tabs/Overview'));
+const Explorer = lazy(() => import('./tabs/Explorer'));
+const Analytics = lazy(() => import('./tabs/Analytics'));
+const Clusters = lazy(() => import('./tabs/Clusters'));
+const Ideas = lazy(() => import('./tabs/Ideas'));
+const Forecast = lazy(() => import('./tabs/Forecast'));
 import PostModal from './components/PostModal';
 import ImportModal from './components/ImportModal';
 import SettingsModal from './components/SettingsModal';
@@ -56,6 +57,12 @@ export default function App() {
     document.documentElement.dataset.theme = theme;
   }, [theme]);
 
+  // FE-2: первый запуск (нет онбординга и нет персистентного корпуса) — демо грузится отдельным чанком
+  useEffect(() => {
+    const s = useStore.getState();
+    if (!s.onboarded && s.posts.length === 0) void s.loadDemo();
+  }, []);
+
   const doExport = (kind: 'json' | 'csv' | 'ideas' | 'obsidian') => {
     setExportOpen(false);
     if (kind === 'json') { download('linkedin_baza.json', exportPostsJson(posts)); flash('Экспортировано постов: ' + posts.length); }
@@ -99,7 +106,7 @@ export default function App() {
           <button type="button" style={hdrBtn} onClick={() => window.print()}>Отчёт недели</button>
           <button type="button" style={hdrBtn} onClick={() => setSettingsOpen(true)}>⚙ Настройки</button>
           <button type="button" style={hdrBtn} onClick={() => setReadOnly(!readOnly)} aria-pressed={readOnly}>{readOnly ? 'Выключить просмотр' : 'Только просмотр'}</button>
-          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { if (confirm('Сбросить к исходному датасету (289 постов)? Идеи и факты будут потеряны.')) reset(); }}>Сброс</button>}
+          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { if (confirm('Сбросить к демо-корпусу (289 постов)? Идеи и факты будут потеряны.')) void reset(); }}>Сброс</button>}
           <button type="button" style={hdrBtn} onClick={toggleTheme} aria-label="Переключить тему">{theme === 'dark' ? '☾ Тёмная' : '☀ Светлая'}</button>
         </div>
       </header>
@@ -124,12 +131,14 @@ export default function App() {
       </div>
 
       <main className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
-        {tab === 'overview' && <Overview />}
-        {tab === 'analytics' && <Analytics />}
-        {tab === 'explorer' && <Explorer />}
-        {tab === 'clusters' && <Clusters />}
-        {tab === 'ideas' && <Ideas />}
-        {tab === 'forecast' && <Forecast />}
+        <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>Загрузка…</div>}>
+          {tab === 'overview' && <Overview />}
+          {tab === 'analytics' && <Analytics />}
+          {tab === 'explorer' && <Explorer />}
+          {tab === 'clusters' && <Clusters />}
+          {tab === 'ideas' && <Ideas />}
+          {tab === 'forecast' && <Forecast />}
+        </Suspense>
       </main>
 
       <PostModal />

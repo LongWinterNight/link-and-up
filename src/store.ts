@@ -4,9 +4,8 @@ import type { Idea, Post, Rule } from '@/types';
 import { CADENCE_GOAL, FORMULAS, LS_KEY, OWN_AUTHOR, SCHEMA_VERSION } from '@/lib/constants';
 import { enrich, enrichAll, tagPost } from '@/lib/enrich';
 import { analyzeIngest, mergeIngest, type IngestReport } from '@/lib/dedup';
-import { forecast, recalcCalibration } from '@/lib/forecast';
+import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { DEFAULT_RULES } from '@/lib/guardrails';
-import { seedIdeas, seedPosts } from '@/data/seed';
 import type { IdeaActual, Tags } from '@/types';
 
 export type TabId = 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
@@ -63,6 +62,8 @@ interface State {
   viewMode: ViewMode;
   selectedPostId: string | null;
   calibration: number;
+  /** Сколько опубликованных фактов легло в калибровку (COR-8: множитель активен от 3). */
+  calibrationCount: number;
   forecastId: string;
   isDemo: boolean;
   onboarded: boolean;
@@ -93,7 +94,9 @@ interface State {
   flash: (msg: string) => void;
   ingestJson: (text: string) => IngestReport;
   completeOnboarding: (mode: 'demo' | 'fresh') => void;
-  reset: () => void;
+  /** FE-2: демо-корпус (337 КБ JSON) грузится отдельным чанком по требованию, не в initial-бандле. */
+  loadDemo: () => Promise<void>;
+  reset: () => Promise<void>;
   saveIdea: (idea: Idea) => void;
   delIdea: (id: string) => void;
   moveIdeaStatus: (id: string, status: Idea['status']) => void;
@@ -149,8 +152,8 @@ export const useStore = create<State>()(
   persist(
     (set, get) => ({
       version: SCHEMA_VERSION,
-      posts: enrichAll(seedPosts),
-      ideas: seedIdeas(),
+      posts: [],
+      ideas: [],
       theme: initialTheme(),
       tab: 'overview',
       search: '',
@@ -158,6 +161,7 @@ export const useStore = create<State>()(
       viewMode: 'cards',
       selectedPostId: null,
       calibration: 1,
+      calibrationCount: 0,
       forecastId: '',
       isDemo: true,
       onboarded: false,
@@ -211,6 +215,7 @@ export const useStore = create<State>()(
             posts: [],
             ideas: [],
             calibration: 1,
+            calibrationCount: 0,
             selectedPostId: null,
             search: '',
             filters: { ...DEFAULT_FILTERS },
@@ -220,20 +225,26 @@ export const useStore = create<State>()(
             auditLog: audit(get().auditLog, 'Старт с чистого корпуса'),
           });
         } else {
+          if (get().posts.length === 0) void get().loadDemo();
           set({ onboarded: true });
         }
       },
 
-      reset: () =>
+      loadDemo: async () => {
+        const { seedPosts, seedIdeas } = await import('@/data/seed');
         set({
           posts: enrichAll(seedPosts),
           ideas: seedIdeas(),
           calibration: 1,
+          calibrationCount: 0,
           selectedPostId: null,
           search: '',
           filters: { ...DEFAULT_FILTERS },
           isDemo: true,
-        }),
+        });
+      },
+
+      reset: () => get().loadDemo(),
 
       saveIdea: (idea) => {
         if (get().readOnly) return;
@@ -265,7 +276,7 @@ export const useStore = create<State>()(
         if (get().readOnly) return;
         const idea = get().ideas.find((i) => i.id === ideaId);
         if (!idea) return;
-        const fc = forecast(idea, get().posts, get().calibration);
+        const fc = forecast(idea, get().posts, effectiveCalibration(get().calibration, get().calibrationCount));
         const updatedIdea: Idea = {
           ...idea,
           status: 'published',
@@ -296,6 +307,7 @@ export const useStore = create<State>()(
           ideas,
           posts,
           calibration: cal.calibration,
+          calibrationCount: cal.count,
           auditLog: audit(get().auditLog, 'Опубликован пост «' + (idea.title || '?') + '»: ' + real.comments + ' комм., ' + real.reactions + ' реакц.'),
         });
         get().flash('Факт сохранён. Калибровка ×' + cal.calibration.toFixed(2));
@@ -309,7 +321,8 @@ export const useStore = create<State>()(
           if (field === 'flags') {
             const set2 = new Set(tags.flags);
             const v = value as Tags['flags'][number];
-            set2.has(v) ? set2.delete(v) : set2.add(v);
+            if (set2.has(v)) set2.delete(v);
+            else set2.add(v);
             tags.flags = [...set2];
           } else {
             (tags as Record<string, unknown>)[field] = value;
@@ -383,6 +396,7 @@ export const useStore = create<State>()(
         ideas: s.ideas,
         theme: s.theme,
         calibration: s.calibration,
+        calibrationCount: s.calibrationCount,
         isDemo: s.isDemo,
         onboarded: s.onboarded,
         readOnly: s.readOnly,
