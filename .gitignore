@@ -1,0 +1,15 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+coverage
+*.log
+*.tsbuildinfo
+
+# Internal planning / design artifacts (not part of the public product)
+PROJECT_BOARD.md
+BACKLOG.md
+design_handoff_content_dashboard/
