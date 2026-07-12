@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { backtest, CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
+import { corpusFreshness } from '@/lib/derive';
 import { CLUSTER_LABEL } from '@/lib/constants';
 import { nf } from '@/lib/stats';
 import type { IdeaActual } from '@/types';
@@ -38,6 +39,7 @@ export default function Forecast() {
   const readOnly = useStore((s) => s.readOnly);
 
   const bt = useMemo(() => backtest(posts), [posts]);
+  const fresh = useMemo(() => corpusFreshness(posts), [posts]);
   const idea = ideas.find((i) => i.id === forecastId) || null;
   // COR-8: множитель калибровки активен только от CALIBRATION_MIN_FACTS фактов
   const effCal = effectiveCalibration(calibration, calibrationCount);
@@ -83,6 +85,13 @@ export default function Forecast() {
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{bt.note} Прогноз ниже — ОЦЕНКА, не факт: относитесь к диапазону, а не к точному числу.</div>
           </>
         )}
+        {fresh.latest && (
+          <div style={{ fontSize: 12, color: fresh.stale ? 'var(--warning)' : 'var(--text-3)', marginTop: 8 }}>
+            Свежесть корпуса: последний сбор {fresh.latest}
+            {fresh.ageDays != null && ` (${fresh.ageDays} дн. назад)`}.
+            {fresh.stale && ' Паттерны могли устареть вместе с алгоритмом платформы — обновите корпус, доверие к прогнозу снижено.'}
+          </div>
+        )}
       </Panel>
 
       <Panel title="Прогноз вовлечения идеи">
@@ -108,13 +117,16 @@ export default function Forecast() {
                 Число ниже — грубая заглушка, не оценка. Добавьте свои посты с фактами или укажите референс.
               </div>
             )}
+            {/* D3: диапазон — главное число; точечная оценка — вторичный ориентир */}
             <div style={{ display: 'flex', gap: 20, alignItems: 'baseline', flexWrap: 'wrap' }}>
               <div>
-                <div style={{ fontSize: 12, color: 'var(--text-3)' }}>Ожидаемо комментариев (оценка)</div>
-                <div className="num" style={{ fontSize: 34, fontWeight: 800 }}>{nf(fc.expected)}</div>
+                <div style={{ fontSize: 12, color: 'var(--text-3)' }}>Ожидаемый диапазон комментариев</div>
+                <div className="num" style={{ fontSize: 30, fontWeight: 800 }}>
+                  {nf(fc.low)}<span style={{ color: 'var(--text-3)', fontWeight: 400 }}>–</span>{nf(fc.high)}
+                </div>
               </div>
-              <div style={{ fontSize: 14, color: 'var(--text-2)' }}>
-                диапазон <span className="num">{nf(fc.low)}</span>–<span className="num">{nf(fc.high)}</span>
+              <div style={{ fontSize: 13, color: 'var(--text-3)' }}>
+                центр оценки ≈ <span className="num" style={{ color: 'var(--text-2)' }}>{nf(fc.expected)}</span>
               </div>
               {fc.er && (
                 <div style={{ fontSize: 13, color: 'var(--text-2)' }}>
@@ -122,6 +134,29 @@ export default function Forecast() {
                 </div>
               )}
             </div>
+
+            {/* полоса диапазона: где центр оценки внутри low–high */}
+            {fc.high > fc.low && (
+              <div aria-hidden style={{ maxWidth: 440 }}>
+                <div style={{ position: 'relative', height: 8, background: 'var(--accent-soft)', borderRadius: 4 }}>
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -2,
+                      left: `calc(${Math.min(100, Math.max(0, ((fc.expected - fc.low) / (fc.high - fc.low)) * 100))}% - 4px)`,
+                      width: 8,
+                      height: 12,
+                      borderRadius: 3,
+                      background: 'var(--accent)',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>
+                  <span className="num">{nf(fc.low)}</span>
+                  <span className="num">{nf(fc.high)}</span>
+                </div>
+              </div>
+            )}
             <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>{fc.bandNote}</div>
 
             <div>

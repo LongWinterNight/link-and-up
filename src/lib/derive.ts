@@ -119,6 +119,25 @@ export function distributionBy(posts: Post[], key: 'hook_type' | 'structure' | '
   return [...m.entries()].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
 }
 
+export interface CorpusFreshness {
+  latest: string | null;
+  ageDays: number | null;
+  stale: boolean;
+}
+
+/**
+ * D3: метка свежести корпуса. Прогноз обучен на прошлом режиме платформы —
+ * чем старше последний сбор, тем меньше доверия паттернам (stale после 90 дней).
+ */
+export function corpusFreshness(posts: Post[], now = new Date()): CorpusFreshness {
+  const dates = posts.map((p) => p.collected_at || '').filter(Boolean).sort();
+  if (!dates.length) return { latest: null, ageDays: null, stale: false };
+  const latest = dates[dates.length - 1];
+  const ms = now.getTime() - new Date(latest + 'T00:00:00').getTime();
+  const ageDays = Math.max(0, Math.floor(ms / 86400000));
+  return { latest, ageDays, stale: ageDays > 90 };
+}
+
 const num = (s: string): number | null => {
   const t = (s || '').trim();
   if (t === '') return null;

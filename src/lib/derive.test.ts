@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterPosts } from './derive';
+import { corpusFreshness, filterPosts } from './derive';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
 import type { Post } from '@/types';
@@ -93,5 +93,22 @@ describe('filterPosts — golden-set', () => {
 
   it('пустая строка в числовом фильтре = фильтр выключен', () => {
     expect(filterPosts(POSTS, '', f({ minC: '', maxC: '', minER: '' }))).toHaveLength(3);
+  });
+});
+
+describe('corpusFreshness — метка свежести (D3)', () => {
+  it('пустой корпус → нет метки, не stale', () => {
+    expect(corpusFreshness([])).toEqual({ latest: null, ageDays: null, stale: false });
+  });
+  it('берёт последнюю дату сбора и считает возраст', () => {
+    const now = new Date('2026-07-12T12:00:00');
+    const fr = corpusFreshness(POSTS, now); // последний сбор 2026-07-10
+    expect(fr.latest).toBe('2026-07-10');
+    expect(fr.ageDays).toBe(2);
+    expect(fr.stale).toBe(false);
+  });
+  it('старше 90 дней → stale', () => {
+    const now = new Date('2026-11-12T12:00:00');
+    expect(corpusFreshness(POSTS, now).stale).toBe(true);
   });
 });
