@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useStore } from '@/store';
+import { validatePattern } from '@/lib/guardrails';
 import type { Rule } from '@/types';
 import { Btn } from './ui';
 import { Modal } from './Modal';
@@ -70,10 +71,10 @@ export default function SettingsModal() {
       flash('Укажите название и паттерн правила');
       return;
     }
-    try {
-      new RegExp(nPattern, 'iu');
-    } catch (e) {
-      setPatternErr('Некорректное регулярное выражение: ' + (e as Error).message);
+    // SEC-2: длина, компиляция, вложенные квантификаторы, тайминг-проба
+    const err = validatePattern(nPattern);
+    if (err) {
+      setPatternErr(err);
       return;
     }
     addRule({
@@ -101,11 +102,11 @@ export default function SettingsModal() {
 
         {/* Общие */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: 12, marginBottom: 22 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-3)' }}>Автор своих постов
-            <input value={ownAuthor} onChange={(e) => setOwnAuthor(e.target.value)} style={{ ...inp, marginTop: 4 }} />
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="own-author">Автор своих постов
+            <input id="own-author" name="own-author" value={ownAuthor} onChange={(e) => setOwnAuthor(e.target.value)} style={{ ...inp, marginTop: 4 }} />
           </label>
-          <label style={{ fontSize: 11, color: 'var(--text-3)' }}>Цель каденса (постов/нед)
-            <input type="number" min={1} max={14} value={cadenceGoal} onChange={(e) => setCadenceGoal(Number(e.target.value))} style={{ ...inp, marginTop: 4 }} />
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="cadence-goal">Цель каденса (постов/нед)
+            <input id="cadence-goal" name="cadence-goal" type="number" min={1} max={14} value={cadenceGoal} onChange={(e) => setCadenceGoal(Number(e.target.value))} style={{ ...inp, marginTop: 4 }} />
           </label>
         </div>
 
@@ -114,7 +115,12 @@ export default function SettingsModal() {
           <h3 style={{ fontSize: 14, fontWeight: 600 }}>Гардрейлы (brand-safety)</h3>
           <button type="button" onClick={() => { resetRules(); flash('Правила сброшены к дефолтным'); }} style={{ fontSize: 12, color: 'var(--text-accent)', background: 'none', border: 'none', cursor: 'pointer' }}>Сбросить к дефолтным</button>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>Правила проверяют идеи и черновики. <b>hard</b> блокирует публикацию и экспорт. Добавьте свои (напр. запрещённые термины / имена клиентов под NDA).</div>
+        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6 }}>Правила проверяют идеи и черновики. <b>hard</b> блокирует публикацию и экспорт. Добавьте свои (напр. запрещённые термины).</div>
+        {/* SEC-6: честная граница доверия localStorage */}
+        <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 10 }}>
+          Правила хранятся в браузере в открытом виде. Не вводите то, что нельзя хранить на этом устройстве
+          (например, имена клиентов под NDA на общем компьютере) — шифрование появится вместе с командным режимом.
+        </div>
 
         <div style={{ marginBottom: 16 }}>
           {rules.map((r) => <RuleRow key={r.id} rule={r} />)}
@@ -124,9 +130,9 @@ export default function SettingsModal() {
         <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12 }}>
           <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Добавить своё правило</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <input value={nLabel} onChange={(e) => setNLabel(e.target.value)} placeholder="Название" style={inp} aria-label="Название правила" />
-            <input value={nPattern} onChange={(e) => { setNPattern(e.target.value); setPatternErr(''); }} placeholder="паттерн (regex, напр. запрещённыйтермин)" style={{ ...inp, fontFamily: 'var(--mono)' }} aria-label="Паттерн" />
-            <input value={nMsg} onChange={(e) => setNMsg(e.target.value)} placeholder="Сообщение (необязательно)" style={inp} aria-label="Сообщение" />
+            <input id="rule-label" name="rule-label" autoComplete="off" value={nLabel} onChange={(e) => setNLabel(e.target.value)} placeholder="Название" style={inp} aria-label="Название правила" />
+            <input id="rule-pattern" name="rule-pattern" autoComplete="off" value={nPattern} onChange={(e) => { setNPattern(e.target.value); setPatternErr(''); }} placeholder="паттерн (regex, напр. запрещённыйтермин)" style={{ ...inp, fontFamily: 'var(--mono)' }} aria-label="Паттерн" />
+            <input id="rule-message" name="rule-message" autoComplete="off" value={nMsg} onChange={(e) => setNMsg(e.target.value)} placeholder="Сообщение (необязательно)" style={inp} aria-label="Сообщение" />
             <select value={nSev} onChange={(e) => setNSev(e.target.value as Rule['severity'])} style={inp} aria-label="Строгость нового правила">
               <option value="soft">soft (предупредить)</option>
               <option value="hard">hard (блокировать)</option>
@@ -135,6 +141,26 @@ export default function SettingsModal() {
           {patternErr && <div style={{ color: 'var(--critical)', fontSize: 12, marginTop: 8 }}>{patternErr}</div>}
           <div style={{ marginTop: 10, textAlign: 'right' }}>
             <Btn variant="accent" onClick={addCustom}>Добавить правило</Btn>
+          </div>
+        </div>
+
+        {/* SEC-6: полное удаление данных */}
+        <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--critical)', marginBottom: 6 }}>Опасная зона</div>
+          <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              onClick={() => {
+                if (confirm('Удалить ВСЕ данные приложения из этого браузера (корпус, идеи, правила, настройки)? Действие необратимо.')) {
+                  useStore.persist.clearStorage();
+                  location.reload();
+                }
+              }}
+              style={{ background: 'var(--critical-soft)', border: '1px solid var(--critical)', borderRadius: 'var(--radius-ctl)', padding: '8px 12px', color: 'var(--critical)', fontSize: 13, cursor: 'pointer' }}
+            >
+              Удалить все данные
+            </button>
+            <span style={{ fontSize: 12, color: 'var(--text-3)' }}>Стирает localStorage полностью; приложение перезапустится с онбординга.</span>
           </div>
         </div>
     </Modal>

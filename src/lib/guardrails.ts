@@ -50,9 +50,39 @@ export const DEFAULT_RULES: Rule[] = [
 /** COR-4: ё→е, чтобы правила и текст матчились независимо от написания (как в dedup.normText). */
 const foldYo = (s: string) => s.replace(/ё/g, 'е').replace(/Ё/g, 'Е');
 
-/** Проверить произвольный текст против набора правил. */
+/** SEC-2: лимиты против ReDoS от пользовательских паттернов. */
+export const MAX_PATTERN_LENGTH = 200;
+const MAX_INPUT_LENGTH = 20000;
+// группа с квантификатором, сама под квантификатором: (a+)+, (\w*)* , (…{2,})+ — классика catastrophic backtracking
+const NESTED_QUANTIFIER = /\((?:[^()\\]|\\.)*(?:[*+]|\{\d+,\d*\})(?:[^()\\]|\\.)*\)\s*(?:[*+]|\{\d+,\d*\})/;
+
+/**
+ * SEC-2: проверка пользовательского паттерна перед сохранением.
+ * Возвращает текст ошибки или null, если паттерн безопасен.
+ * Три барьера: длина, компиляция, эвристика вложенных квантификаторов + таймин-проба
+ * на длинной строке без совпадения (худший случай для backtracking).
+ */
+export function validatePattern(pattern: string): string | null {
+  const p = (pattern || '').trim();
+  if (!p) return 'Пустой паттерн';
+  if (p.length > MAX_PATTERN_LENGTH) return `Паттерн длиннее ${MAX_PATTERN_LENGTH} символов`;
+  let re: RegExp;
+  try {
+    re = new RegExp(foldYo(p), 'iu');
+  } catch (e) {
+    return 'Некорректное регулярное выражение: ' + (e as Error).message;
+  }
+  if (NESTED_QUANTIFIER.test(p)) return 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)';
+  const probe = 'а'.repeat(3000) + '!';
+  const t0 = performance.now();
+  re.test(probe);
+  if (performance.now() - t0 > 50) return 'Паттерн слишком медленный на длинном тексте — упростите его';
+  return null;
+}
+
+/** Проверить произвольный текст против набора правил. Вход капится (SEC-2). */
 export function validateContent(text: string, rules: Rule[] = DEFAULT_RULES): GuardrailFlag[] {
-  const t = foldYo((text || '').toLowerCase());
+  const t = foldYo((text || '').slice(0, MAX_INPUT_LENGTH).toLowerCase());
   const flags: GuardrailFlag[] = [];
   for (const r of rules) {
     if (!r.enabled) continue;

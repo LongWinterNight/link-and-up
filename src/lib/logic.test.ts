@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
 import { analyzeIngest, diceSim, dedupKey } from './dedup';
 import { backtest, effectiveCalibration, forecast, recalcCalibration } from './forecast';
-import { validateIdea, validateContent, hasHardFlag, DEFAULT_RULES } from './guardrails';
+import { validateIdea, validateContent, validatePattern, hasHardFlag, DEFAULT_RULES, MAX_PATTERN_LENGTH } from './guardrails';
 import { csvCell } from './exports';
 import type { Rule } from '@/types';
 import type { Idea, Post, RawPost } from '@/types';
@@ -278,6 +278,24 @@ describe('validateIdea — гардрейлы (generic brand-safety)', () => {
     const bad: Rule[] = [{ id: 'bad', label: 't', pattern: '(', severity: 'soft', message: 'm', enabled: true }];
     expect(() => validateContent('любой текст', bad)).not.toThrow();
     expect(validateContent('любой текст', bad)).toHaveLength(0);
+  });
+});
+
+describe('SEC-2: validatePattern — защита от ReDoS', () => {
+  it('нормальные паттерны проходят, включая все дефолтные правила', () => {
+    expect(validatePattern('запрещённыйтермин')).toBeNull();
+    expect(validatePattern('гаранти\\w*|100\\s?%')).toBeNull();
+    for (const r of DEFAULT_RULES) expect(validatePattern(r.pattern)).toBeNull();
+  });
+  it('вложенные квантификаторы отклоняются', () => {
+    expect(validatePattern('(a+)+')).toContain('ReDoS');
+    expect(validatePattern('(\\w*)*x')).toContain('ReDoS');
+    expect(validatePattern('(слово{2,})+')).toContain('ReDoS');
+  });
+  it('слишком длинный и битый паттерны отклоняются', () => {
+    expect(validatePattern('a'.repeat(MAX_PATTERN_LENGTH + 1))).toContain('длиннее');
+    expect(validatePattern('(')).toContain('Некорректное');
+    expect(validatePattern('  ')).toBe('Пустой паттерн');
   });
 });
 
