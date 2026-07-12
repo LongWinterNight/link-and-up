@@ -6,6 +6,7 @@ import { enrich, enrichAll, tagPost } from '@/lib/enrich';
 import { analyzeIngest, mergeIngest, type IngestReport } from '@/lib/dedup';
 import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { DEFAULT_RULES } from '@/lib/guardrails';
+import { NICHE_PACKS } from '@/lib/nichePacks';
 import { detectLocale, ensureLocale, tr, type Locale } from '@/i18n';
 import type { IdeaActual, Tags } from '@/types';
 
@@ -125,6 +126,8 @@ interface State {
   updateRule: (id: string, patch: Partial<Rule>) => void;
   deleteRule: (id: string) => void;
   resetRules: () => void;
+  /** Б3: подключить/отключить нишевый пакет правил (по полю pack). */
+  toggleNichePack: (packId: string) => void;
   savePreset: (name: string) => void;
   applyPreset: (name: string) => void;
   deletePreset: (name: string) => void;
@@ -398,6 +401,16 @@ export const useStore = create<State>()(
       updateRule: (id, patch) => set({ rules: get().rules.map((r) => (r.id === id ? { ...r, ...patch } : r)) }),
       deleteRule: (id) => set({ rules: get().rules.filter((r) => r.id !== id) }),
       resetRules: () => set({ rules: DEFAULT_RULES.map((r) => ({ ...r })) }),
+      toggleNichePack: (packId) => {
+        const pack = NICHE_PACKS.find((p) => p.id === packId);
+        if (!pack) return;
+        const active = get().rules.some((r) => r.pack === packId);
+        const rest = get().rules.filter((r) => r.pack !== packId);
+        set({
+          rules: active ? rest : [...rest, ...pack.rules.map((r) => ({ ...r }))],
+          auditLog: audit(get().auditLog, (active ? 'Отключён' : 'Подключён') + ' пакет правил «' + pack.label + '»'),
+        });
+      },
 
       savePreset: (name) => {
         const n = name.trim();

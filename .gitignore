@@ -17,3 +17,6 @@ ROADMAP_SPEC.md
 INTERVIEW_SCRIPT.md
 TONE.md
 design_handoff_content_dashboard/
+
+.vercel
+.env*

@@ -189,6 +189,8 @@ export interface GuardrailFlag {
 
 /** Правило гардрейлов (brand-safety). Конфигурируется пользователем. */
 export interface Rule {
+  /** Б3: идентификатор нишевого пакета, из которого пришло правило (undefined = своё/дефолтное). */
+  pack?: string;
   id: string;
   label: string;
   /** источник регулярного выражения (i, u флаги применяются автоматически) */

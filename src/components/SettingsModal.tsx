@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useStore } from '@/store';
 import { validatePattern } from '@/lib/guardrails';
+import { NICHE_PACKS } from '@/lib/nichePacks';
 import { exportAuditCsv } from '@/lib/exports';
 import { download } from '@/lib/download';
 import type { Rule } from '@/types';
@@ -54,6 +55,7 @@ export default function SettingsModal() {
   const rules = useStore((s) => s.rules);
   const addRule = useStore((s) => s.addRule);
   const resetRules = useStore((s) => s.resetRules);
+  const toggleNichePack = useStore((s) => s.toggleNichePack);
   const ownAuthor = useStore((s) => s.ownAuthor);
   const setOwnAuthor = useStore((s) => s.setOwnAuthor);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
@@ -127,6 +129,31 @@ export default function SettingsModal() {
 
         <div style={{ marginBottom: 16 }}>
           {rules.map((r) => <RuleRow key={r.id} rule={r} />)}
+        </div>
+
+        {/* Б3: нишевые пакеты правил */}
+        <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12, marginBottom: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Пакеты правил под нишу</div>
+          {NICHE_PACKS.map((pack) => {
+            const active = rules.some((r) => r.pack === pack.id);
+            return (
+              <div key={pack.id} style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
+                <input
+                  type="checkbox"
+                  id={'pack-' + pack.id}
+                  checked={active}
+                  onChange={() => toggleNichePack(pack.id)}
+                  aria-label={'Пакет ' + pack.label}
+                  style={{ marginTop: 3 }}
+                />
+                <label htmlFor={'pack-' + pack.id} style={{ cursor: 'pointer' }}>
+                  <span style={{ fontSize: 13, fontWeight: 500 }}>{pack.label}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-3)' }}> · {pack.rules.length} правил, {pack.formulas.length} формулы</span>
+                  <div style={{ fontSize: 11.5, color: 'var(--warning)', marginTop: 2 }}>{pack.disclaimer}</div>
+                </label>
+              </div>
+            );
+          })}
         </div>
 
         {/* Добавить правило */}

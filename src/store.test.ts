@@ -144,6 +144,29 @@ describe('store: undo удаления идеи (М12)', () => {
   });
 });
 
+describe('store: нишевый пакет правил (Б3, финтех)', () => {
+  it('toggleNichePack подключает и отключает правила пакета; hard-правило реально блокирует', async () => {
+    const { validateIdea, hasHardFlag, DEFAULT_RULES } = await import('./lib/guardrails');
+    useStore.setState({ rules: DEFAULT_RULES.map((r) => ({ ...r })) });
+    const base = S().rules.length;
+
+    S().toggleNichePack('fintech');
+    expect(S().rules.length).toBeGreaterThan(base);
+    const idea = { title: 'Гарантированный доход 20% в месяц', hook: '' };
+    expect(hasHardFlag(validateIdea(idea, S().rules))).toBe(true);
+
+    S().toggleNichePack('fintech');
+    expect(S().rules.length).toBe(base);
+    expect(hasHardFlag(validateIdea(idea, S().rules))).toBe(false);
+  });
+
+  it('все паттерны пакета проходят validatePattern (SEC-2)', async () => {
+    const { validatePattern } = await import('./lib/guardrails');
+    const { FINTECH_PACK } = await import('./lib/nichePacks');
+    for (const r of FINTECH_PACK.rules) expect(validatePattern(r.pattern)).toBeNull();
+  });
+});
+
 describe('store: reset возвращает демо-корпус', () => {
   it('reset наполняет posts и ставит isDemo=true (FE-2: сид грузится динамическим чанком)', async () => {
     useStore.setState({ posts: [], isDemo: false });

@@ -3,15 +3,19 @@ import { useStore } from '@/store';
 import { clusterStats } from '@/lib/derive';
 import { ANTIPATTERNS, CLUSTER_LABEL, FORMULAS } from '@/lib/constants';
 import { DEFAULT_RULES } from '@/lib/guardrails';
+import { NICHE_PACKS } from '@/lib/nichePacks';
 import { topByComments } from '@/lib/derive';
 import { nf } from '@/lib/stats';
 import { Panel } from '@/components/ui';
 
 export default function Clusters() {
   const posts = useStore((s) => s.posts);
+  const rules = useStore((s) => s.rules);
   const openPost = useStore((s) => s.openPost);
   const setTab = useStore((s) => s.setTab);
   const setFilters = useStore((s) => s.setFilters);
+  // Б3: активные нишевые пакеты — их формулы/анти-паттерны показываются рядом с базовыми
+  const activePacks = NICHE_PACKS.filter((p) => rules.some((r) => r.pack === p.id));
 
   const stats = useMemo(() => clusterStats(posts), [posts]);
   const exemplarsByCluster = useMemo(() => {
@@ -74,7 +78,21 @@ export default function Clusters() {
               <div style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{f.body}</div>
             </div>
           ))}
+          {activePacks.flatMap((pack) =>
+            pack.formulas.map((f) => (
+              <div key={f.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--accent)', borderRadius: 10, padding: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
+                  <strong style={{ fontSize: 13.5 }}>{f.title}</strong>
+                  <span style={{ fontSize: 11, color: 'var(--text-accent)', whiteSpace: 'nowrap' }}>{pack.label}</span>
+                </div>
+                <div style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{f.body}</div>
+              </div>
+            )),
+          )}
         </div>
+        {activePacks.map((p) => (
+          <div key={p.id} style={{ fontSize: 11.5, color: 'var(--warning)', marginTop: 8 }}>{p.label}: {p.disclaimer}</div>
+        ))}
       </Panel>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
@@ -83,6 +101,13 @@ export default function Clusters() {
             {ANTIPATTERNS.map((a, i) => (
               <li key={i} style={{ fontSize: 13, color: 'var(--critical)' }}>{a}</li>
             ))}
+            {activePacks.flatMap((pack) =>
+              pack.antipatterns.map((a, i) => (
+                <li key={pack.id + i} style={{ fontSize: 13, color: 'var(--critical)' }}>
+                  {a} <span style={{ color: 'var(--text-3)' }}>· {pack.label}</span>
+                </li>
+              )),
+            )}
           </ul>
         </Panel>
         <Panel title="Гардрейлы (brand-safety)">
