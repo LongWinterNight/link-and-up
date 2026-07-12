@@ -8,7 +8,7 @@ import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecas
 import { DEFAULT_RULES } from '@/lib/guardrails';
 import type { IdeaActual, Tags } from '@/types';
 
-export type TabId = 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
+export type TabId = 'today' | 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
 export type Theme = 'dark' | 'light';
 export type ViewMode = 'cards' | 'table';
 
@@ -155,7 +155,7 @@ export const useStore = create<State>()(
       posts: [],
       ideas: [],
       theme: initialTheme(),
-      tab: 'overview',
+      tab: 'today', // P-1: дефолт — «что публикуем сегодня», не ретро-аналитика
       search: '',
       filters: { ...DEFAULT_FILTERS },
       viewMode: 'cards',

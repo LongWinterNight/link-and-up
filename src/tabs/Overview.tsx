@@ -95,7 +95,7 @@ export default function Overview() {
                 ))}
               </div>
               <div>
-                <Btn variant="accent" onClick={() => setTab('ideas')}>К идеям и черновику →</Btn>
+                <Btn variant="accent" onClick={() => setTab('today')}>К посту сегодня →</Btn>
               </div>
             </>
           ) : (

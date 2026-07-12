@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { useStore, type TabId } from './store';
-// FE-2: вкладки — ленивые чанки; на первом экране нужен только «Обзор»
+// FE-2: вкладки — ленивые чанки; на первом экране нужен только «Сегодня»
+const Today = lazy(() => import('./tabs/Today'));
 const Overview = lazy(() => import('./tabs/Overview'));
 const Explorer = lazy(() => import('./tabs/Explorer'));
 const Analytics = lazy(() => import('./tabs/Analytics'));
@@ -17,6 +18,7 @@ import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from 
 import { PRODUCT_NAME, PRODUCT_TAGLINE } from './lib/constants';
 
 const TABS: [TabId, string][] = [
+  ['today', 'Сегодня'],
   ['overview', 'Обзор'],
   ['analytics', 'Аналитика'],
   ['explorer', 'Посты'],
@@ -184,6 +186,7 @@ export default function App() {
 
       <main id="tabpanel" role="tabpanel" aria-labelledby={'tab-' + tab} className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
         <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>Загрузка…</div>}>
+          {tab === 'today' && <Today />}
           {tab === 'overview' && <Overview />}
           {tab === 'analytics' && <Analytics />}
           {tab === 'explorer' && <Explorer />}
