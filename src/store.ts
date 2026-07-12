@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, type PersistStorage, type StorageValue } from 'zustand/middleware';
 import type { Idea, Post, Rule } from '@/types';
 import { CADENCE_GOAL, FORMULAS, LS_KEY, OWN_AUTHOR, SCHEMA_VERSION } from '@/lib/constants';
 import { enrich, enrichAll, tagPost } from '@/lib/enrich';
@@ -159,6 +159,67 @@ function initialTheme(): Theme {
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
+
+/**
+ * SCALE-8: отложенная запись persist. Zustand сериализует ВСЁ состояние на каждое действие —
+ * на 20K постов это ~111мс фриза на клик. Здесь JSON.stringify выполняется только на flush:
+ * раз в 300мс после последнего изменения и принудительно при уходе со страницы.
+ */
+/** Точный тип persisted-среза (partialize ниже обязан ему соответствовать). */
+interface PersistedSlice {
+  version: number;
+  posts: Post[];
+  ideas: Idea[];
+  theme: Theme;
+  locale: Locale;
+  calibration: number;
+  calibrationCount: number;
+  isDemo: boolean;
+  onboarded: boolean;
+  readOnly: boolean;
+  auditLog: AuditEntry[];
+  rules: Rule[];
+  ownAuthor: string;
+  cadenceGoal: number;
+  presets: Preset[];
+}
+
+const rawLS = typeof window !== 'undefined' ? window.localStorage : null;
+let pendingWrite: { name: string; value: StorageValue<PersistedSlice> } | null = null;
+let writeTimer: ReturnType<typeof setTimeout> | undefined;
+const flushPersist = () => {
+  if (rawLS && pendingWrite) {
+    try {
+      rawLS.setItem(pendingWrite.name, JSON.stringify(pendingWrite.value));
+    } catch {
+      // квота localStorage переполнена (SCALE-1: миграция на IndexedDB в Б10)
+      useStore.getState().flash('Хранилище браузера переполнено — данные не сохраняются. Экспортируйте корпус.');
+    }
+  }
+  pendingWrite = null;
+};
+const debouncedStorage: PersistStorage<PersistedSlice> = {
+  getItem: (name) => {
+    const s = rawLS?.getItem(name);
+    return s ? JSON.parse(s) : null;
+  },
+  setItem: (name, value) => {
+    pendingWrite = { name, value };
+    clearTimeout(writeTimer);
+    writeTimer = setTimeout(flushPersist, 300);
+  },
+  removeItem: (name) => {
+    clearTimeout(writeTimer);
+    pendingWrite = null;
+    rawLS?.removeItem(name);
+  },
+};
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', flushPersist);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') flushPersist();
+  });
+}
 
 export const useStore = create<State>()(
   persist(
@@ -430,6 +491,7 @@ export const useStore = create<State>()(
     {
       name: LS_KEY,
       version: SCHEMA_VERSION,
+      storage: debouncedStorage,
       partialize: (s) => ({
         version: s.version,
         posts: s.posts,
