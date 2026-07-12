@@ -137,7 +137,16 @@ export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestRepo
     }
     const na = normAuthor(rp.author);
     const nb = normText(rp.text).slice(0, 160);
-    if ((buckets.get(na) || []).some((body) => diceSim(body, nb) >= 0.82)) {
+    // SCALE-5: префильтр по длине — при разнице >35% Dice заведомо < 0.82, diceSim не считаем.
+    // Критично для одноавторных бакетов (импорт собственного корпуса: все посты одного автора).
+    if (
+      (buckets.get(na) || []).some((body) => {
+        const min = Math.min(body.length, nb.length);
+        const max = Math.max(body.length, nb.length);
+        if (max > 0 && min / max < 0.65) return false;
+        return diceSim(body, nb) >= 0.82;
+      })
+    ) {
       nearDupes++;
       dupes++;
       reasons.push('запись #' + (idx + 1) + ' (' + (rp.author || '?') + '): near-dup — будет пропущено');

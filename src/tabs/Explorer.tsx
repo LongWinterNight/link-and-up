@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useStore } from '@/store';
 import { filterPosts } from '@/lib/derive';
@@ -182,6 +182,16 @@ export default function Explorer() {
   const viewMode = useStore((s) => s.viewMode);
   const setViewMode = useStore((s) => s.setViewMode);
 
+  // SCALE-4: debounce поиска — на 20K постов каждый keystroke стоил ~50мс фильтрации
+  const [searchLocal, setSearchLocal] = useState(search);
+  const searchTimer = useRef<ReturnType<typeof setTimeout>>();
+  useEffect(() => setSearchLocal(search), [search]); // внешние изменения (пресеты, сброс)
+  const onSearch = (v: string) => {
+    setSearchLocal(v);
+    clearTimeout(searchTimer.current);
+    searchTimer.current = setTimeout(() => setSearch(v), 150);
+  };
+
   const list = useMemo(() => filterPosts(posts, search, filters), [posts, search, filters]);
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -214,8 +224,8 @@ export default function Explorer() {
         type="search"
         id="post-search"
         name="post-search"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
+        value={searchLocal}
+        onChange={(e) => onSearch(e.target.value)}
         placeholder="Поиск по автору, тексту, углу…"
         aria-label="Поиск постов"
         style={{ ...selStyle, padding: '10px 12px', fontSize: 14 }}

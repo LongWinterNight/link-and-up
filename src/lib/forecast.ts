@@ -190,6 +190,27 @@ export function recalcCalibration(ideas: Idea[], currentCal: number): Calibratio
  * Метрики: MAPE, медианная абс. ошибка, доля прогнозов в пределах 2× от факта (order-of-magnitude).
  * Это измеряет, насколько «медиана кластера × формат» вообще отслеживает реальность.
  */
+/** Первый индекс, где sorted[i] >= v (для поиска позиции своего значения). */
+function lowerBound(sorted: number[], v: number): number {
+  let lo = 0;
+  let hi = sorted.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >> 1;
+    if (sorted[mid] < v) lo = mid + 1;
+    else hi = mid;
+  }
+  return lo;
+}
+
+/** Медиана отсортированного массива с пропуском элемента на позиции skip (leave-one-out без копий). */
+function medianExcluding(sorted: number[], skip: number): number {
+  const L = sorted.length - 1;
+  if (L <= 0) return 0;
+  const at = (k: number) => sorted[k < skip ? k : k + 1];
+  const m = Math.floor(L / 2);
+  return L % 2 ? at(m) : (at(m - 1) + at(m)) / 2;
+}
+
 export function backtest(posts: Post[]): BacktestResult {
   const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
   if (metric.length < 8) {
@@ -201,13 +222,24 @@ export function backtest(posts: Post[]): BacktestResult {
       note: 'Мало постов с метриками (' + metric.length + ') — бэктест недостоверен.',
     };
   }
+  // SCALE-2: O(n log n) вместо O(n²) — на 20K постов старая версия вешала вкладку на ~11 секунд.
+  // Комментарии предгруппированы по кластеру и отсортированы; leave-one-out — через medianExcluding.
+  const byCluster = new Map<string, number[]>();
+  for (const p of metric) {
+    const arr = byCluster.get(p.meta_cluster);
+    if (arr) arr.push(p.comments);
+    else byCluster.set(p.meta_cluster, [p.comments]);
+  }
+  for (const arr of byCluster.values()) arr.sort((a, b) => a - b);
+  const all = metric.map((p) => p.comments).sort((a, b) => a - b);
+
   const apes: number[] = [];
   const absErrs: number[] = [];
   let within = 0;
   for (const p of metric) {
-    const sameCluster = metric.filter((o) => o.id !== p.id && o.meta_cluster === p.meta_cluster);
-    const pool = sameCluster.length >= 3 ? sameCluster : metric.filter((o) => o.id !== p.id);
-    const base = median(pool.map((o) => o.comments)) || 8;
+    const clusterArr = byCluster.get(p.meta_cluster)!;
+    const pool = clusterArr.length - 1 >= 3 ? clusterArr : all;
+    const base = medianExcluding(pool, lowerBound(pool, p.comments)) || 8;
     const pred = Math.max(1, Math.round(base * postMultipliers(p)));
     const actual = p.comments;
     apes.push(Math.abs(actual - pred) / actual);

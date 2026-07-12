@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
 import { analyzeIngest, diceSim, dedupKey, MAX_IMPORT_RECORDS } from './dedup';
-import { backtest, effectiveCalibration, forecast, recalcCalibration } from './forecast';
+import { backtest, effectiveCalibration, forecast, postMultipliers, recalcCalibration } from './forecast';
+import { median } from './stats';
 import { validateIdea, validateContent, validatePattern, hasHardFlag, DEFAULT_RULES, MAX_PATTERN_LENGTH } from './guardrails';
 import { redactHard } from './guardrails';
 import { csvCell, exportAuditCsv, exportIdeasCsv, exportPostsCsv, redactIdea } from './exports';
@@ -239,6 +240,33 @@ describe('backtest leave-one-out', () => {
     const r1 = backtest(mkPosts(1));
     expect(r1.n).toBe(1);
     expect(r1.mape).toBeNull();
+  });
+  it('SCALE-2: O(n log n)-бэктест эквивалентен brute-force O(n²) на разнородном корпусе', () => {
+    let seed = 7;
+    const rnd = () => (seed = (seed * 48271) % 2147483647) / 2147483647;
+    const posts: Post[] = Array.from({ length: 60 }, (_, i) => {
+      const p = enrich({ author: 'A' + i, headline: '10 000 подписчиков', reactions: 5, comments: 1 + Math.floor(Math.exp(rnd() * 4)), text: 'пост номер ' + i });
+      p.meta_cluster = (['spec', 'jobs', 'other'] as Post['meta_cluster'][])[i % 3];
+      return p;
+    });
+    // brute-force копия исходного алгоритма
+    const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
+    const apes: number[] = [];
+    const abss: number[] = [];
+    let w = 0;
+    for (const p of metric) {
+      const same = metric.filter((o) => o.id !== p.id && o.meta_cluster === p.meta_cluster);
+      const pool = same.length >= 3 ? same : metric.filter((o) => o.id !== p.id);
+      const base = median(pool.map((o) => o.comments)) || 8;
+      const pred = Math.max(1, Math.round(base * postMultipliers(p)));
+      apes.push(Math.abs(p.comments - pred) / p.comments);
+      abss.push(Math.abs(p.comments - pred));
+      if (pred >= p.comments / 2 && pred <= p.comments * 2) w++;
+    }
+    const r = backtest(posts);
+    expect(r.mape).toBe(Math.round((apes.reduce((a, b) => a + b, 0) / apes.length) * 100) / 100);
+    expect(r.medianAbsErr).toBe(Math.round(median(abss)));
+    expect(r.within2x).toBe(Math.round((w / metric.length) * 100));
   });
   it('считает метрики при достаточном корпусе', () => {
     const posts: Post[] = Array.from({ length: 12 }, (_, i) =>

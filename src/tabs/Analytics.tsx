@@ -32,10 +32,22 @@ export default function Analytics() {
   const byStruct = useMemo(() => effectivenessBy(posts, 'structure'), [posts]);
   const byCta = useMemo(() => effectivenessBy(posts, 'cta_type'), [posts]);
   const emotionDist = useMemo(() => distributionBy(posts, 'emotion'), [posts]);
-  const scatter = useMemo(
+  const scatterAll = useMemo(
     () => posts.filter((p) => p.has_metrics).map((p) => ({ x: p.reactions, y: p.comments, label: p.author, onClick: () => openPost(p.id) })),
     [posts, openPost],
   );
+  // SCALE-3: на тысячах постов SVG-точки — DOM-тормоза и перекрытие; берём стратифицированную
+  // выборку по квантилям комментариев (каждая step-я из отсортированных) и честно подписываем.
+  const sample = (limit: number) => {
+    if (scatterAll.length <= limit) return scatterAll;
+    const sorted = [...scatterAll].sort((a, b) => b.y - a.y);
+    const step = Math.ceil(sorted.length / limit);
+    return sorted.filter((_, i) => i % step === 0);
+  };
+  const scatter = useMemo(() => sample(1000), [scatterAll]); // eslint-disable-line react-hooks/exhaustive-deps
+  const scatterZoomPts = useMemo(() => sample(3000), [scatterAll]); // eslint-disable-line react-hooks/exhaustive-deps
+  const sampleNote = (shown: number) =>
+    scatterAll.length > shown ? `Точек: ${shown} из ${scatterAll.length} — стратифицированная выборка по уровню комментариев.` : '';
 
   const topInsight = byHook[0];
 
@@ -90,6 +102,7 @@ export default function Analytics() {
               >
                 ⤢ Увеличить
               </button>
+              {sampleNote(scatter.length) && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{sampleNote(scatter.length)}</div>}
             </>
           ) : (
             <EmptyState>Нет постов с метриками</EmptyState>
@@ -108,9 +121,10 @@ export default function Analytics() {
             <h2 style={{ fontSize: 16, fontWeight: 700 }}>Реакции ↔ комментарии</h2>
             <button type="button" onClick={() => setScatterZoom(false)} aria-label="Закрыть" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
           </div>
-          <Scatter caption="Реакции против комментариев (увеличено)" points={scatter} width={1040} height={560} />
+          <Scatter caption="Реакции против комментариев (увеличено)" points={scatterZoomPts} width={1040} height={560} />
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
             Обе оси — логарифмические (вовлечение распределено лог-нормально). Клик по точке — открыть пост.
+            {sampleNote(scatterZoomPts.length) && ' ' + sampleNote(scatterZoomPts.length)}
           </div>
         </Modal>
       )}
