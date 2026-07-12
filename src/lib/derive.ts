@@ -125,6 +125,20 @@ export function isPostingDay(d = new Date()): boolean {
   return w === 2 || w === 4;
 }
 
+/** Начало недели (понедельник, 00:00). */
+export function startOfWeek(d: Date): Date {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  x.setDate(x.getDate() - ((x.getDay() + 6) % 7));
+  return x;
+}
+
+/** Сколько своих постов опубликовано на текущей неделе (North-Star / М16). */
+export function ownPostsThisWeek(posts: Post[], now = new Date()): number {
+  const ws = startOfWeek(now);
+  return posts.filter((p) => p.is_own && new Date(p.collected_at || 0) >= ws).length;
+}
+
 export interface CorpusFreshness {
   latest: string | null;
   ageDays: number | null;

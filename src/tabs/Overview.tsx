@@ -1,20 +1,12 @@
 import { useMemo } from 'react';
 import { useStore } from '@/store';
-import { clusterStats, collectionByMonth, isPostingDay, kpis, topByComments, topByRate } from '@/lib/derive';
+import { clusterStats, collectionByMonth, isPostingDay, kpis, ownPostsThisWeek, topByComments, topByRate } from '@/lib/derive';
 import { median, nf } from '@/lib/stats';
 import { Bars, Donut } from '@/components/charts';
 import { Btn, Kpi, Panel, Pill } from '@/components/ui';
 import { CLUSTER_LABEL } from '@/lib/constants';
 import EmptyCorpus from '@/components/EmptyCorpus';
 import { useT } from '@/i18n/useT';
-
-function startOfWeek(d: Date): Date {
-  const x = new Date(d);
-  x.setHours(0, 0, 0, 0);
-  const day = (x.getDay() + 6) % 7; // понедельник = 0
-  x.setDate(x.getDate() - day);
-  return x;
-}
 
 export default function Overview() {
   const posts = useStore((s) => s.posts);
@@ -32,8 +24,7 @@ export default function Overview() {
 
   // North-Star: свои посты на этой неделе против цели 3–5
   const own = useMemo(() => posts.filter((p) => p.is_own), [posts]);
-  const weekStart = startOfWeek(new Date());
-  const ownThisWeek = own.filter((p) => new Date(p.collected_at || 0) >= weekStart).length;
+  const ownThisWeek = ownPostsThisWeek(posts);
   const goal = cadenceGoal;
   const pct = Math.min(100, Math.round((ownThisWeek / goal) * 100));
   const ownComments = own.filter((p) => p.has_metrics).map((p) => p.comments);

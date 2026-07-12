@@ -15,6 +15,7 @@ import OnboardingModal from './components/OnboardingModal';
 import PrintReport from './components/PrintReport';
 import { download } from './lib/download';
 import { setNumberLocale } from './lib/stats';
+import { isPostingDay, ownPostsThisWeek } from './lib/derive';
 import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from './lib/exports';
 import { PRODUCT_NAME } from './lib/constants';
 import { ensureLocale, intlLocale, type DictKey } from './i18n';
@@ -50,6 +51,9 @@ export default function App() {
   const rules = useStore((s) => s.rules);
   const flash = useStore((s) => s.flash);
   const setSettingsOpen = useStore((s) => s.setSettingsOpen);
+  const cadenceGoal = useStore((s) => s.cadenceGoal);
+  const lastDeletedIdea = useStore((s) => s.lastDeletedIdea);
+  const restoreLastIdea = useStore((s) => s.restoreLastIdea);
   const t = useT();
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
@@ -103,6 +107,14 @@ export default function App() {
     const s = useStore.getState();
     if (!s.onboarded && s.posts.length === 0) void s.loadDemo();
   }, []);
+
+  // М16: в день публикации title вкладки показывает прогресс каденса
+  useEffect(() => {
+    const base = PRODUCT_NAME + ' — ' + t('app.tagline');
+    const n = ownPostsThisWeek(posts);
+    document.title = isPostingDay() && n < cadenceGoal ? `(${n}/${cadenceGoal}) ${base}` : base;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [posts, cadenceGoal, locale]);
 
   const doExport = (kind: 'json' | 'csv' | 'ideas' | 'obsidian') => {
     setExportOpen(false);
@@ -215,8 +227,14 @@ export default function App() {
       <PrintReport />
 
       {toast && (
-        <div className="no-print" aria-live="polite" style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: 'var(--surface-3)', border: '1px solid var(--border-strong)', borderRadius: 10, padding: '10px 16px', fontSize: 13, boxShadow: 'var(--shadow-modal)', zIndex: 60 }}>
+        <div className="no-print" aria-live="polite" style={{ position: 'fixed', bottom: 20, left: '50%', transform: 'translateX(-50%)', background: 'var(--surface-3)', border: '1px solid var(--border-strong)', borderRadius: 10, padding: '10px 16px', fontSize: 13, boxShadow: 'var(--shadow-modal)', zIndex: 60, display: 'flex', gap: 12, alignItems: 'center' }}>
           {toast}
+          {/* М12: undo удаления идеи, пока тост на экране */}
+          {lastDeletedIdea && (
+            <button type="button" onClick={restoreLastIdea} style={{ background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+              {t('toast.undo')}
+            </button>
+          )}
         </div>
       )}
     </div>

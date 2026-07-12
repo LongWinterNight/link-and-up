@@ -6,7 +6,7 @@ import { enrich, enrichAll, tagPost } from '@/lib/enrich';
 import { analyzeIngest, mergeIngest, type IngestReport } from '@/lib/dedup';
 import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { DEFAULT_RULES } from '@/lib/guardrails';
-import { detectLocale, ensureLocale, type Locale } from '@/i18n';
+import { detectLocale, ensureLocale, tr, type Locale } from '@/i18n';
 import type { IdeaActual, Tags } from '@/types';
 
 export type TabId = 'today' | 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
@@ -77,6 +77,8 @@ interface State {
   toast: string;
   importOpen: boolean;
   importPreview: IngestReport | null;
+  /** М12: снапшот последней удалённой идеи для undo (не персистится). */
+  lastDeletedIdea: Idea | null;
   // настройки продукта
   rules: Rule[];
   ownAuthor: string;
@@ -105,6 +107,7 @@ interface State {
   reset: () => Promise<void>;
   saveIdea: (idea: Idea) => void;
   delIdea: (id: string) => void;
+  restoreLastIdea: () => void;
   moveIdeaStatus: (id: string, status: Idea['status']) => void;
   scheduleIdea: (id: string) => void;
   saveReal: (ideaId: string, real: IdeaActual) => void;
@@ -178,6 +181,7 @@ export const useStore = create<State>()(
       toast: '',
       importOpen: false,
       importPreview: null,
+      lastDeletedIdea: null,
       rules: DEFAULT_RULES.map((r) => ({ ...r })),
       ownAuthor: OWN_AUTHOR,
       cadenceGoal: CADENCE_GOAL,
@@ -267,7 +271,18 @@ export const useStore = create<State>()(
       delIdea: (id) => {
         if (get().readOnly) return;
         const it = get().ideas.find((x) => x.id === id);
-        set({ ideas: get().ideas.filter((x) => x.id !== id), auditLog: audit(get().auditLog, 'Удалена идея «' + (it?.title || '?') + '»') });
+        set({
+          ideas: get().ideas.filter((x) => x.id !== id),
+          lastDeletedIdea: it || null, // М12: undo доступен, пока виден тост
+          auditLog: audit(get().auditLog, 'Удалена идея «' + (it?.title || '?') + '»'),
+        });
+        get().flash(tr(get().locale, 'toast.idea.deleted'));
+      },
+      restoreLastIdea: () => {
+        const it = get().lastDeletedIdea;
+        if (!it) return;
+        set({ ideas: [...get().ideas, it], lastDeletedIdea: null });
+        get().flash(tr(get().locale, 'toast.idea.restored'));
       },
       moveIdeaStatus: (id, status) => {
         if (get().readOnly) return;

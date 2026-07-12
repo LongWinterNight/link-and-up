@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { corpusFreshness, filterPosts, isPostingDay } from './derive';
+import { corpusFreshness, filterPosts, isPostingDay, ownPostsThisWeek } from './derive';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
 import type { Post } from '@/types';
@@ -102,6 +102,19 @@ describe('isPostingDay (P-6)', () => {
     expect(isPostingDay(new Date('2026-07-16'))).toBe(true); // четверг
     expect(isPostingDay(new Date('2026-07-12'))).toBe(false); // воскресенье
     expect(isPostingDay(new Date('2026-07-13'))).toBe(false); // понедельник
+  });
+});
+
+describe('ownPostsThisWeek', () => {
+  it('считает только свои посты текущей недели', () => {
+    const now = new Date('2026-07-15T12:00:00'); // среда; неделя с пн 13-го
+    const posts = [
+      mk({ author: 'Я', text: 'свой на этой неделе', is_own: true, collected_at: '2026-07-14' }),
+      mk({ author: 'Я', text: 'свой на прошлой', is_own: true, collected_at: '2026-07-10' }),
+      mk({ author: 'Чужой', text: 'не свой на этой неделе', collected_at: '2026-07-14' }),
+    ];
+    expect(ownPostsThisWeek(posts, now)).toBe(1);
+    expect(ownPostsThisWeek([], now)).toBe(0);
   });
 });
 

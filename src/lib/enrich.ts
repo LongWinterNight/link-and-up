@@ -148,6 +148,14 @@ export function detectLang(p: RawPost): Lang {
   return /[а-яё]/i.test(letters) ? 'RU' : 'EN';
 }
 
+/** М48: url с опасной схемой (javascript:/data:/vbscript:/file:) отбрасывается при импорте. */
+export function sanitizeUrl(u?: string): string {
+  const s = (u || '').trim();
+  if (!s) return '';
+  if (/^(javascript|data|vbscript|file)\s*:/i.test(s)) return '';
+  return s;
+}
+
 /** Обогатить сырой пост: метрики, подписчики, язык, ER, кластер, теги. */
 export function enrich(p: RawPost): Post {
   const followers = parseFollowers(p.headline);
@@ -169,7 +177,7 @@ export function enrich(p: RawPost): Post {
     comments,
     reposts: Number(p.reposts) || 0,
     text: p.text || '',
-    url: p.url || '',
+    url: sanitizeUrl(p.url),
     collected_at: p.collected_at || '',
     id: p.id || (p.author || '') + '|' + (p.text || '').slice(0, 80),
     followers,

@@ -145,6 +145,18 @@ button {
   max-width: 100%;
 }
 
+/* М23: уважение prefers-reduced-motion (WCAG 2.3.3) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* FE-5: мобильные раскладки — kanban стеком, календарь скроллится внутри контейнера */
 .kanban-grid {
   display: grid;

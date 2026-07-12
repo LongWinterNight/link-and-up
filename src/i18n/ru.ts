@@ -27,6 +27,10 @@ export const ru = {
   'app.loading': 'Загрузка…',
   'app.tabs.aria': 'Разделы дашборда',
   'toast.posts.exported': 'Экспортировано постов: ',
+  'toast.idea.deleted': 'Идея удалена',
+  'toast.idea.restored': 'Идея восстановлена',
+  'toast.idea.titleRequired': 'Укажите заголовок идеи',
+  'toast.undo': 'Вернуть',
   'toast.csv.exported': 'CSV экспортирован',
   'toast.ideas.exported': 'CSV идей экспортирован',
   'toast.md.exported': 'Markdown сформирован',
@@ -90,6 +94,10 @@ export const ru = {
   'today.copy': 'Копировать',
   'today.copied': 'Черновик скопирован',
   'today.download': 'Скачать .md',
+  'today.quick.button': '+ Быстрая идея',
+  'today.quick.title': 'Заголовок',
+  'today.quick.hook': 'Хук (первая строка поста)',
+  'today.quick.create': 'Создать',
 
   // --- «Обзор» ---
   'ov.empty.title': 'Начните с загрузки постов',

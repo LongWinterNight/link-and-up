@@ -103,6 +103,12 @@ describe('enrich — достоверность метрик', () => {
     const p = enrich({ author: 'X', text: 'text', reactions: 10, comments: 5, headline: 'Без числа' });
     expect(p.rate).toBeNull();
   });
+  it('М48: url с опасной схемой отбрасывается, обычный сохраняется', () => {
+    expect(enrich({ author: 'X', text: 't', url: 'javascript:alert(1)' }).url).toBe('');
+    expect(enrich({ author: 'X', text: 't', url: ' DATA:text/html,x' }).url).toBe('');
+    expect(enrich({ author: 'X', text: 't', url: 'linkedin.com/posts/abc' }).url).toBe('linkedin.com/posts/abc');
+    expect(enrich({ author: 'X', text: 't', url: 'https://example.com' }).url).toBe('https://example.com');
+  });
   it('COR-1: reactions>0, comments=0 => has_metrics=true, но rate=null (комментарии неизвестны)', () => {
     const p = enrich({ author: 'X', text: 'text', reactions: 40, comments: 0, headline: '5 000 подписчиков' });
     expect(p.has_metrics).toBe(true);

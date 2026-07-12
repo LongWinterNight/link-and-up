@@ -132,6 +132,18 @@ describe('store: петля фактов (saveReal)', () => {
   });
 });
 
+describe('store: undo удаления идеи (М12)', () => {
+  it('delIdea сохраняет снапшот, restoreLastIdea возвращает идею', () => {
+    useStore.setState({ ideas: [seedIdea()] });
+    S().delIdea('idea-test');
+    expect(S().ideas).toHaveLength(0);
+    expect(S().lastDeletedIdea?.id).toBe('idea-test');
+    S().restoreLastIdea();
+    expect(S().ideas).toHaveLength(1);
+    expect(S().lastDeletedIdea).toBeNull();
+  });
+});
+
 describe('store: reset возвращает демо-корпус', () => {
   it('reset наполняет posts и ставит isDemo=true (FE-2: сид грузится динамическим чанком)', async () => {
     useStore.setState({ posts: [], isDemo: false });
