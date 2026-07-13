@@ -13,6 +13,68 @@ export interface FactorMultipliers {
 
 export const DEFAULT_MULTIPLIERS: FactorMultipliers = { hook: 1.4, personal: 1.25, numbers: 1.2, cta: 1.15, ru: 1.1 };
 
+/**
+ * FE-3c: человекочитаемые строки прогноза инжектятся снаружи (локаль знает UI, lib — нет).
+ * RU-дефолты сохраняют прежнее поведение (тесты и вызовы без меток не меняются).
+ */
+export interface ForecastLabels {
+  clusterName: (id: string) => string;
+  baseRef: (author: string) => string;
+  baseNoData: () => string;
+  baseMedian: (cluster: string) => string;
+  strongHook: string;
+  personal: string;
+  numbers: string;
+  questionCta: string;
+  ruMarket: string;
+  calibration: string;
+  bandIqr: (n: number, q25: string, q75: string) => string;
+  bandLow: (n: number) => string;
+  explainRef: (author: string, comments: string, cluster: string) => string;
+  explainNoData: () => string;
+  explainMedian: (cluster: string, n: number, med: number) => string;
+}
+
+export const RU_FORECAST_LABELS: ForecastLabels = {
+  clusterName: (id) => CLUSTER_LABEL[id] || id,
+  baseRef: (author) => 'База: пост-референс «' + author + '»',
+  baseNoData: () => 'База: нет данных (заглушка)',
+  baseMedian: (cluster) => 'База: медиана кластера «' + cluster + '»',
+  strongHook: 'Сильный хук',
+  personal: 'Личная история',
+  numbers: 'Есть цифры',
+  questionCta: 'Вопрос-CTA',
+  ruMarket: 'RU-рынок',
+  calibration: 'Калибровка по фактам',
+  bandIqr: (n, q25, q75) =>
+    'Диапазон = межквартильный разброс кластера (' +
+    n +
+    ' постов): 25-й перцентиль ' +
+    q25 +
+    ', 75-й ' +
+    q75 +
+    ' комм.',
+  bandLow: (n) => 'Мало данных в кластере (' + n + ' постов) — диапазон ориентировочный (±).',
+  explainRef: (author, comments, cluster) =>
+    'База = комментарии поста-референса «' + author + '» (' + comments + ') из кластера «' + cluster + '».',
+  explainNoData: () =>
+    'Нет постов с метриками для основы прогноза — число ориентировочное. Добавьте свои посты с фактами или референс.',
+  explainMedian: (cluster, n, med) =>
+    'База = медиана комментариев по кластеру «' + cluster + '» (' + n + ' постов с метриками) = ' + med + '.',
+};
+
+/** Строки бэктеста (инжект по той же схеме). */
+export interface BacktestLabels {
+  low: (n: number) => string;
+  ok: (n: number) => string;
+}
+
+export const RU_BACKTEST_LABELS: BacktestLabels = {
+  low: (n) => 'Мало постов с метриками (' + n + ') — бэктест недостоверен.',
+  ok: (n) =>
+    'Leave-one-out по ' + n + ' постам с метриками. «В пределах 2×» — доля прогнозов того же порядка, что факт.',
+};
+
 /** Бинарные признаки поста (для множителей и их эмпирической оценки). */
 export function postFactors(p: Post): Record<keyof FactorMultipliers, boolean> {
   const first = (p.text || '').split('\n')[0].toLowerCase();
@@ -125,9 +187,10 @@ export function forecastWithHook(
   posts: Post[],
   calibration: number,
   mults: FactorMultipliers = DEFAULT_MULTIPLIERS,
+  labels: ForecastLabels = RU_FORECAST_LABELS,
 ): ForecastResult | null {
   if (!idea) return null;
-  return forecast({ ...idea, hook }, posts, calibration, mults);
+  return forecast({ ...idea, hook }, posts, calibration, mults, labels);
 }
 
 /**
@@ -139,6 +202,7 @@ export function forecast(
   posts: Post[],
   calibration: number,
   mults: FactorMultipliers = DEFAULT_MULTIPLIERS,
+  labels: ForecastLabels = RU_FORECAST_LABELS,
 ): ForecastResult | null {
   if (!idea) return null;
   const clusterPosts = posts.filter((p) => p.has_metrics && p.meta_cluster === idea.cluster);
@@ -159,10 +223,10 @@ export function forecast(
   let running = base;
   steps.push({
     label: baseFromRef
-      ? 'База: пост-референс «' + refPost!.author + '»'
+      ? labels.baseRef(refPost!.author)
       : lowData
-        ? 'База: нет данных (заглушка)'
-        : 'База: медиана кластера «' + (CLUSTER_LABEL[idea.cluster] || idea.cluster) + '»',
+        ? labels.baseNoData()
+        : labels.baseMedian(labels.clusterName(idea.cluster)),
     factor: '',
     running: Math.round(running),
   });
@@ -172,15 +236,15 @@ export function forecast(
       steps.push({ label, factor: '×' + f, running: Math.round(running) });
     }
   };
-  apply(/[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first.toLowerCase()), 'Сильный хук', mults.hook);
+  apply(/[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first.toLowerCase()), labels.strongHook, mults.hook);
   const personal = /\bя\b|\bмой\b|\bмоя\b|честно|признаюсь/.test(txt);
-  apply(personal, 'Личная история', mults.personal);
-  apply(/\d/.test(txt), 'Есть цифры', mults.numbers);
-  apply(/[?]\s*$/.test((idea.hook || '').trim()), 'Вопрос-CTA', mults.cta);
-  apply(idea.channel === 'LinkedIn' || idea.channel === 'Telegram', 'RU-рынок', mults.ru);
+  apply(personal, labels.personal, mults.personal);
+  apply(/\d/.test(txt), labels.numbers, mults.numbers);
+  apply(/[?]\s*$/.test((idea.hook || '').trim()), labels.questionCta, mults.cta);
+  apply(idea.channel === 'LinkedIn' || idea.channel === 'Telegram', labels.ruMarket, mults.ru);
   const cal = calibration || 1;
   running *= cal;
-  steps.push({ label: 'Калибровка по фактам', factor: '×' + cal.toFixed(2), running: Math.round(running) });
+  steps.push({ label: labels.calibration, factor: '×' + cal.toFixed(2), running: Math.round(running) });
   const expected = Math.round(running);
   const mult = expected / (base * cal || 1);
 
@@ -195,18 +259,11 @@ export function forecast(
   if (pool.length >= 5 && medc > 0) {
     low = Math.round(expected * (q25 / medc));
     high = Math.round(expected * (q75 / medc));
-    bandNote =
-      'Диапазон = межквартильный разброс кластера (' +
-      pool.length +
-      ' постов): 25-й перцентиль ' +
-      nf(q25) +
-      ', 75-й ' +
-      nf(q75) +
-      ' комм.';
+    bandNote = labels.bandIqr(pool.length, nf(q25), nf(q75));
   } else {
     low = Math.round(expected * 0.5);
     high = Math.round(expected * 1.8);
-    bandNote = 'Мало данных в кластере (' + pool.length + ' постов) — диапазон ориентировочный (±).';
+    bandNote = labels.bandLow(pool.length);
   }
   if (low > expected) low = expected;
   if (high < expected) high = expected;
@@ -226,24 +283,12 @@ export function forecast(
 
   let evidence = [...pool].sort((a, b) => b.comments - a.comments).slice(0, 3);
   if (refPost) evidence = [refPost, ...evidence.filter((p) => p.id !== refPost.id)].slice(0, 3);
-  const clName = CLUSTER_LABEL[idea.cluster] || idea.cluster;
+  const clName = labels.clusterName(idea.cluster);
   const explain = baseFromRef
-    ? 'База = комментарии поста-референса «' +
-      refPost!.author +
-      '» (' +
-      nf(refPost!.comments) +
-      ') из кластера «' +
-      clName +
-      '».'
+    ? labels.explainRef(refPost!.author, nf(refPost!.comments), clName)
     : lowData
-      ? 'Нет постов с метриками для основы прогноза — число ориентировочное. Добавьте свои посты с фактами или референс.'
-      : 'База = медиана комментариев по кластеру «' +
-        clName +
-        '» (' +
-        poolComments.length +
-        ' постов с метриками) = ' +
-        Math.round(med) +
-        '.';
+      ? labels.explainNoData()
+      : labels.explainMedian(clName, poolComments.length, Math.round(med));
 
   return {
     base: Math.round(base),
@@ -317,7 +362,11 @@ function medianExcluding(sorted: number[], skip: number): number {
   return L % 2 ? at(m) : (at(m - 1) + at(m)) / 2;
 }
 
-export function backtest(posts: Post[], mult: FactorMultipliers = DEFAULT_MULTIPLIERS): BacktestResult {
+export function backtest(
+  posts: Post[],
+  mult: FactorMultipliers = DEFAULT_MULTIPLIERS,
+  labels: BacktestLabels = RU_BACKTEST_LABELS,
+): BacktestResult {
   const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
   if (metric.length < 8) {
     return {
@@ -325,7 +374,7 @@ export function backtest(posts: Post[], mult: FactorMultipliers = DEFAULT_MULTIP
       mape: null,
       medianAbsErr: null,
       within2x: null,
-      note: 'Мало постов с метриками (' + metric.length + ') — бэктест недостоверен.',
+      note: labels.low(metric.length),
     };
   }
   // SCALE-2: O(n log n) вместо O(n²) — на 20K постов старая версия вешала вкладку на ~11 секунд.
@@ -358,10 +407,7 @@ export function backtest(posts: Post[], mult: FactorMultipliers = DEFAULT_MULTIP
     mape: Math.round(mape * 100) / 100,
     medianAbsErr: Math.round(median(absErrs)),
     within2x: Math.round((within / metric.length) * 100),
-    note:
-      'Leave-one-out по ' +
-      metric.length +
-      ' постам с метриками. «В пределах 2×» — доля прогнозов того же порядка, что факт.',
+    note: labels.ok(metric.length),
   };
 }
 

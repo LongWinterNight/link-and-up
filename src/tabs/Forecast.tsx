@@ -12,7 +12,7 @@ import { corpusFreshness } from '@/lib/derive';
 import { nf } from '@/lib/stats';
 import type { IdeaActual } from '@/types';
 import { Btn, EmptyState, Kpi, Panel } from '@/components/ui';
-import { useClusterLabel, useT } from '@/i18n/useT';
+import { useClusterLabel, useForecastLabels, useT } from '@/i18n/useT';
 
 const inp: React.CSSProperties = {
   background: 'var(--surface-2)',
@@ -43,6 +43,7 @@ function NumField({ label, value, onChange }: { label: string; value: string; on
 export default function Forecast() {
   const t = useT();
   const cl = useClusterLabel();
+  const { fl, bl } = useForecastLabels();
   const posts = useStore((s) => s.posts);
   const ideas = useStore((s) => s.ideas);
   const forecastId = useStore((s) => s.forecastId);
@@ -56,12 +57,12 @@ export default function Forecast() {
 
   // FCST-2: набор множителей выбирается автоматически по leave-one-out бэктесту на этом корпусе
   const sel = useMemo(() => selectMultipliers(posts), [posts]);
-  const bt = useMemo(() => backtest(posts, sel.multipliers), [posts, sel]);
+  const bt = useMemo(() => backtest(posts, sel.multipliers, bl), [posts, sel, bl]);
   const fresh = useMemo(() => corpusFreshness(posts), [posts]);
   const idea = ideas.find((i) => i.id === forecastId) || null;
   // COR-8: множитель калибровки активен только от CALIBRATION_MIN_FACTS фактов
   const effCal = effectiveCalibration(calibration, calibrationCount);
-  const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);
+  const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers, fl), [idea, posts, effCal, sel, fl]);
   const cal = useMemo(() => recalcCalibration(ideas, calibration), [ideas, calibration]);
 
   const published = useMemo(
