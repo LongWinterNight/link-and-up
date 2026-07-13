@@ -8,6 +8,7 @@ import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecas
 import { DEFAULT_RULES } from '@/lib/guardrails';
 import { NICHE_PACKS } from '@/lib/nichePacks';
 import { detectLocale, ensureLocale, tr, type Locale } from '@/i18n';
+import { idbAvailable, kvDel, kvReadWithMigration, kvSet } from '@/lib/kv';
 import type { IdeaActual, Tags } from '@/types';
 
 export type TabId = 'today' | 'overview' | 'analytics' | 'explorer' | 'clusters' | 'ideas' | 'forecast';
@@ -137,6 +138,8 @@ interface State {
   savePreset: (name: string) => void;
   applyPreset: (name: string) => void;
   deletePreset: (name: string) => void;
+  /** М32: восстановление из файла-бэкапа — полная замена persisted-среза. */
+  applyBackup: (slice: PersistedSlice) => void;
 }
 
 /** Ближайший вторник(2) или четверг(4). */
@@ -172,7 +175,7 @@ let toastTimer: ReturnType<typeof setTimeout> | undefined;
  * раз в 300мс после последнего изменения и принудительно при уходе со страницы.
  */
 /** Точный тип persisted-среза (partialize ниже обязан ему соответствовать). */
-interface PersistedSlice {
+export interface PersistedSlice {
   version: number;
   posts: Post[];
   ideas: Idea[];
@@ -190,25 +193,50 @@ interface PersistedSlice {
   presets: Preset[];
 }
 
+/** Единственное место, знающее состав persisted-среза (persist partialize + бэкап М32). */
+export function toPersistedSlice(s: State): PersistedSlice {
+  return {
+    version: s.version,
+    posts: s.posts,
+    ideas: s.ideas,
+    theme: s.theme,
+    locale: s.locale,
+    calibration: s.calibration,
+    calibrationCount: s.calibrationCount,
+    isDemo: s.isDemo,
+    onboarded: s.onboarded,
+    readOnly: s.readOnly,
+    auditLog: s.auditLog,
+    rules: s.rules,
+    ownAuthor: s.ownAuthor,
+    cadenceGoal: s.cadenceGoal,
+    presets: s.presets,
+  };
+}
+
 const rawLS = typeof window !== 'undefined' ? window.localStorage : null;
 let pendingWrite: { name: string; value: StorageValue<PersistedSlice> } | null = null;
 let writeTimer: ReturnType<typeof setTimeout> | undefined;
 const flushPersist = () => {
-  if (rawLS && pendingWrite) {
-    try {
-      rawLS.setItem(pendingWrite.name, JSON.stringify(pendingWrite.value));
-    } catch {
-      // квота localStorage переполнена (SCALE-1: миграция на IndexedDB в Б10)
-      useStore.getState().flash('Хранилище браузера переполнено — данные не сохраняются. Экспортируйте корпус.');
-    }
-  }
+  if (!pendingWrite) return;
+  const { name, value } = pendingWrite;
   pendingWrite = null;
+  if (idbAvailable()) {
+    // SCALE-1: IndexedDB — structured clone без JSON.stringify, квота — гигабайты
+    void kvSet(name, value).catch(() => {
+      useStore.getState().flash('Не удалось сохранить данные — экспортируйте бэкап из настроек.');
+    });
+    return;
+  }
+  try {
+    rawLS?.setItem(name, JSON.stringify(value));
+  } catch {
+    useStore.getState().flash('Хранилище браузера переполнено — данные не сохраняются. Экспортируйте корпус.');
+  }
 };
 const debouncedStorage: PersistStorage<PersistedSlice> = {
-  getItem: (name) => {
-    const s = rawLS?.getItem(name);
-    return s ? JSON.parse(s) : null;
-  },
+  // SCALE-1: чтение с миграцией из legacy-localStorage и восстановлением из .bak-снапшота
+  getItem: (name) => kvReadWithMigration<StorageValue<PersistedSlice>>(name, rawLS),
   setItem: (name, value) => {
     pendingWrite = { name, value };
     clearTimeout(writeTimer);
@@ -218,6 +246,10 @@ const debouncedStorage: PersistStorage<PersistedSlice> = {
     clearTimeout(writeTimer);
     pendingWrite = null;
     rawLS?.removeItem(name);
+    if (idbAvailable()) {
+      void kvDel(name).catch(() => {});
+      void kvDel(name + '.bak').catch(() => {});
+    }
   },
 };
 if (typeof window !== 'undefined') {
@@ -502,28 +534,18 @@ export const useStore = create<State>()(
         get().flash('Применён пресет: ' + name);
       },
       deletePreset: (name) => set({ presets: get().presets.filter((p) => p.name !== name) }),
+
+      applyBackup: (slice) => {
+        set({ ...slice, selectedPostId: null, importPreview: null, lastDeletedIdea: null });
+        void ensureLocale(slice.locale);
+        get().flash('Бэкап восстановлен: постов ' + slice.posts.length + ', идей ' + slice.ideas.length);
+      },
     }),
     {
       name: LS_KEY,
       version: SCHEMA_VERSION,
       storage: debouncedStorage,
-      partialize: (s) => ({
-        version: s.version,
-        posts: s.posts,
-        ideas: s.ideas,
-        theme: s.theme,
-        locale: s.locale,
-        calibration: s.calibration,
-        calibrationCount: s.calibrationCount,
-        isDemo: s.isDemo,
-        onboarded: s.onboarded,
-        readOnly: s.readOnly,
-        auditLog: s.auditLog,
-        rules: s.rules,
-        ownAuthor: s.ownAuthor,
-        cadenceGoal: s.cadenceGoal,
-        presets: s.presets,
-      }),
+      partialize: toPersistedSlice,
       migrate: (persisted: unknown, fromVersion) => {
         const s = persisted as Partial<State> | undefined;
         if (!s) return s as unknown as State;

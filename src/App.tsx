@@ -8,6 +8,7 @@ const Analytics = lazy(() => import('./tabs/Analytics'));
 const Clusters = lazy(() => import('./tabs/Clusters'));
 const Ideas = lazy(() => import('./tabs/Ideas'));
 const Forecast = lazy(() => import('./tabs/Forecast'));
+import { ErrorBoundary } from './components/ErrorBoundary';
 import PostModal from './components/PostModal';
 import ImportModal from './components/ImportModal';
 import SettingsModal from './components/SettingsModal';
@@ -57,6 +58,9 @@ export default function App() {
   const t = useT();
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
+  // SCALE-1: IndexedDB-гидратация асинхронна — до её конца не решаем «первый ли это запуск»
+  const [hydrated, setHydrated] = useState(useStore.persist.hasHydrated());
+  useEffect(() => useStore.persist.onFinishHydration(() => setHydrated(true)), []);
 
   // FE-4: меню «Экспорт» — Escape, стрелки, клик-вне, автофокус первого пункта
   useEffect(() => {
@@ -104,9 +108,10 @@ export default function App() {
 
   // FE-2: первый запуск (нет онбординга и нет персистентного корпуса) — демо грузится отдельным чанком
   useEffect(() => {
+    if (!hydrated) return;
     const s = useStore.getState();
     if (!s.onboarded && s.posts.length === 0) void s.loadDemo();
-  }, []);
+  }, [hydrated]);
 
   // М16: в день публикации title вкладки показывает прогресс каденса
   useEffect(() => {
@@ -123,6 +128,9 @@ export default function App() {
     if (kind === 'ideas') { download('idei.csv', exportIdeasCsv(ideas, posts, rules), 'text/csv;charset=utf-8'); flash(t('toast.ideas.exported')); }
     if (kind === 'obsidian') { download('link-and-up-ideas.md', exportObsidian(ideas, rules), 'text/markdown'); flash(t('toast.md.exported')); }
   };
+
+  // до конца гидратации не показываем UI: иначе вернувшийся пользователь на миг увидит онбординг
+  if (!hydrated) return <div style={{ minHeight: '100%' }} />;
 
   return (
     <div style={{ minHeight: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -209,6 +217,7 @@ export default function App() {
       </div>
 
       <main id="tabpanel" role="tabpanel" aria-labelledby={'tab-' + tab} className="no-print" style={{ flex: 1, maxWidth: 1240, width: '100%', margin: '0 auto', padding: 20 }}>
+        <ErrorBoundary>
         <Suspense fallback={<div style={{ color: 'var(--text-3)', fontSize: 13, padding: 20 }}>{t('app.loading')}</div>}>
           {tab === 'today' && <Today />}
           {tab === 'overview' && <Overview />}
@@ -218,6 +227,7 @@ export default function App() {
           {tab === 'ideas' && <Ideas />}
           {tab === 'forecast' && <Forecast />}
         </Suspense>
+        </ErrorBoundary>
       </main>
 
       <PostModal />

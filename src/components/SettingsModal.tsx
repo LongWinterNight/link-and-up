@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { useStore } from '@/store';
+import { toPersistedSlice, useStore } from '@/store';
+import { exportStateJson, parseBackup } from '@/lib/backup';
 import { validatePattern } from '@/lib/guardrails';
 import { NICHE_PACKS } from '@/lib/nichePacks';
 import { exportAuditCsv } from '@/lib/exports';
@@ -61,7 +62,33 @@ export default function SettingsModal() {
   const cadenceGoal = useStore((s) => s.cadenceGoal);
   const setCadenceGoal = useStore((s) => s.setCadenceGoal);
   const auditLog = useStore((s) => s.auditLog);
+  const applyBackup = useStore((s) => s.applyBackup);
   const flash = useStore((s) => s.flash);
+
+  const onRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const rd = new FileReader();
+    rd.onload = () => {
+      try {
+        const backup = parseBackup(String(rd.result));
+        const cur = useStore.getState();
+        if (
+          confirm(
+            `Восстановить бэкап от ${backup.exportedAt.slice(0, 16).replace('T', ' ')}?\n` +
+              `Текущее состояние (постов: ${cur.posts.length}, идей: ${cur.ideas.length}) будет ЗАМЕНЕНО на ` +
+              `(постов: ${backup.state.posts.length}, идей: ${backup.state.ideas.length}).`,
+          )
+        ) {
+          applyBackup(backup.state);
+        }
+      } catch (err) {
+        flash('Не удалось восстановить: ' + (err as Error).message);
+      }
+    };
+    rd.readAsText(f);
+    e.target.value = '';
+  };
 
   const [nLabel, setNLabel] = useState('');
   const [nPattern, setNPattern] = useState('');
@@ -171,6 +198,29 @@ export default function SettingsModal() {
           {patternErr && <div style={{ color: 'var(--critical)', fontSize: 12, marginTop: 8 }}>{patternErr}</div>}
           <div style={{ marginTop: 10, textAlign: 'right' }}>
             <Btn variant="accent" onClick={addCustom}>Добавить правило</Btn>
+          </div>
+        </div>
+
+        {/* М32 (Б10): бэкап и восстановление всего состояния */}
+        <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
+          <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>Данные</h3>
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>
+            Данные живут только в этом браузере. Скачивайте бэкап перед очисткой браузера или переездом на другое устройство.
+          </div>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Btn
+              variant="accent"
+              onClick={() => {
+                download('link-and-up-backup.json', exportStateJson(toPersistedSlice(useStore.getState())));
+                flash('Бэкап скачан');
+              }}
+            >
+              Скачать бэкап
+            </Btn>
+            <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--text-accent)' }}>
+              Восстановить из бэкапа…
+              <input type="file" accept="application/json,.json" onChange={onRestoreFile} style={{ display: 'none' }} aria-label="Файл бэкапа" />
+            </label>
           </div>
         </div>
 

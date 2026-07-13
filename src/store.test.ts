@@ -167,6 +167,34 @@ describe('store: нишевый пакет правил (Б3, финтех)', ()
   });
 });
 
+describe('store: бэкап/восстановление (М32)', () => {
+  it('roundtrip: export → parse → applyBackup восстанавливает состояние', async () => {
+    const { toPersistedSlice } = await import('./store');
+    const { exportStateJson, parseBackup } = await import('./lib/backup');
+    S().ingestJson(JSON.stringify([{ author: 'Бэкап Автор', text: 'пост для проверки бэкапа и восстановления' }]));
+    useStore.setState({ ideas: [seedIdea()], cadenceGoal: 7 });
+    const json = exportStateJson(toPersistedSlice(useStore.getState()));
+
+    // «потеряли» всё
+    useStore.setState({ posts: [], ideas: [], cadenceGoal: 5 });
+    expect(S().posts).toHaveLength(0);
+
+    const backup = parseBackup(json);
+    S().applyBackup(backup.state);
+    expect(S().posts).toHaveLength(1);
+    expect(S().posts[0].author).toBe('Бэкап Автор');
+    expect(S().ideas).toHaveLength(1);
+    expect(S().cadenceGoal).toBe(7);
+  });
+
+  it('parseBackup отклоняет чужой/битый файл с человеческим сообщением', async () => {
+    const { parseBackup } = await import('./lib/backup');
+    expect(() => parseBackup('не json')).toThrow('JSON');
+    expect(() => parseBackup('{"app":"other"}')).toThrow('не бэкап');
+    expect(() => parseBackup('{"app":"link-and-up","schema":1}')).toThrow('Версия схемы');
+  });
+});
+
 describe('store: reset возвращает демо-корпус', () => {
   it('reset наполняет posts и ставит isDemo=true (FE-2: сид грузится динамическим чанком)', async () => {
     useStore.setState({ posts: [], isDemo: false });
