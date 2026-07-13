@@ -39,6 +39,8 @@ export interface SettingsSlice {
   addCluster: (def: ClusterDef) => void;
   /** Удалить кластер; его посты уходят в 'other'. */
   deleteCluster: (id: string) => void;
+  /** Б5: сигнал Team-спроса — попытка создать 3-й воркспейс. */
+  logTeamSignal: () => void;
   /** М32: восстановление из файла-бэкапа — полная замена persisted-среза. */
   applyBackup: (slice: PersistedSlice) => void;
 }
@@ -134,6 +136,8 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
       auditLog: audit(get().auditLog, 'Удалён кластер «' + def.label + '»'),
     });
   },
+
+  logTeamSignal: () => set({ auditLog: audit(get().auditLog, 'Запрошен 3-й воркспейс — сигнал Team-тарифа') }),
 
   applyBackup: (slice) => {
     set({

@@ -622,5 +622,12 @@ export const ru = {
   'se.data.storage.a': 'Занято хранилища: ',
   'se.data.storage.b': ' из ',
   'se.data.storage.c': ' доступных.',
+  // --- Б5: воркспейсы ---
+  'ws.label': 'Воркспейс',
+  'ws.default': 'Основной',
+  'ws.new': '+ Новый воркспейс…',
+  'ws.name.ph': 'Имя воркспейса',
+  'ws.create': 'Создать',
+  'ws.limit': 'Во free — до 2 воркспейсов. Больше — в командном тарифе; ваш интерес записан.',
 };
 export type DictKey = keyof typeof ru;

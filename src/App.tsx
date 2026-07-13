@@ -22,6 +22,7 @@ import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from 
 import { PRODUCT_NAME } from './lib/constants';
 import { ensureLocale, intlLocale, type DictKey } from './i18n';
 import { useT } from './i18n/useT';
+import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 
 const TAB_IDS: TabId[] = ['today', 'overview', 'analytics', 'explorer', 'clusters', 'ideas', 'forecast'];
 
@@ -263,6 +264,7 @@ export default function App() {
           <button type="button" style={hdrBtn} onClick={() => window.print()}>
             {t('app.report')}
           </button>
+          <WorkspaceSwitcher />
           <button type="button" style={hdrBtn} onClick={() => setSettingsOpen(true)}>
             {t('app.settings')}
           </button>

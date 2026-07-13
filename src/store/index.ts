@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { DEFAULT_CLUSTER_DEFS, LS_KEY, SCHEMA_VERSION } from '@/lib/constants';
+import { activeWorkspace, storageKeyFor } from '@/lib/workspaces';
 import { enrich } from '@/lib/enrich';
 import { recalcCalibration } from '@/lib/forecast';
 import { createUiSlice } from './uiSlice';
@@ -15,6 +16,10 @@ import type { State } from './types';
  * воркспейсы (Б5) и облачный синк (G-1): storage-слой заменяется в persistCore,
  * не трогая слайсы. Публичный API не изменился.
  */
+// Б5: ключ хранилища зависит от активного воркспейса (реестр — синхронный LS, читается до гидратации)
+const wsStorageKey =
+  typeof window !== 'undefined' ? storageKeyFor(LS_KEY, activeWorkspace(window.localStorage)) : LS_KEY;
+
 export const useStore = create<State>()(
   persist(
     (...a) => ({
@@ -25,7 +30,7 @@ export const useStore = create<State>()(
       ...createSettingsSlice(...a),
     }),
     {
-      name: LS_KEY,
+      name: wsStorageKey,
       version: SCHEMA_VERSION,
       storage: debouncedStorage,
       partialize: toPersistedSlice,

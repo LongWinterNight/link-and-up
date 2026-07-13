@@ -615,4 +615,11 @@ export const en: Record<DictKey, string> = {
   'se.data.storage.a': 'Storage used: ',
   'se.data.storage.b': ' of ',
   'se.data.storage.c': ' available.',
+  // --- Б5: workspaces ---
+  'ws.label': 'Workspace',
+  'ws.default': 'Main',
+  'ws.new': '+ New workspace…',
+  'ws.name.ph': 'Workspace name',
+  'ws.create': 'Create',
+  'ws.limit': 'Free tier allows up to 2 workspaces. More come with the team plan; your interest is recorded.',
 };
