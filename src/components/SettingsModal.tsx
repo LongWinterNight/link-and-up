@@ -68,6 +68,7 @@ export default function SettingsModal() {
   const niche = useStore((s) => s.niche);
   const setNiche = useStore((s) => s.setNiche);
   const flash = useStore((s) => s.flash);
+  const askConfirm = useStore((s) => s.askConfirm);
   const t = useT();
 
   const onRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -78,15 +79,13 @@ export default function SettingsModal() {
       try {
         const backup = parseBackup(String(rd.result));
         const cur = useStore.getState();
-        if (
-          confirm(
-            `Восстановить бэкап от ${backup.exportedAt.slice(0, 16).replace('T', ' ')}?\n` +
-              `Текущее состояние (постов: ${cur.posts.length}, идей: ${cur.ideas.length}) будет ЗАМЕНЕНО на ` +
-              `(постов: ${backup.state.posts.length}, идей: ${backup.state.ideas.length}).`,
-          )
-        ) {
-          applyBackup(backup.state);
-        }
+        void askConfirm(
+          `Восстановить бэкап от ${backup.exportedAt.slice(0, 16).replace('T', ' ')}?\n` +
+            `Текущее состояние (постов: ${cur.posts.length}, идей: ${cur.ideas.length}) будет ЗАМЕНЕНО на ` +
+            `(постов: ${backup.state.posts.length}, идей: ${backup.state.ideas.length}).`,
+        ).then((ok) => {
+          if (ok) applyBackup(backup.state);
+        });
       } catch (err) {
         flash('Не удалось восстановить: ' + (err as Error).message);
       }
@@ -258,10 +257,11 @@ export default function SettingsModal() {
             <button
               type="button"
               onClick={() => {
-                if (confirm('Удалить ВСЕ данные приложения из этого браузера (корпус, идеи, правила, настройки)? Действие необратимо.')) {
+                void askConfirm('Удалить ВСЕ данные приложения из этого браузера (корпус, идеи, правила, настройки)? Действие необратимо.').then((ok) => {
+                  if (!ok) return;
                   useStore.persist.clearStorage();
                   location.reload();
-                }
+                });
               }}
               style={{ background: 'var(--critical-soft)', border: '1px solid var(--critical)', borderRadius: 'var(--radius-ctl)', padding: '8px 12px', color: 'var(--critical)', fontSize: 13, cursor: 'pointer' }}
             >

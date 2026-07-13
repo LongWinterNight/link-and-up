@@ -31,6 +31,9 @@ export const ru = {
   'toast.idea.restored': 'Идея восстановлена',
   'toast.idea.titleRequired': 'Укажите заголовок идеи',
   'toast.undo': 'Вернуть',
+  'confirm.title': 'Подтверждение',
+  'confirm.yes': 'Подтвердить',
+  'confirm.no': 'Отмена',
   'toast.csv.exported': 'CSV экспортирован',
   'toast.ideas.exported': 'CSV идей экспортирован',
   'toast.md.exported': 'Markdown сформирован',
@@ -113,6 +116,9 @@ export const ru = {
   'today.quick.create': 'Создать',
   'today.pctl.above': 'центр выше, чем у ',
   'today.pctl.rest': '% постов корпуса',
+  'today.variety.a': 'За 30 дней ',
+  'today.variety.b': '% публикаций — формула «',
+  'today.variety.c': '» — аудитория привыкает, смените формат.',
 
   // --- «Обзор» ---
   'ov.empty.title': 'Начните с загрузки постов',

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { corpusFreshness, filterPosts, isPostingDay, kpis, ownPostsThisWeek, topByComments } from './derive';
+import { corpusFreshness, filterPosts, formulaVariety, isPostingDay, kpis, ownPostsThisWeek, topByComments } from './derive';
+import type { Idea } from '@/types';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
 import type { Post } from '@/types';
@@ -140,6 +141,27 @@ describe('ownPostsThisWeek', () => {
     ];
     expect(ownPostsThisWeek(posts, now)).toBe(1);
     expect(ownPostsThisWeek([], now)).toBe(0);
+  });
+});
+
+describe('formulaVariety — индикатор эхо-камеры (М52)', () => {
+  const mkIdea = (formula: string, date: string): Idea =>
+    ({ id: formula + date, title: 't', hook: '', cluster: 'spec' as Idea['cluster'], formula, source: '', channel: 'LinkedIn', status: 'published', date: '', refPostId: '', predicted: 0, actual: { reactions: 1, comments: 1, leads: 0, interviews: 0, date } });
+  const now = new Date('2026-07-13T12:00:00');
+
+  it('молчит при <5 публикаций за 30 дней и при доле <70%', () => {
+    expect(formulaVariety([mkIdea('pak', '2026-07-01')], now)).toBeNull();
+    const mixed = ['pak', 'pak', 'hook', 'hook', 'arch', 'fail'].map((f, i) => mkIdea(f, '2026-07-0' + (i + 1)));
+    expect(formulaVariety(mixed, now)).toBeNull();
+  });
+
+  it('предупреждает при ≥70% одной формулы; старые публикации не считаются', () => {
+    const mono = ['pak', 'pak', 'pak', 'pak', 'hook'].map((f, i) => mkIdea(f, '2026-07-0' + (i + 1)));
+    const old = mkIdea('hook', '2026-01-01'); // вне окна 30 дней
+    const w = formulaVariety([...mono, old], now)!;
+    expect(w.formula).toBe('pak');
+    expect(w.sharePct).toBe(80);
+    expect(w.n).toBe(5);
   });
 });
 

@@ -1,4 +1,4 @@
-import type { ClusterId, Post } from '@/types';
+import type { ClusterId, Idea, Post } from '@/types';
 import { CLUSTERS } from './constants';
 import { median } from './stats';
 import type { Filters } from '@/store';
@@ -163,6 +163,29 @@ export function startOfWeek(d: Date): Date {
 export function ownPostsThisWeek(posts: Post[], now = new Date()): number {
   const ws = startOfWeek(now);
   return posts.filter((p) => p.is_own && new Date(p.collected_at || 0) >= ws).length;
+}
+
+/**
+ * М52: индикатор разнообразия — защита от «эхо-камеры» одинаковых постов
+ * (валидная критика внешнего аудита: оптимизация под один формат усыпляет аудиторию).
+ */
+export interface VarietyWarning {
+  formula: string;
+  sharePct: number;
+  n: number;
+}
+
+export function formulaVariety(ideas: Idea[], now = new Date()): VarietyWarning | null {
+  const cutoff = now.getTime() - 30 * 86400000;
+  const recent = ideas.filter(
+    (i) => i.status === 'published' && i.actual?.date && new Date(i.actual.date + 'T00:00:00').getTime() >= cutoff,
+  );
+  if (recent.length < 5) return null; // на малых числах доля — шум, молчим
+  const counts = new Map<string, number>();
+  for (const i of recent) counts.set(i.formula, (counts.get(i.formula) || 0) + 1);
+  const [formula, top] = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+  const share = top / recent.length;
+  return share >= 0.7 ? { formula, sharePct: Math.round(share * 100), n: recent.length } : null;
 }
 
 export interface CorpusFreshness {

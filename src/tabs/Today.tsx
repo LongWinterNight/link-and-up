@@ -4,7 +4,7 @@ import { CLUSTER_LABEL, STATUS_LABEL } from '@/lib/constants';
 import { generateDraft } from '@/lib/draft';
 import { CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, selectMultipliers } from '@/lib/forecast';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
-import { clusterStats, isPostingDay, ownPostsThisWeek } from '@/lib/derive';
+import { clusterStats, formulaVariety, isPostingDay, ownPostsThisWeek } from '@/lib/derive';
 import { download } from '@/lib/download';
 import { nf, percentileOf } from '@/lib/stats';
 import { Btn, EmptyState, Input, Panel, Pill, Select } from '@/components/ui';
@@ -81,6 +81,9 @@ export default function Today() {
 
   const ownThisWeek = ownPostsThisWeek(posts);
   const postingDay = isPostingDay();
+  // М52: предупреждение об однообразии формул за 30 дней
+  const variety = useMemo(() => formulaVariety(ideas), [ideas]);
+  const varietyTitle = variety ? (FORMULAS.find((f) => f.id === variety.formula)?.title || variety.formula) : '';
 
   if (posts.length === 0) {
     return <EmptyCorpus title={t('today.empty.title')} hint={t('today.empty.hint')} />;
@@ -96,6 +99,12 @@ export default function Today() {
           {postingDay ? t('today.postingDay') : t('today.nextDay')}
         </span>
       </section>
+
+      {variety && (
+        <div style={{ background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', borderRadius: 8, padding: '8px 12px', fontSize: 'var(--fs-xs)', color: 'var(--warning)' }}>
+          {t('today.variety.a')}{variety.sharePct}{t('today.variety.b')}{varietyTitle}{t('today.variety.c')}
+        </div>
+      )}
 
       {candidates.length === 0 ? (
         <Panel>

@@ -18,6 +18,8 @@ export interface UiSlice {
   toast: string;
   settingsOpen: boolean;
   presets: Preset[];
+  /** М24: текст открытого Confirm-диалога (null = закрыт). */
+  confirmMsg: string | null;
 
   setTheme: (t: Theme) => void;
   toggleTheme: () => void;
@@ -35,6 +37,9 @@ export interface UiSlice {
   savePreset: (name: string) => void;
   applyPreset: (name: string) => void;
   deletePreset: (name: string) => void;
+  /** М24: темизируемая замена нативного confirm() (i18n, фокус-трап). */
+  askConfirm: (msg: string) => Promise<boolean>;
+  resolveConfirm: (ok: boolean) => void;
 }
 
 /** Тема по умолчанию (только для первого запуска — persist перекрывает своим значением). */
@@ -46,6 +51,7 @@ function initialTheme(): Theme {
 }
 
 let toastTimer: ReturnType<typeof setTimeout> | undefined;
+let confirmResolver: ((ok: boolean) => void) | null = null;
 
 export const createUiSlice: StateCreator<State, [], [], UiSlice> = (set, get) => ({
   theme: initialTheme(),
@@ -60,6 +66,7 @@ export const createUiSlice: StateCreator<State, [], [], UiSlice> = (set, get) =>
   toast: '',
   settingsOpen: false,
   presets: [],
+  confirmMsg: null,
 
   setTheme: (theme) => set({ theme }),
   toggleTheme: () => set({ theme: get().theme === 'dark' ? 'light' : 'dark' }),
@@ -101,4 +108,17 @@ export const createUiSlice: StateCreator<State, [], [], UiSlice> = (set, get) =>
     get().flash('Применён пресет: ' + name);
   },
   deletePreset: (name) => set({ presets: get().presets.filter((p) => p.name !== name) }),
+
+  askConfirm: (msg) => {
+    confirmResolver?.(false); // предыдущий незакрытый диалог = отказ
+    set({ confirmMsg: msg });
+    return new Promise<boolean>((resolve) => {
+      confirmResolver = resolve;
+    });
+  },
+  resolveConfirm: (ok) => {
+    set({ confirmMsg: null });
+    confirmResolver?.(ok);
+    confirmResolver = null;
+  },
 });

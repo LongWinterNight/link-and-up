@@ -9,6 +9,7 @@ const Clusters = lazy(() => import('./tabs/Clusters'));
 const Ideas = lazy(() => import('./tabs/Ideas'));
 const Forecast = lazy(() => import('./tabs/Forecast'));
 import { ErrorBoundary } from './components/ErrorBoundary';
+import ConfirmHost from './components/ConfirmHost';
 import PostModal from './components/PostModal';
 import ImportModal from './components/ImportModal';
 import SettingsModal from './components/SettingsModal';
@@ -54,6 +55,7 @@ export default function App() {
   const setSettingsOpen = useStore((s) => s.setSettingsOpen);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
   const lastDeletedIdea = useStore((s) => s.lastDeletedIdea);
+  const askConfirm = useStore((s) => s.askConfirm);
   const restoreLastIdea = useStore((s) => s.restoreLastIdea);
   const t = useT();
   const [exportOpen, setExportOpen] = useState(false);
@@ -169,7 +171,7 @@ export default function App() {
           <button type="button" style={hdrBtn} onClick={() => window.print()}>{t('app.report')}</button>
           <button type="button" style={hdrBtn} onClick={() => setSettingsOpen(true)}>{t('app.settings')}</button>
           <button type="button" style={hdrBtn} onClick={() => setReadOnly(!readOnly)} aria-pressed={readOnly}>{readOnly ? t('app.readonly.off') : t('app.readonly.on')}</button>
-          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { if (confirm(t('app.reset.confirm'))) void reset(); }}>{t('app.reset')}</button>}
+          {!readOnly && <button type="button" style={hdrBtn} onClick={() => { void askConfirm(t('app.reset.confirm')).then((ok) => { if (ok) void reset(); }); }}>{t('app.reset')}</button>}
           <button type="button" style={hdrBtn} onClick={() => void setLocale(locale === 'ru' ? 'en' : 'ru')} aria-label={t('app.lang.aria')}>
             {locale === 'ru' ? 'EN' : 'RU'}
           </button>
@@ -234,6 +236,7 @@ export default function App() {
       <ImportModal />
       <SettingsModal />
       <OnboardingModal />
+      <ConfirmHost />
       <PrintReport />
 
       {toast && (
