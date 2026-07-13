@@ -68,6 +68,11 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
   applyBackup: (slice) => {
     set({ ...slice, selectedPostId: null, importPreview: null, lastDeletedIdea: null });
     void ensureLocale(slice.locale);
-    get().flash(tr(get().locale, 'st.backupRestored.a') + slice.posts.length + tr(get().locale, 'st.backupRestored.b') + slice.ideas.length);
+    get().flash(
+      tr(get().locale, 'st.backupRestored.a') +
+        slice.posts.length +
+        tr(get().locale, 'st.backupRestored.b') +
+        slice.ideas.length,
+    );
   },
 });

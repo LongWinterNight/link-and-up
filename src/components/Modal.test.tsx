@@ -7,7 +7,9 @@ afterEach(cleanup);
 describe('Modal (FE-1: единый примитив)', () => {
   it('рендерит содержимое и role=dialog c aria-label', () => {
     const { getByRole, getByText } = render(
-      <Modal onClose={() => {}} label="Тест"><button>Внутри</button></Modal>,
+      <Modal onClose={() => {}} label="Тест">
+        <button>Внутри</button>
+      </Modal>,
     );
     const dlg = getByRole('dialog');
     expect(dlg.getAttribute('aria-label')).toBe('Тест');
@@ -16,14 +18,22 @@ describe('Modal (FE-1: единый примитив)', () => {
 
   it('Escape вызывает onClose', () => {
     const onClose = vi.fn();
-    render(<Modal onClose={onClose} label="Тест"><button>x</button></Modal>);
+    render(
+      <Modal onClose={onClose} label="Тест">
+        <button>x</button>
+      </Modal>,
+    );
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   it('клик по оверлею вызывает onClose, клик по диалогу — нет', () => {
     const onClose = vi.fn();
-    const { getByRole } = render(<Modal onClose={onClose} label="Тест"><button>x</button></Modal>);
+    const { getByRole } = render(
+      <Modal onClose={onClose} label="Тест">
+        <button>x</button>
+      </Modal>,
+    );
     const dlg = getByRole('dialog');
     fireEvent.click(dlg); // внутренний контейнер — не закрывает
     expect(onClose).not.toHaveBeenCalled();
@@ -33,7 +43,11 @@ describe('Modal (FE-1: единый примитив)', () => {
 
   it('closeOnOverlay=false — клик по оверлею не закрывает', () => {
     const onClose = vi.fn();
-    const { getByRole } = render(<Modal onClose={onClose} label="Тест" closeOnOverlay={false}><button>x</button></Modal>);
+    const { getByRole } = render(
+      <Modal onClose={onClose} label="Тест" closeOnOverlay={false}>
+        <button>x</button>
+      </Modal>,
+    );
     fireEvent.click(getByRole('dialog').parentElement as HTMLElement);
     expect(onClose).not.toHaveBeenCalled();
   });
@@ -43,7 +57,11 @@ describe('Modal (FE-1: единый примитив)', () => {
     document.body.appendChild(trigger);
     trigger.focus();
     expect(document.activeElement).toBe(trigger);
-    const { unmount } = render(<Modal onClose={() => {}} label="Тест"><button>x</button></Modal>);
+    const { unmount } = render(
+      <Modal onClose={() => {}} label="Тест">
+        <button>x</button>
+      </Modal>,
+    );
     unmount();
     expect(document.activeElement).toBe(trigger);
     trigger.remove();

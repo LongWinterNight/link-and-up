@@ -6,13 +6,35 @@ import type { CtaType, Emotion, FormatFlag, HookType, Structure } from '@/types'
 import { Btn, Pill } from './ui';
 import { useClusterLabel, useLbl, useT } from '@/i18n/useT';
 
-const HOOKS: HookType[] = ['вопрос', 'цифра-статистика', 'провокация/контртезис', 'личная история', 'обещание пользы', 'пугающий факт'];
-const STRUCTS: Structure[] = ['нумерованный список', 'сюжетная арка', 'кейс с цифрами', 'конспект', 'карусель', 'пошаговый гайд', 'манифест'];
+const HOOKS: HookType[] = [
+  'вопрос',
+  'цифра-статистика',
+  'провокация/контртезис',
+  'личная история',
+  'обещание пользы',
+  'пугающий факт',
+];
+const STRUCTS: Structure[] = [
+  'нумерованный список',
+  'сюжетная арка',
+  'кейс с цифрами',
+  'конспект',
+  'карусель',
+  'пошаговый гайд',
+  'манифест',
+];
 const CTAS: CtaType[] = ['вопрос в конце', 'лид-магнит-в-комменты', 'сохрани', 'без CTA'];
 const EMOS: Emotion[] = ['уязвимость', 'юмор', 'амбиция', 'тревога', 'вдохновение', 'нейтрально'];
 const FLAGS: FormatFlag[] = ['has_numbers', 'personal_story', 'contrarian', 'list_format', 'save_bait'];
 
-const tagSel: React.CSSProperties = { background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-ctl)', padding: '6px 8px', color: 'var(--text-1)', fontSize: 12.5 };
+const tagSel: React.CSSProperties = {
+  background: 'var(--surface-2)',
+  border: '1px solid var(--border)',
+  borderRadius: 'var(--radius-ctl)',
+  padding: '6px 8px',
+  color: 'var(--text-1)',
+  fontSize: 12.5,
+};
 
 export default function PostModal() {
   const t = useT();
@@ -35,7 +57,9 @@ export default function PostModal() {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
       if (e.key === 'Tab' && dialogRef.current) {
-        const f = [...dialogRef.current.querySelectorAll<HTMLElement>('button,a[href],[tabindex]:not([tabindex="-1"])')].filter((el) => el.offsetParent !== null);
+        const f = [
+          ...dialogRef.current.querySelectorAll<HTMLElement>('button,a[href],[tabindex]:not([tabindex="-1"])'),
+        ].filter((el) => el.offsetParent !== null);
         if (!f.length) return;
         const first = f[0];
         const last = f[f.length - 1];
@@ -64,7 +88,16 @@ export default function PostModal() {
   return (
     <div
       onClick={close}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, zIndex: 50 }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,.45)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        zIndex: 50,
+      }}
     >
       <div
         ref={dialogRef}
@@ -83,12 +116,37 @@ export default function PostModal() {
           padding: 20,
         }}
       >
-        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start', marginBottom: 12 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            gap: 12,
+            alignItems: 'flex-start',
+            marginBottom: 12,
+          }}
+        >
           <div>
             <h2 style={{ fontSize: 16, fontWeight: 700 }}>{post.author}</h2>
-            {post.headline && <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginTop: 2 }}>{post.headline}</div>}
+            {post.headline && (
+              <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginTop: 2 }}>{post.headline}</div>
+            )}
           </div>
-          <button type="button" onClick={close} aria-label={t('an.modal.close')} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18, flexShrink: 0 }}>
+          <button
+            type="button"
+            onClick={close}
+            aria-label={t('an.modal.close')}
+            style={{
+              background: 'var(--surface-2)',
+              border: '1px solid var(--border)',
+              borderRadius: 8,
+              width: 32,
+              height: 32,
+              cursor: 'pointer',
+              color: 'var(--text-1)',
+              fontSize: 18,
+              flexShrink: 0,
+            }}
+          >
             ×
           </button>
         </div>
@@ -97,17 +155,42 @@ export default function PostModal() {
           <Pill kind="cluster">{cl(post.meta_cluster)}</Pill>
           <Pill kind="lang">{post.lang}</Pill>
           {post.has_metrics ? (
-            <Pill kind="metric">♥ {nf(post.reactions)} · 💬 {nf(post.comments)}{post.rate != null ? ` · ER ${(post.rate * 100).toFixed(2)}%` : ''}</Pill>
+            <Pill kind="metric">
+              ♥ {nf(post.reactions)} · 💬 {nf(post.comments)}
+              {post.rate != null ? ` · ER ${(post.rate * 100).toFixed(2)}%` : ''}
+            </Pill>
           ) : (
             <Pill kind="nometric">{t('pm.nometric')}</Pill>
           )}
         </div>
 
-        <p style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap', color: 'var(--text-1)', margin: '0 0 16px' }}>{body}</p>
+        <p
+          style={{ fontSize: 14, lineHeight: 1.6, whiteSpace: 'pre-wrap', color: 'var(--text-1)', margin: '0 0 16px' }}
+        >
+          {body}
+        </p>
 
         {fmt && (
-          <div style={{ background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--warning)', letterSpacing: '0.04em', marginBottom: 6 }}>{t('pm.format')}</div>
+          <div
+            style={{
+              background: 'var(--warning-soft)',
+              border: '1px solid var(--border-warning)',
+              borderRadius: 10,
+              padding: '12px 14px',
+              marginBottom: 14,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 11,
+                fontWeight: 700,
+                color: 'var(--warning)',
+                letterSpacing: '0.04em',
+                marginBottom: 6,
+              }}
+            >
+              {t('pm.format')}
+            </div>
             <div style={{ fontSize: 13.5, color: 'var(--text-1)', whiteSpace: 'pre-wrap' }}>{fmt}</div>
           </div>
         )}
@@ -121,34 +204,91 @@ export default function PostModal() {
             <Pill key={f}>{f}</Pill>
           ))}
           {!readOnly && (
-            <button type="button" onClick={() => setEditTags((v) => !v)} style={{ fontSize: 11, background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', marginLeft: 'auto' }}>
+            <button
+              type="button"
+              onClick={() => setEditTags((v) => !v)}
+              style={{
+                fontSize: 11,
+                background: 'none',
+                border: 'none',
+                color: 'var(--text-accent)',
+                cursor: 'pointer',
+                marginLeft: 'auto',
+              }}
+            >
               {editTags ? t('pm.tags.hide') : t('pm.tags.edit')}
             </button>
           )}
         </div>
 
         {editTags && !readOnly && (
-          <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12, marginBottom: 14 }}>
-            {post.tags_edited && <div style={{ fontSize: 11, color: 'var(--warning)', marginBottom: 8 }}>{t('pm.tags.edited')}</div>}
+          <div
+            style={{
+              background: 'var(--surface-2)',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              padding: 12,
+              marginBottom: 14,
+            }}
+          >
+            {post.tags_edited && (
+              <div style={{ fontSize: 11, color: 'var(--warning)', marginBottom: 8 }}>{t('pm.tags.edited')}</div>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px,1fr))', gap: 8 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('ex.f.hook')}
-                <select value={post.tags.hook_type} onChange={(e) => updatePostTag(post.id, 'hook_type', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {HOOKS.map((h) => <option key={h} value={h}>{lbl(h)}</option>)}
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                {t('ex.f.hook')}
+                <select
+                  value={post.tags.hook_type}
+                  onChange={(e) => updatePostTag(post.id, 'hook_type', e.target.value)}
+                  style={{ ...tagSel, width: '100%', marginTop: 4 }}
+                >
+                  {HOOKS.map((h) => (
+                    <option key={h} value={h}>
+                      {lbl(h)}
+                    </option>
+                  ))}
                 </select>
               </label>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('ex.f.structure')}
-                <select value={post.tags.structure} onChange={(e) => updatePostTag(post.id, 'structure', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {STRUCTS.map((s) => <option key={s} value={s}>{lbl(s)}</option>)}
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                {t('ex.f.structure')}
+                <select
+                  value={post.tags.structure}
+                  onChange={(e) => updatePostTag(post.id, 'structure', e.target.value)}
+                  style={{ ...tagSel, width: '100%', marginTop: 4 }}
+                >
+                  {STRUCTS.map((s) => (
+                    <option key={s} value={s}>
+                      {lbl(s)}
+                    </option>
+                  ))}
                 </select>
               </label>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>CTA
-                <select value={post.tags.cta_type} onChange={(e) => updatePostTag(post.id, 'cta_type', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {CTAS.map((c) => <option key={c} value={c}>{lbl(c)}</option>)}
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                CTA
+                <select
+                  value={post.tags.cta_type}
+                  onChange={(e) => updatePostTag(post.id, 'cta_type', e.target.value)}
+                  style={{ ...tagSel, width: '100%', marginTop: 4 }}
+                >
+                  {CTAS.map((c) => (
+                    <option key={c} value={c}>
+                      {lbl(c)}
+                    </option>
+                  ))}
                 </select>
               </label>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('pm.tags.emotion')}
-                <select value={post.tags.emotion} onChange={(e) => updatePostTag(post.id, 'emotion', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {EMOS.map((e2) => <option key={e2} value={e2}>{lbl(e2)}</option>)}
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>
+                {t('pm.tags.emotion')}
+                <select
+                  value={post.tags.emotion}
+                  onChange={(e) => updatePostTag(post.id, 'emotion', e.target.value)}
+                  style={{ ...tagSel, width: '100%', marginTop: 4 }}
+                >
+                  {EMOS.map((e2) => (
+                    <option key={e2} value={e2}>
+                      {lbl(e2)}
+                    </option>
+                  ))}
                 </select>
               </label>
             </div>
@@ -156,8 +296,22 @@ export default function PostModal() {
               {FLAGS.map((f) => {
                 const on = post.tags.flags.includes(f);
                 return (
-                  <button key={f} type="button" onClick={() => updatePostTag(post.id, 'flags', f)} style={{ fontSize: 11, padding: '3px 9px', borderRadius: 'var(--radius-pill)', cursor: 'pointer', background: on ? 'var(--accent-soft)' : 'var(--surface-1)', border: `1px solid ${on ? 'var(--accent)' : 'var(--border)'}`, color: on ? 'var(--text-accent)' : 'var(--text-3)' }}>
-                    {on ? '✓ ' : ''}{f}
+                  <button
+                    key={f}
+                    type="button"
+                    onClick={() => updatePostTag(post.id, 'flags', f)}
+                    style={{
+                      fontSize: 11,
+                      padding: '3px 9px',
+                      borderRadius: 'var(--radius-pill)',
+                      cursor: 'pointer',
+                      background: on ? 'var(--accent-soft)' : 'var(--surface-1)',
+                      border: `1px solid ${on ? 'var(--accent)' : 'var(--border)'}`,
+                      color: on ? 'var(--text-accent)' : 'var(--text-3)',
+                    }}
+                  >
+                    {on ? '✓ ' : ''}
+                    {f}
                   </button>
                 );
               })}
@@ -169,11 +323,28 @@ export default function PostModal() {
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-3)', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <span>{t('pm.angle')}{post.query.replace(/^tavily:/, '')}</span>
-          {post.followers != null && <span>{t('pm.followers')}{nf(post.followers)}</span>}
-          {post.collected_at && <span>{t('pm.collected')}{post.collected_at}</span>}
+          <span>
+            {t('pm.angle')}
+            {post.query.replace(/^tavily:/, '')}
+          </span>
+          {post.followers != null && (
+            <span>
+              {t('pm.followers')}
+              {nf(post.followers)}
+            </span>
+          )}
+          {post.collected_at && (
+            <span>
+              {t('pm.collected')}
+              {post.collected_at}
+            </span>
+          )}
           {post.url && (
-            <a href={/^https?:\/\//.test(post.url) ? post.url : `https://${post.url}`} target="_blank" rel="noopener noreferrer">
+            <a
+              href={/^https?:\/\//.test(post.url) ? post.url : `https://${post.url}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               {t('pm.openSource')}
             </a>
           )}
@@ -183,11 +354,7 @@ export default function PostModal() {
             {t('pm.findSearch')}
           </a>
         </div>
-        {isDemo && (
-          <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>
-            {t('pm.demoNote')}
-          </div>
-        )}
+        {isDemo && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>{t('pm.demoNote')}</div>}
       </div>
     </div>
   );

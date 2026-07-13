@@ -11,7 +11,11 @@ const TABS = ['Сегодня', 'Обзор', 'Аналитика', 'Посты'
 
 const browser = await chromium.launch();
 for (const scheme of ['light', 'dark']) {
-  const ctx = await browser.newContext({ locale: 'ru-RU', viewport: { width: 1348, height: 900 }, colorScheme: scheme });
+  const ctx = await browser.newContext({
+    locale: 'ru-RU',
+    viewport: { width: 1348, height: 900 },
+    colorScheme: scheme,
+  });
   const page = await ctx.newPage();
   await page.goto(URL, { waitUntil: 'networkidle' });
   const demoBtn = page.getByText('Изучить демо-корпус');

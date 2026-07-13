@@ -96,7 +96,9 @@ describe('store: пресеты фильтров', () => {
 
 describe('store: импорт', () => {
   it('previewImport + commitImport добавляют пост и снимают флаг демо', () => {
-    const json = JSON.stringify([{ author: 'Игорь Ветров', text: 'Спека до кода экономит часы отладки', reactions: 10, comments: 5 }]);
+    const json = JSON.stringify([
+      { author: 'Игорь Ветров', text: 'Спека до кода экономит часы отладки', reactions: 10, comments: 5 },
+    ]);
     S().previewImport(json);
     expect(S().importPreview?.added).toBe(1);
     S().commitImport();
@@ -127,7 +129,9 @@ describe('store: петля фактов (saveReal)', () => {
 
   it('saveReal не падает на пустом корпусе (forecast=null)', () => {
     useStore.setState({ ideas: [seedIdea()], posts: [] });
-    expect(() => S().saveReal('idea-test', { reactions: 5, comments: 3, leads: 0, interviews: 0, date: '' })).not.toThrow();
+    expect(() =>
+      S().saveReal('idea-test', { reactions: 5, comments: 3, leads: 0, interviews: 0, date: '' }),
+    ).not.toThrow();
     expect(S().ideas[0].status).toBe('published');
   });
 });

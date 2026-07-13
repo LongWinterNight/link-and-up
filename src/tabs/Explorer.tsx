@@ -9,8 +9,23 @@ import { EmptyState, Pill } from '@/components/ui';
 import EmptyCorpus from '@/components/EmptyCorpus';
 import { useClusterLabel, useLbl, useT } from '@/i18n/useT';
 
-const HOOKS: HookType[] = ['вопрос', 'цифра-статистика', 'провокация/контртезис', 'личная история', 'обещание пользы', 'пугающий факт'];
-const STRUCTS: Structure[] = ['нумерованный список', 'сюжетная арка', 'кейс с цифрами', 'конспект', 'карусель', 'пошаговый гайд', 'манифест'];
+const HOOKS: HookType[] = [
+  'вопрос',
+  'цифра-статистика',
+  'провокация/контртезис',
+  'личная история',
+  'обещание пользы',
+  'пугающий факт',
+];
+const STRUCTS: Structure[] = [
+  'нумерованный список',
+  'сюжетная арка',
+  'кейс с цифрами',
+  'конспект',
+  'карусель',
+  'пошаговый гайд',
+  'манифест',
+];
 
 const selStyle: React.CSSProperties = {
   background: 'var(--surface-2)',
@@ -21,7 +36,17 @@ const selStyle: React.CSSProperties = {
   fontSize: 13,
 };
 
-function Sel({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: [string, string][] }) {
+function Sel({
+  label,
+  value,
+  onChange,
+  options,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  options: [string, string][];
+}) {
   return (
     <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
       {label}
@@ -68,7 +93,16 @@ function PostCard({ post, onOpen }: { post: Post; onOpen: () => void }) {
           <Pill kind="nometric">{t('ex.noMetrics')}</Pill>
         )}
       </div>
-      <div style={{ fontSize: 13, color: 'var(--text-2)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+      <div
+        style={{
+          fontSize: 13,
+          color: 'var(--text-2)',
+          display: '-webkit-box',
+          WebkitLineClamp: 2,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+        }}
+      >
         {post.text.replace(/\s*Формат\s*:.*/is, '').trim()}
       </div>
       <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
@@ -103,14 +137,42 @@ function TableView({ list, openPost }: { list: Post[]; openPost: (id: string) =>
     ['hook', t('ex.col.hook')],
     ['structure', t('ex.col.structure')],
   ];
-  const cell: React.CSSProperties = { padding: '0 8px', fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' };
+  const cell: React.CSSProperties = {
+    padding: '0 8px',
+    fontSize: 12.5,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    display: 'flex',
+    alignItems: 'center',
+  };
   return (
-    <div role="table" aria-label={t('ex.table.aria')} aria-rowcount={list.length + 1} style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}>
+    <div
+      role="table"
+      aria-label={t('ex.table.aria')}
+      aria-rowcount={list.length + 1}
+      style={{ border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', overflow: 'hidden' }}
+    >
       <div style={{ overflowX: 'auto' }}>
         <div style={{ minWidth: 860 }}>
-          <div role="row" aria-rowindex={1} style={{ display: 'grid', gridTemplateColumns: GRID, background: 'var(--surface-2)', borderBottom: '1px solid var(--border)', height: 38, fontSize: 11, fontWeight: 600, color: 'var(--text-3)' }}>
+          <div
+            role="row"
+            aria-rowindex={1}
+            style={{
+              display: 'grid',
+              gridTemplateColumns: GRID,
+              background: 'var(--surface-2)',
+              borderBottom: '1px solid var(--border)',
+              height: 38,
+              fontSize: 11,
+              fontWeight: 600,
+              color: 'var(--text-3)',
+            }}
+          >
             {cols.map(([k, l]) => (
-              <div key={k} role="columnheader" style={{ ...cell, fontSize: 11 }}>{l}</div>
+              <div key={k} role="columnheader" style={{ ...cell, fontSize: 11 }}>
+                {l}
+              </div>
             ))}
           </div>
           <div ref={parentRef} style={{ height: 'calc(100vh - 380px)', minHeight: 320, overflowY: 'auto' }}>
@@ -124,15 +186,40 @@ function TableView({ list, openPost }: { list: Post[]; openPost: (id: string) =>
                     aria-rowindex={vi.index + 2}
                     tabIndex={0}
                     onClick={() => openPost(p.id)}
-                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openPost(p.id); } }}
-                    style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: 44, transform: `translateY(${vi.start}px)`, display: 'grid', gridTemplateColumns: GRID, borderBottom: '1px solid var(--border)', cursor: 'pointer', background: vi.index % 2 ? 'var(--surface-0)' : 'transparent' }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        openPost(p.id);
+                      }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: 44,
+                      transform: `translateY(${vi.start}px)`,
+                      display: 'grid',
+                      gridTemplateColumns: GRID,
+                      borderBottom: '1px solid var(--border)',
+                      cursor: 'pointer',
+                      background: vi.index % 2 ? 'var(--surface-0)' : 'transparent',
+                    }}
                   >
-                    <div style={cell}><strong style={{ fontWeight: 500 }}>{p.author}</strong></div>
+                    <div style={cell}>
+                      <strong style={{ fontWeight: 500 }}>{p.author}</strong>
+                    </div>
                     <div style={cell}>{cl(p.meta_cluster)}</div>
                     <div style={cell}>{p.lang}</div>
-                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">{p.has_metrics ? nf(p.reactions) : '—'}</div>
-                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">{p.has_metrics ? nf(p.comments) : '—'}</div>
-                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">{p.rate != null ? (p.rate * 100).toFixed(2) + '%' : '—'}</div>
+                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
+                      {p.has_metrics ? nf(p.reactions) : '—'}
+                    </div>
+                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
+                      {p.has_metrics ? nf(p.comments) : '—'}
+                    </div>
+                    <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
+                      {p.rate != null ? (p.rate * 100).toFixed(2) + '%' : '—'}
+                    </div>
                     <div style={{ ...cell, color: 'var(--text-3)' }}>{lbl(p.tags.hook_type)}</div>
                     <div style={{ ...cell, color: 'var(--text-3)' }}>{lbl(p.tags.structure)}</div>
                   </div>
@@ -153,7 +240,10 @@ function Presets() {
   const applyPreset = useStore((s) => s.applyPreset);
   const deletePreset = useStore((s) => s.deletePreset);
   const [name, setName] = useState('');
-  const save = () => { savePreset(name); setName(''); };
+  const save = () => {
+    savePreset(name);
+    setName('');
+  };
   return (
     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
       <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
@@ -162,17 +252,54 @@ function Presets() {
           name="preset-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') save(); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') save();
+          }}
           placeholder={t('ex.preset.placeholder')}
           aria-label={t('ex.preset.aria')}
           style={{ ...selStyle, padding: '6px 10px', width: 180 }}
         />
-        <button type="button" onClick={save} style={{ ...selStyle, cursor: 'pointer', padding: '6px 12px' }}>{t('ex.preset.save')}</button>
+        <button type="button" onClick={save} style={{ ...selStyle, cursor: 'pointer', padding: '6px 12px' }}>
+          {t('ex.preset.save')}
+        </button>
       </div>
       {presets.map((p) => (
-        <span key={p.name} style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-pill)', padding: '2px 4px 2px 10px', fontSize: 12 }}>
-          <button type="button" onClick={() => applyPreset(p.name)} style={{ background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', fontSize: 12 }}>{p.name}</button>
-          <button type="button" onClick={() => deletePreset(p.name)} aria-label={t('ex.preset.delete') + p.name} style={{ background: 'none', border: 'none', color: 'var(--text-3)', cursor: 'pointer', width: 18, height: 18, lineHeight: '16px' }}>×</button>
+        <span
+          key={p.name}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+            background: 'var(--surface-2)',
+            border: '1px solid var(--border)',
+            borderRadius: 'var(--radius-pill)',
+            padding: '2px 4px 2px 10px',
+            fontSize: 12,
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => applyPreset(p.name)}
+            style={{ background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', fontSize: 12 }}
+          >
+            {p.name}
+          </button>
+          <button
+            type="button"
+            onClick={() => deletePreset(p.name)}
+            aria-label={t('ex.preset.delete') + p.name}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-3)',
+              cursor: 'pointer',
+              width: 18,
+              height: 18,
+              lineHeight: '16px',
+            }}
+          >
+            ×
+          </button>
         </span>
       ))}
     </div>
@@ -219,7 +346,13 @@ export default function Explorer() {
       type="button"
       onClick={() => setViewMode(mode)}
       aria-pressed={viewMode === mode}
-      style={{ ...selStyle, cursor: 'pointer', padding: '6px 12px', background: viewMode === mode ? 'var(--surface-3)' : 'var(--surface-2)', fontWeight: viewMode === mode ? 600 : 400 }}
+      style={{
+        ...selStyle,
+        cursor: 'pointer',
+        padding: '6px 12px',
+        background: viewMode === mode ? 'var(--surface-3)' : 'var(--surface-2)',
+        fontWeight: viewMode === mode ? 600 : 400,
+      }}
     >
       {label}
     </button>
@@ -243,16 +376,54 @@ export default function Explorer() {
       />
 
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'flex-end' }}>
-        <Sel label={t('ex.f.cluster')} value={filters.cluster} onChange={(v) => setFilters({ cluster: v })} options={[['all', t('ex.f.cluster.all')], ...CLUSTERS.map(([id]) => [id, cl(id)] as [string, string])]} />
-        <Sel label={t('ex.f.lang')} value={filters.lang} onChange={(v) => setFilters({ lang: v })} options={[['all', t('ex.f.lang.all')], ['RU', 'RU'], ['EN', 'EN']]} />
-        <Sel label={t('ex.f.metrics')} value={filters.metrics} onChange={(v) => setFilters({ metrics: v })} options={[['all', t('ex.f.metrics.all')], ['yes', t('ex.f.metrics.yes')], ['no', t('ex.f.metrics.no')]]} />
-        <Sel label={t('ex.f.hook')} value={filters.hook} onChange={(v) => setFilters({ hook: v })} options={[['all', t('ex.f.hook.all')], ...HOOKS.map((h) => [h, lbl(h)] as [string, string])]} />
-        <Sel label={t('ex.f.structure')} value={filters.structure} onChange={(v) => setFilters({ structure: v })} options={[['all', t('ex.f.structure.all')], ...STRUCTS.map((s) => [s, lbl(s)] as [string, string])]} />
+        <Sel
+          label={t('ex.f.cluster')}
+          value={filters.cluster}
+          onChange={(v) => setFilters({ cluster: v })}
+          options={[['all', t('ex.f.cluster.all')], ...CLUSTERS.map(([id]) => [id, cl(id)] as [string, string])]}
+        />
+        <Sel
+          label={t('ex.f.lang')}
+          value={filters.lang}
+          onChange={(v) => setFilters({ lang: v })}
+          options={[
+            ['all', t('ex.f.lang.all')],
+            ['RU', 'RU'],
+            ['EN', 'EN'],
+          ]}
+        />
+        <Sel
+          label={t('ex.f.metrics')}
+          value={filters.metrics}
+          onChange={(v) => setFilters({ metrics: v })}
+          options={[
+            ['all', t('ex.f.metrics.all')],
+            ['yes', t('ex.f.metrics.yes')],
+            ['no', t('ex.f.metrics.no')],
+          ]}
+        />
+        <Sel
+          label={t('ex.f.hook')}
+          value={filters.hook}
+          onChange={(v) => setFilters({ hook: v })}
+          options={[['all', t('ex.f.hook.all')], ...HOOKS.map((h) => [h, lbl(h)] as [string, string])]}
+        />
+        <Sel
+          label={t('ex.f.structure')}
+          value={filters.structure}
+          onChange={(v) => setFilters({ structure: v })}
+          options={[['all', t('ex.f.structure.all')], ...STRUCTS.map((s) => [s, lbl(s)] as [string, string])]}
+        />
         <Sel
           label={t('ex.f.sort')}
           value={filters.sort}
           onChange={(v) => setFilters({ sort: v })}
-          options={[['comments', t('ex.sort.comments')], ['reactions', t('ex.sort.reactions')], ['rate', t('ex.sort.rate')], ['date', t('ex.sort.date')]]}
+          options={[
+            ['comments', t('ex.sort.comments')],
+            ['reactions', t('ex.sort.reactions')],
+            ['rate', t('ex.sort.rate')],
+            ['date', t('ex.sort.date')],
+          ]}
         />
         <button type="button" onClick={resetFilters} style={{ ...selStyle, cursor: 'pointer', alignSelf: 'flex-end' }}>
           {t('ex.reset')}
@@ -261,9 +432,15 @@ export default function Explorer() {
 
       <Presets />
 
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+      <div
+        style={{ display: 'flex', gap: 10, alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}
+      >
         <div style={{ fontSize: 12, color: 'var(--text-3)' }}>
-          {t('ex.shown.a')}<span className="num">{nf(list.length)}</span>{t('ex.shown.b')}<span className="num">{nf(posts.length)}</span>{t('ex.shown.c')}
+          {t('ex.shown.a')}
+          <span className="num">{nf(list.length)}</span>
+          {t('ex.shown.b')}
+          <span className="num">{nf(posts.length)}</span>
+          {t('ex.shown.c')}
         </div>
         <div role="group" aria-label={t('ex.view.aria')} style={{ display: 'flex', gap: 6 }}>
           {toggleBtn('cards', t('ex.view.cards'))}
@@ -285,7 +462,13 @@ export default function Explorer() {
                   key={post.id}
                   ref={virt.measureElement}
                   data-index={vi.index}
-                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', transform: `translateY(${vi.start}px)` }}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${vi.start}px)`,
+                  }}
                 >
                   <PostCard post={post} onOpen={() => openPost(post.id)} />
                 </div>

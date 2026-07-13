@@ -50,9 +50,18 @@ export default function Today() {
     const cluster = (clusterStats(posts)[0]?.id || 'spec') as ClusterId;
     const id = 'idea-' + Date.now();
     saveIdea({
-      id, title: qTitle.trim(), hook: qHook.trim(), cluster,
-      formula: FORMULAS[0].id, source: '', channel: 'LinkedIn',
-      status: 'draft', date: '', refPostId: '', predicted: 0, actual: null,
+      id,
+      title: qTitle.trim(),
+      hook: qHook.trim(),
+      cluster,
+      formula: FORMULAS[0].id,
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
     });
     setQTitle('');
     setQHook('');
@@ -61,10 +70,26 @@ export default function Today() {
   };
   const quickForm = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 8, maxWidth: 440 }}>
-      <Input label={t('today.quick.title')} id="quick-title" name="quick-title" autoComplete="off" value={qTitle} onChange={(e) => setQTitle(e.target.value)} />
-      <Input label={t('today.quick.hook')} id="quick-hook" name="quick-hook" autoComplete="off" value={qHook} onChange={(e) => setQHook(e.target.value)} />
+      <Input
+        label={t('today.quick.title')}
+        id="quick-title"
+        name="quick-title"
+        autoComplete="off"
+        value={qTitle}
+        onChange={(e) => setQTitle(e.target.value)}
+      />
+      <Input
+        label={t('today.quick.hook')}
+        id="quick-hook"
+        name="quick-hook"
+        autoComplete="off"
+        value={qHook}
+        onChange={(e) => setQHook(e.target.value)}
+      />
       <div>
-        <Btn variant="accent" onClick={createQuick}>{t('today.quick.create')}</Btn>
+        <Btn variant="accent" onClick={createQuick}>
+          {t('today.quick.create')}
+        </Btn>
       </div>
     </div>
   );
@@ -76,14 +101,17 @@ export default function Today() {
   const sel = useMemo(() => selectMultipliers(posts), [posts]);
   const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);
   // М8: перцентиль честен только на достаточной выборке (резолюция раунда 3: ≥30 метрик)
-  const metricComments = useMemo(() => posts.filter((p) => p.has_metrics && p.comments > 0).map((p) => p.comments), [posts]);
+  const metricComments = useMemo(
+    () => posts.filter((p) => p.has_metrics && p.comments > 0).map((p) => p.comments),
+    [posts],
+  );
   const pctl = fc && !fc.lowData && metricComments.length >= 30 ? percentileOf(metricComments, fc.expected) : null;
 
   const ownThisWeek = ownPostsThisWeek(posts);
   const postingDay = isPostingDay();
   // М52: предупреждение об однообразии формул за 30 дней
   const variety = useMemo(() => formulaVariety(ideas), [ideas]);
-  const varietyTitle = variety ? (FORMULAS.find((f) => f.id === variety.formula)?.title || variety.formula) : '';
+  const varietyTitle = variety ? FORMULAS.find((f) => f.id === variety.formula)?.title || variety.formula : '';
 
   if (posts.length === 0) {
     return <EmptyCorpus title={t('today.empty.title')} hint={t('today.empty.hint')} />;
@@ -95,24 +123,54 @@ export default function Today() {
       <section style={{ display: 'flex', gap: 14, alignItems: 'baseline', flexWrap: 'wrap' }}>
         <h2 style={{ fontSize: 'var(--fs-2xl)', fontWeight: 800 }}>{t('today.h1')}</h2>
         <span style={{ fontSize: 'var(--fs-md)', color: 'var(--text-3)' }}>
-          {t('today.week')}<span className="num" style={{ color: 'var(--text-1)' }}>{ownThisWeek}</span>/{cadenceGoal}
+          {t('today.week')}
+          <span className="num" style={{ color: 'var(--text-1)' }}>
+            {ownThisWeek}
+          </span>
+          /{cadenceGoal}
           {postingDay ? t('today.postingDay') : t('today.nextDay')}
         </span>
       </section>
 
       {variety && (
-        <div style={{ background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', borderRadius: 8, padding: '8px 12px', fontSize: 'var(--fs-xs)', color: 'var(--warning)' }}>
-          {t('today.variety.a')}{variety.sharePct}{t('today.variety.b')}{varietyTitle}{t('today.variety.c')}
+        <div
+          style={{
+            background: 'var(--warning-soft)',
+            border: '1px solid var(--border-warning)',
+            borderRadius: 8,
+            padding: '8px 12px',
+            fontSize: 'var(--fs-xs)',
+            color: 'var(--warning)',
+          }}
+        >
+          {t('today.variety.a')}
+          {variety.sharePct}
+          {t('today.variety.b')}
+          {varietyTitle}
+          {t('today.variety.c')}
         </div>
       )}
 
       {candidates.length === 0 ? (
         <Panel>
           <EmptyState>{t('today.noIdeas')}</EmptyState>
-          {!readOnly ? quickForm : <Btn variant="accent" onClick={() => setTab('ideas')}>{t('today.createIdea')}</Btn>}
+          {!readOnly ? (
+            quickForm
+          ) : (
+            <Btn variant="accent" onClick={() => setTab('ideas')}>
+              {t('today.createIdea')}
+            </Btn>
+          )}
         </Panel>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16, alignItems: 'start' }}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: 16,
+            alignItems: 'start',
+          }}
+        >
           {/* левая колонка: идея + гардрейлы + действия */}
           <Panel title={t('today.panel.idea')}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -130,7 +188,19 @@ export default function Today() {
                 ))}
               </Select>
               {!readOnly && (
-                <button type="button" onClick={() => setQuickOpen((v) => !v)} style={{ background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', fontSize: 'var(--fs-xs)', textAlign: 'left', padding: 0 }}>
+                <button
+                  type="button"
+                  onClick={() => setQuickOpen((v) => !v)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--text-accent)',
+                    cursor: 'pointer',
+                    fontSize: 'var(--fs-xs)',
+                    textAlign: 'left',
+                    padding: 0,
+                  }}
+                >
                   {t('today.quick.button')}
                 </button>
               )}
@@ -141,22 +211,49 @@ export default function Today() {
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                     <Pill kind="cluster">{CLUSTER_LABEL[idea.cluster] || idea.cluster}</Pill>
                     <Pill>{idea.channel}</Pill>
-                    {idea.date && <Pill>{t('today.plan')}{idea.date}</Pill>}
+                    {idea.date && (
+                      <Pill>
+                        {t('today.plan')}
+                        {idea.date}
+                      </Pill>
+                    )}
                   </div>
-                  {idea.hook && <div style={{ fontSize: 'var(--fs-md)', color: 'var(--text-2)', lineHeight: 1.55 }}>{idea.hook}</div>}
+                  {idea.hook && (
+                    <div style={{ fontSize: 'var(--fs-md)', color: 'var(--text-2)', lineHeight: 1.55 }}>
+                      {idea.hook}
+                    </div>
+                  )}
 
                   {/* гардрейлы */}
                   {flags.length > 0 && (
-                    <div style={{ background: hard ? 'var(--critical-soft)' : 'var(--warning-soft)', border: `1px solid ${hard ? 'var(--critical)' : 'var(--border-warning)'}`, borderRadius: 8, padding: '8px 10px' }}>
-                      <div style={{ fontSize: 'var(--fs-2xs)', fontWeight: 700, color: hard ? 'var(--critical)' : 'var(--warning)', marginBottom: 4 }}>
+                    <div
+                      style={{
+                        background: hard ? 'var(--critical-soft)' : 'var(--warning-soft)',
+                        border: `1px solid ${hard ? 'var(--critical)' : 'var(--border-warning)'}`,
+                        borderRadius: 8,
+                        padding: '8px 10px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          fontSize: 'var(--fs-2xs)',
+                          fontWeight: 700,
+                          color: hard ? 'var(--critical)' : 'var(--warning)',
+                          marginBottom: 4,
+                        }}
+                      >
                         {hard ? t('today.guard.block') : t('today.guard.warn')}
                       </div>
                       {flags.map((f, i) => (
-                        <div key={i} style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-2)' }}>• {f.message}</div>
+                        <div key={i} style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-2)' }}>
+                          • {f.message}
+                        </div>
                       ))}
                     </div>
                   )}
-                  {flags.length === 0 && <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--positive)' }}>{t('today.guard.clean')}</div>}
+                  {flags.length === 0 && (
+                    <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--positive)' }}>{t('today.guard.clean')}</div>
+                  )}
 
                   {!readOnly && (
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -191,34 +288,80 @@ export default function Today() {
                 ) : (
                   <div style={{ display: 'flex', gap: 16, alignItems: 'baseline', flexWrap: 'wrap' }}>
                     <div className="num" style={{ fontSize: 'var(--fs-num)', fontWeight: 800 }}>
-                      {nf(fc.low)}<span style={{ color: 'var(--text-3)', fontWeight: 400 }}>–</span>{nf(fc.high)}
+                      {nf(fc.low)}
+                      <span style={{ color: 'var(--text-3)', fontWeight: 400 }}>–</span>
+                      {nf(fc.high)}
                     </div>
                     <span style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-3)' }}>
-                      {t('today.comments.by')}<span className="num">{nf(fc.expected)}</span>{t('today.analogs')}{fc.poolSize}{t('today.analogs2')}
+                      {t('today.comments.by')}
+                      <span className="num">{nf(fc.expected)}</span>
+                      {t('today.analogs')}
+                      {fc.poolSize}
+                      {t('today.analogs2')}
                       {calibrationCount < CALIBRATION_MIN_FACTS && t('today.noCalib')}
                     </span>
                     {pctl != null && (
-                      <span style={{ fontSize: 'var(--fs-xs)', padding: '2px 9px', borderRadius: 'var(--radius-pill)', background: 'var(--positive-soft)', color: 'var(--positive)', border: '1px solid var(--positive)' }}>
-                        {t('today.pctl.above')}{pctl}{t('today.pctl.rest')}
+                      <span
+                        style={{
+                          fontSize: 'var(--fs-xs)',
+                          padding: '2px 9px',
+                          borderRadius: 'var(--radius-pill)',
+                          background: 'var(--positive-soft)',
+                          color: 'var(--positive)',
+                          border: '1px solid var(--positive)',
+                        }}
+                      >
+                        {t('today.pctl.above')}
+                        {pctl}
+                        {t('today.pctl.rest')}
                       </span>
                     )}
                   </div>
                 )}
-                <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginTop: 8 }}>{t('today.fullBreakdown')}</div>
+                <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginTop: 8 }}>
+                  {t('today.fullBreakdown')}
+                </div>
               </Panel>
             )}
 
             {draft && (
               <Panel title={t('today.panel.draft')}>
                 {draft.blocked && (
-                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--critical)', marginBottom: 8 }}>{t('today.draft.blocked')}</div>
+                  <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--critical)', marginBottom: 8 }}>
+                    {t('today.draft.blocked')}
+                  </div>
                 )}
-                <pre style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, padding: 12, fontSize: 'var(--fs-sm)', lineHeight: 1.55, whiteSpace: 'pre-wrap', fontFamily: 'var(--mono)', margin: 0, maxHeight: '44vh', overflowY: 'auto' }}>
+                <pre
+                  style={{
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    padding: 12,
+                    fontSize: 'var(--fs-sm)',
+                    lineHeight: 1.55,
+                    whiteSpace: 'pre-wrap',
+                    fontFamily: 'var(--mono)',
+                    margin: 0,
+                    maxHeight: '44vh',
+                    overflowY: 'auto',
+                  }}
+                >
                   {draft.text}
                 </pre>
                 <div style={{ display: 'flex', gap: 8, marginTop: 10, justifyContent: 'flex-end' }}>
-                  <Btn onClick={() => { navigator.clipboard?.writeText(draft.text); flash(t('today.copied')); }}>{t('today.copy')}</Btn>
-                  <Btn onClick={() => download(((idea?.title || 'draft').slice(0, 40)) + '.md', draft.text, 'text/markdown')}>{t('today.download')}</Btn>
+                  <Btn
+                    onClick={() => {
+                      navigator.clipboard?.writeText(draft.text);
+                      flash(t('today.copied'));
+                    }}
+                  >
+                    {t('today.copy')}
+                  </Btn>
+                  <Btn
+                    onClick={() => download((idea?.title || 'draft').slice(0, 40) + '.md', draft.text, 'text/markdown')}
+                  >
+                    {t('today.download')}
+                  </Btn>
                 </div>
               </Panel>
             )}

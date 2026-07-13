@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { corpusFreshness, filterPosts, formulaVariety, isPostingDay, kpis, ownPostsThisWeek, topByComments } from './derive';
+import {
+  corpusFreshness,
+  filterPosts,
+  formulaVariety,
+  isPostingDay,
+  kpis,
+  ownPostsThisWeek,
+  topByComments,
+} from './derive';
 import type { Idea } from '@/types';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
@@ -21,21 +29,40 @@ function mk(over: Over): Post {
 }
 
 const A = mk({
-  author: 'Анна', text: 'alpha текст про спеку', comments: 50, reactions: 10,
-  headline: '10 000 подписчиков', collected_at: '2026-07-01',
-  meta_cluster: 'spec', lang: 'RU',
+  author: 'Анна',
+  text: 'alpha текст про спеку',
+  comments: 50,
+  reactions: 10,
+  headline: '10 000 подписчиков',
+  collected_at: '2026-07-01',
+  meta_cluster: 'spec',
+  lang: 'RU',
   tags: { hook_type: 'вопрос', structure: 'конспект', cta_type: 'без CTA', emotion: 'нейтрально', flags: [] },
 });
 const B = mk({
-  author: 'Bob (EN)', text: 'beta english post', comments: 5, reactions: 3,
+  author: 'Bob (EN)',
+  text: 'beta english post',
+  comments: 5,
+  reactions: 3,
   collected_at: '2026-07-05',
-  meta_cluster: 'jobs', lang: 'EN',
-  tags: { hook_type: 'личная история', structure: 'сюжетная арка', cta_type: 'без CTA', emotion: 'уязвимость', flags: [] },
+  meta_cluster: 'jobs',
+  lang: 'EN',
+  tags: {
+    hook_type: 'личная история',
+    structure: 'сюжетная арка',
+    cta_type: 'без CTA',
+    emotion: 'уязвимость',
+    flags: [],
+  },
 });
 const C = mk({
-  author: 'Ирина', text: 'gamma без метрик', comments: 0, reactions: 0,
+  author: 'Ирина',
+  text: 'gamma без метрик',
+  comments: 0,
+  reactions: 0,
   collected_at: '2026-07-10',
-  meta_cluster: 'spec', lang: 'RU',
+  meta_cluster: 'spec',
+  lang: 'RU',
   tags: { hook_type: 'обещание пользы', structure: 'манифест', cta_type: 'без CTA', emotion: 'нейтрально', flags: [] },
 });
 const POSTS = [A, B, C];
@@ -100,7 +127,10 @@ describe('filterPosts — golden-set', () => {
 describe('buildPostSearchUrl — поисковый fallback источника', () => {
   it('первые 10 слов в кавычках + site:linkedin.com для linkedin-ссылок и пустых', async () => {
     const { buildPostSearchUrl } = await import('./links');
-    const u = buildPostSearchUrl({ text: 'Спека до кода — и «Claude Code» перестал фантазировать полностью совсем навсегда точка', url: 'linkedin.com/posts/x_activity-1' });
+    const u = buildPostSearchUrl({
+      text: 'Спека до кода — и «Claude Code» перестал фантазировать полностью совсем навсегда точка',
+      url: 'linkedin.com/posts/x_activity-1',
+    });
     const q = decodeURIComponent(u.split('q=')[1]);
     expect(q).toContain('"Спека до кода — и Claude Code перестал фантазировать');
     expect(q).toContain('site:linkedin.com');
@@ -145,8 +175,20 @@ describe('ownPostsThisWeek', () => {
 });
 
 describe('formulaVariety — индикатор эхо-камеры (М52)', () => {
-  const mkIdea = (formula: string, date: string): Idea =>
-    ({ id: formula + date, title: 't', hook: '', cluster: 'spec' as Idea['cluster'], formula, source: '', channel: 'LinkedIn', status: 'published', date: '', refPostId: '', predicted: 0, actual: { reactions: 1, comments: 1, leads: 0, interviews: 0, date } });
+  const mkIdea = (formula: string, date: string): Idea => ({
+    id: formula + date,
+    title: 't',
+    hook: '',
+    cluster: 'spec' as Idea['cluster'],
+    formula,
+    source: '',
+    channel: 'LinkedIn',
+    status: 'published',
+    date: '',
+    refPostId: '',
+    predicted: 0,
+    actual: { reactions: 1, comments: 1, leads: 0, interviews: 0, date },
+  });
   const now = new Date('2026-07-13T12:00:00');
 
   it('молчит при <5 публикаций за 30 дней и при доле <70%', () => {

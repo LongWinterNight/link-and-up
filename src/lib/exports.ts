@@ -38,16 +38,47 @@ export function csvCell(v: unknown): string {
 
 export function exportPostsCsv(posts: Post[], rules?: Rule[]): string {
   const head = [
-    'Автор', 'Заголовок', 'Язык', 'Кластер', 'Хук', 'Структура', 'CTA', 'Эмоция', 'Приёмы',
-    'Реакции', 'Комментарии', 'Репосты', 'Подписчики', 'ER,%', 'Есть метрики', 'Свой', 'Дата сбора', 'URL', 'Угол',
+    'Автор',
+    'Заголовок',
+    'Язык',
+    'Кластер',
+    'Хук',
+    'Структура',
+    'CTA',
+    'Эмоция',
+    'Приёмы',
+    'Реакции',
+    'Комментарии',
+    'Репосты',
+    'Подписчики',
+    'ER,%',
+    'Есть метрики',
+    'Свой',
+    'Дата сбора',
+    'URL',
+    'Угол',
   ];
   const rows = posts.map((p) =>
     [
-      redactHard(p.author, rules), redactHard(p.headline, rules), p.lang, CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
-      p.tags.hook_type, p.tags.structure, p.tags.cta_type, p.tags.emotion, p.tags.flags.join('|'),
-      p.has_metrics ? p.reactions : '', p.has_metrics ? p.comments : '', p.reposts,
-      p.followers == null ? '' : p.followers, p.rate == null ? '' : (p.rate * 100).toFixed(3),
-      p.has_metrics ? 'да' : 'нет', p.is_own ? 'да' : 'нет', p.collected_at, p.url, p.query,
+      redactHard(p.author, rules),
+      redactHard(p.headline, rules),
+      p.lang,
+      CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
+      p.tags.hook_type,
+      p.tags.structure,
+      p.tags.cta_type,
+      p.tags.emotion,
+      p.tags.flags.join('|'),
+      p.has_metrics ? p.reactions : '',
+      p.has_metrics ? p.comments : '',
+      p.reposts,
+      p.followers == null ? '' : p.followers,
+      p.rate == null ? '' : (p.rate * 100).toFixed(3),
+      p.has_metrics ? 'да' : 'нет',
+      p.is_own ? 'да' : 'нет',
+      p.collected_at,
+      p.url,
+      p.query,
     ]
       .map(csvCell)
       .join(','),
@@ -69,7 +100,12 @@ export function redactIdea(idea: Idea, rules?: Rule[]): RedactedIdea {
   if (hasHardFlag(flags)) {
     return {
       title: '[скрыто: блокирующие гардрейлы]',
-      hook: 'Идея содержит блокирующие нарушения гардрейлов и не выгружается. Исправьте: ' + flags.filter((f) => f.severity === 'hard').map((f) => f.message).join('; '),
+      hook:
+        'Идея содержит блокирующие нарушения гардрейлов и не выгружается. Исправьте: ' +
+        flags
+          .filter((f) => f.severity === 'hard')
+          .map((f) => f.message)
+          .join('; '),
       redacted: true,
       note: 'redacted',
     };
@@ -78,15 +114,36 @@ export function redactIdea(idea: Idea, rules?: Rule[]): RedactedIdea {
 }
 
 export function exportIdeasCsv(ideas: Idea[], posts: Post[], rules?: Rule[]): string {
-  const head = ['Заголовок', 'Хук', 'Кластер', 'Формула', 'Источник', 'Канал', 'Статус', 'Плановая дата', 'Референс', 'Прогноз', 'Факт-комменты', 'Редакция'];
+  const head = [
+    'Заголовок',
+    'Хук',
+    'Кластер',
+    'Формула',
+    'Источник',
+    'Канал',
+    'Статус',
+    'Плановая дата',
+    'Референс',
+    'Прогноз',
+    'Факт-комменты',
+    'Редакция',
+  ];
   const rows = ideas.map((i) => {
     const r = redactIdea(i, rules);
     const rp = i.refPostId ? posts.find((p) => p.id === i.refPostId) : null;
     return [
-      r.title, r.hook, CLUSTER_LABEL[i.cluster] || i.cluster,
+      r.title,
+      r.hook,
+      CLUSTER_LABEL[i.cluster] || i.cluster,
       FORMULAS.find((f) => f.id === i.formula)?.title || i.formula,
-      r.redacted ? '' : redactHard(i.source, rules), i.channel, STATUS_LABEL[i.status] || i.status, i.date, rp?.author || '',
-      i.predicted || '', i.actual ? i.actual.comments : '', r.note,
+      r.redacted ? '' : redactHard(i.source, rules),
+      i.channel,
+      STATUS_LABEL[i.status] || i.status,
+      i.date,
+      rp?.author || '',
+      i.predicted || '',
+      i.actual ? i.actual.comments : '',
+      r.note,
     ]
       .map(csvCell)
       .join(',');

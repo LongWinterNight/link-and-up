@@ -31,7 +31,9 @@ export default function PrintReport() {
         {weekStart.toLocaleDateString(intlLocale(locale))} — {weekEnd.toLocaleDateString(intlLocale(locale))}
       </p>
       <p style={{ fontSize: 13 }}>
-        {t('pr.published.a')}<b>{ownThisWeek}</b>{t('pr.published.b')}
+        {t('pr.published.a')}
+        <b>{ownThisWeek}</b>
+        {t('pr.published.b')}
       </p>
 
       <h2 style={{ fontSize: 16, marginTop: 16 }}>{t('pr.planned')}</h2>
@@ -41,9 +43,13 @@ export default function PrintReport() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
           <thead>
             <tr>
-              {[t('pr.col.date'), t('pr.col.title'), t('pr.col.cluster'), t('pr.col.channel'), t('pr.col.status')].map((h) => (
-                <th key={h} style={{ textAlign: 'left', borderBottom: '1px solid #000', padding: 4 }}>{h}</th>
-              ))}
+              {[t('pr.col.date'), t('pr.col.title'), t('pr.col.cluster'), t('pr.col.channel'), t('pr.col.status')].map(
+                (h) => (
+                  <th key={h} style={{ textAlign: 'left', borderBottom: '1px solid #000', padding: 4 }}>
+                    {h}
+                  </th>
+                ),
+              )}
             </tr>
           </thead>
           <tbody>
@@ -53,7 +59,9 @@ export default function PrintReport() {
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{i.title}</td>
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{cl(i.cluster)}</td>
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{i.channel}</td>
-                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{t(('lbl.status.' + i.status) as DictKey)}</td>
+                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>
+                  {t(('lbl.status.' + i.status) as DictKey)}
+                </td>
               </tr>
             ))}
           </tbody>

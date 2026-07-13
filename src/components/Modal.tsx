@@ -64,7 +64,16 @@ export function Modal({
   return (
     <div
       onClick={closeOnOverlay ? onClose : undefined}
-      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, zIndex }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,.45)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+        zIndex,
+      }}
     >
       <div
         ref={dialogRef}
@@ -73,7 +82,16 @@ export function Modal({
         aria-label={label}
         aria-labelledby={labelledBy}
         onClick={(e) => e.stopPropagation()}
-        style={{ background: 'var(--surface-1)', border: '1px solid var(--border-strong)', borderRadius: 'var(--radius-card)', boxShadow: 'var(--shadow-modal)', width: `min(${width}px, 100%)`, maxHeight: '88vh', overflowY: 'auto', padding: 20 }}
+        style={{
+          background: 'var(--surface-1)',
+          border: '1px solid var(--border-strong)',
+          borderRadius: 'var(--radius-card)',
+          boxShadow: 'var(--shadow-modal)',
+          width: `min(${width}px, 100%)`,
+          maxHeight: '88vh',
+          overflowY: 'auto',
+          padding: 20,
+        }}
       >
         {children}
       </div>

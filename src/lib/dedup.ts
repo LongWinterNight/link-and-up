@@ -108,7 +108,11 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
   if (incoming.length > MAX_IMPORT_RECORDS) {
     capped = incoming.slice(0, MAX_IMPORT_RECORDS);
     st.reasons.push(
-      'импорт ограничен ' + MAX_IMPORT_RECORDS + ' записями за раз (получено ' + incoming.length + ') — остальные загрузите следующим файлом',
+      'импорт ограничен ' +
+        MAX_IMPORT_RECORDS +
+        ' записями за раз (получено ' +
+        incoming.length +
+        ') — остальные загрузите следующим файлом',
     );
   }
 

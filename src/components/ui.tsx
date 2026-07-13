@@ -30,7 +30,12 @@ export function Input({ label, style, ...rest }: InputHTMLAttributes<HTMLInputEl
   );
 }
 
-export function Select({ label, style, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
+export function Select({
+  label,
+  style,
+  children,
+  ...rest
+}: SelectHTMLAttributes<HTMLSelectElement> & { label?: string }) {
   const el = (
     <select {...rest} style={{ ...ctl, ...style }}>
       {children}
@@ -66,7 +71,17 @@ export function SectionTitle({ children }: { children: ReactNode }) {
   return <h2 style={{ fontSize: 15, fontWeight: 600, margin: '0 0 12px' }}>{children}</h2>;
 }
 
-export function Kpi({ label, value, sub, tone }: { label: string; value: ReactNode; sub?: ReactNode; tone?: 'positive' | 'warning' | 'critical' }) {
+export function Kpi({
+  label,
+  value,
+  sub,
+  tone,
+}: {
+  label: string;
+  value: ReactNode;
+  sub?: ReactNode;
+  tone?: 'positive' | 'warning' | 'critical';
+}) {
   const color = tone ? `var(--${tone})` : 'var(--text-1)';
   return (
     <div
@@ -86,7 +101,13 @@ export function Kpi({ label, value, sub, tone }: { label: string; value: ReactNo
   );
 }
 
-export function Pill({ children, kind = 'lang' }: { children: ReactNode; kind?: 'lang' | 'metric' | 'nometric' | 'cluster' }) {
+export function Pill({
+  children,
+  kind = 'lang',
+}: {
+  children: ReactNode;
+  kind?: 'lang' | 'metric' | 'nometric' | 'cluster';
+}) {
   const map = {
     lang: { bg: 'var(--surface-2)', bd: 'var(--border)', c: 'var(--text-2)' },
     metric: { bg: 'var(--positive-soft)', bd: 'var(--positive)', c: 'var(--positive)' },

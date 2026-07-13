@@ -27,7 +27,11 @@ export default function EmptyCorpus({ title, hint }: { title?: string; hint?: st
         {hint || t('empty.hint')}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginTop: 4 }}>
-        {!readOnly && <Btn variant="accent" onClick={() => setImportOpen(true)}>{t('empty.cta.import')}</Btn>}
+        {!readOnly && (
+          <Btn variant="accent" onClick={() => setImportOpen(true)}>
+            {t('empty.cta.import')}
+          </Btn>
+        )}
         <Btn onClick={() => void reset()}>{t('empty.cta.demo')}</Btn>
       </div>
     </div>

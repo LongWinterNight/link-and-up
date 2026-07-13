@@ -9,7 +9,15 @@ export interface BarItem {
 }
 
 /** Горизонтальные бары. Доступно: sr-only таблица + aria на контейнере. */
-export function Bars({ items, color = 'var(--accent)', caption }: { items: BarItem[]; color?: string; caption: string }) {
+export function Bars({
+  items,
+  color = 'var(--accent)',
+  caption,
+}: {
+  items: BarItem[];
+  color?: string;
+  caption: string;
+}) {
   if (!items.length) return <EmptyState>Нет данных</EmptyState>;
   const max = Math.max(1, ...items.map((i) => i.value));
   return (
@@ -38,15 +46,34 @@ export function Bars({ items, color = 'var(--accent)', caption }: { items: BarIt
                   : undefined
               }
               title={it.label}
-              style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '3px 0', cursor: clickable ? 'pointer' : 'default' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 10,
+                padding: '3px 0',
+                cursor: clickable ? 'pointer' : 'default',
+              }}
             >
-              <div style={{ width: 150, flexShrink: 0, fontSize: 12, color: 'var(--text-2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div
+                style={{
+                  width: 150,
+                  flexShrink: 0,
+                  fontSize: 12,
+                  color: 'var(--text-2)',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {it.label}
               </div>
               <div style={{ flex: 1, background: 'var(--surface-2)', borderRadius: 5, overflow: 'hidden', height: 16 }}>
                 <div style={{ width: pct + '%', height: '100%', background: color, borderRadius: 5 }} />
               </div>
-              <div className="num" style={{ width: 56, textAlign: 'right', fontSize: 12, color: 'var(--text-1)', flexShrink: 0 }}>
+              <div
+                className="num"
+                style={{ width: 56, textAlign: 'right', fontSize: 12, color: 'var(--text-1)', flexShrink: 0 }}
+              >
                 {it.display != null ? it.display : nf(it.value)}
               </div>
             </div>
@@ -86,7 +113,17 @@ export interface ScatterPoint {
  * Лог-шкала по обеим осям: вовлечение распределено лог-нормально, на линейной шкале
  * выбросы сжимают 90% точек в слипшееся пятно у нуля. Тики — честные значения 1/10/100/1000.
  */
-export function Scatter({ points, caption, width = 340, height = 220 }: { points: ScatterPoint[]; caption: string; width?: number; height?: number }) {
+export function Scatter({
+  points,
+  caption,
+  width = 340,
+  height = 220,
+}: {
+  points: ScatterPoint[];
+  caption: string;
+  width?: number;
+  height?: number;
+}) {
   if (!points.length) return <EmptyState>Нет данных</EmptyState>;
   const W = width;
   const H = height;
@@ -102,30 +139,55 @@ export function Scatter({ points, caption, width = 340, height = 220 }: { points
   const r = Math.max(4, Math.min(6, Math.round(W / 90)));
   return (
     <>
-    <svg width="100%" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={caption} style={{ maxWidth: '100%', height: 'auto' }}>
-      {/* сетка по лог-тикам */}
-      {ticks(rawMaxX).map((t) => (
-        <g key={'x' + t}>
-          <line x1={sx(t)} y1={12} x2={sx(t)} y2={H - pad} stroke="var(--border)" strokeDasharray="2 3" />
-          <text x={sx(t)} y={H - pad + 14} textAnchor="middle" fill="var(--text-3)" fontSize={9} className="num">{nf(t)}</text>
-        </g>
-      ))}
-      {ticks(rawMaxY).map((t) => (
-        <g key={'y' + t}>
-          <line x1={pad} y1={sy(t)} x2={W - 8} y2={sy(t)} stroke="var(--border)" strokeDasharray="2 3" />
-          <text x={pad - 4} y={sy(t) + 3} textAnchor="end" fill="var(--text-3)" fontSize={9} className="num">{nf(t)}</text>
-        </g>
-      ))}
-      <line x1={pad} y1={H - pad} x2={W - 6} y2={H - pad} stroke="var(--border-strong)" />
-      <line x1={pad} y1={8} x2={pad} y2={H - pad} stroke="var(--border-strong)" />
-      <text x={W / 2} y={H - 4} textAnchor="middle" fill="var(--text-3)" fontSize={10}>реакции → (лог)</text>
-      <text x={8} y={12} fill="var(--text-3)" fontSize={10}>↑ коммент. (лог)</text>
-      {points.map((p, i) => (
-        <circle key={i} cx={sx(p.x)} cy={sy(p.y)} r={r} fill="var(--accent)" fillOpacity={0.55} stroke="var(--surface-1)" strokeWidth={1} style={{ cursor: p.onClick ? 'pointer' : 'default' }} onClick={p.onClick}>
-          <title>{p.label + ' · ♥' + p.x + ' 💬' + p.y}</title>
-        </circle>
-      ))}
-    </svg>
+      <svg
+        width="100%"
+        viewBox={`0 0 ${W} ${H}`}
+        role="img"
+        aria-label={caption}
+        style={{ maxWidth: '100%', height: 'auto' }}
+      >
+        {/* сетка по лог-тикам */}
+        {ticks(rawMaxX).map((t) => (
+          <g key={'x' + t}>
+            <line x1={sx(t)} y1={12} x2={sx(t)} y2={H - pad} stroke="var(--border)" strokeDasharray="2 3" />
+            <text x={sx(t)} y={H - pad + 14} textAnchor="middle" fill="var(--text-3)" fontSize={9} className="num">
+              {nf(t)}
+            </text>
+          </g>
+        ))}
+        {ticks(rawMaxY).map((t) => (
+          <g key={'y' + t}>
+            <line x1={pad} y1={sy(t)} x2={W - 8} y2={sy(t)} stroke="var(--border)" strokeDasharray="2 3" />
+            <text x={pad - 4} y={sy(t) + 3} textAnchor="end" fill="var(--text-3)" fontSize={9} className="num">
+              {nf(t)}
+            </text>
+          </g>
+        ))}
+        <line x1={pad} y1={H - pad} x2={W - 6} y2={H - pad} stroke="var(--border-strong)" />
+        <line x1={pad} y1={8} x2={pad} y2={H - pad} stroke="var(--border-strong)" />
+        <text x={W / 2} y={H - 4} textAnchor="middle" fill="var(--text-3)" fontSize={10}>
+          реакции → (лог)
+        </text>
+        <text x={8} y={12} fill="var(--text-3)" fontSize={10}>
+          ↑ коммент. (лог)
+        </text>
+        {points.map((p, i) => (
+          <circle
+            key={i}
+            cx={sx(p.x)}
+            cy={sy(p.y)}
+            r={r}
+            fill="var(--accent)"
+            fillOpacity={0.55}
+            stroke="var(--surface-1)"
+            strokeWidth={1}
+            style={{ cursor: p.onClick ? 'pointer' : 'default' }}
+            onClick={p.onClick}
+          >
+            <title>{p.label + ' · ♥' + p.x + ' 💬' + p.y}</title>
+          </circle>
+        ))}
+      </svg>
       {/* FE-4: данные scatter доступны скринридеру, как у Bars/Donut */}
       <table className="sr-only">
         <caption>{caption}</caption>
@@ -171,14 +233,40 @@ export function Donut({ segments, caption }: { segments: Segment[]; caption: str
   });
   return (
     <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
-      <svg width={140} height={140} viewBox="0 0 140 140" role="img" aria-label={caption + ': ' + segments.map((s) => s.label + ' ' + s.value).join(', ')}>
+      <svg
+        width={140}
+        height={140}
+        viewBox="0 0 140 140"
+        role="img"
+        aria-label={caption + ': ' + segments.map((s) => s.label + ' ' + s.value).join(', ')}
+      >
         <circle cx={70} cy={70} r={r} fill="none" stroke="var(--surface-2)" strokeWidth={sw} />
         <g transform="rotate(-90 70 70)">
           {arcs.map((s, i) => (
-            <circle key={i} cx={70} cy={70} r={r} fill="none" stroke={s.color} strokeWidth={sw} strokeLinecap="butt" strokeDasharray={`${s.len} ${c - s.len}`} strokeDashoffset={-s.offset} />
+            <circle
+              key={i}
+              cx={70}
+              cy={70}
+              r={r}
+              fill="none"
+              stroke={s.color}
+              strokeWidth={sw}
+              strokeLinecap="butt"
+              strokeDasharray={`${s.len} ${c - s.len}`}
+              strokeDashoffset={-s.offset}
+            />
           ))}
         </g>
-        <text x={70} y={70} textAnchor="middle" dominantBaseline="central" fill="var(--text-1)" fontSize={26} fontWeight={700} fontFamily="var(--mono)">
+        <text
+          x={70}
+          y={70}
+          textAnchor="middle"
+          dominantBaseline="central"
+          fill="var(--text-1)"
+          fontSize={26}
+          fontWeight={700}
+          fontFamily="var(--mono)"
+        >
           {total}
         </text>
       </svg>
@@ -186,7 +274,11 @@ export function Donut({ segments, caption }: { segments: Segment[]; caption: str
         {segments.map((s, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 11, height: 11, borderRadius: 3, background: s.color, flexShrink: 0 }} />
-            <span style={{ color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.label}</span>
+            <span
+              style={{ color: 'var(--text-2)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            >
+              {s.label}
+            </span>
             <span className="num" style={{ marginLeft: 'auto', color: 'var(--text-1)', flexShrink: 0 }}>
               {s.value} · {Math.round((s.value / total) * 100)}%
             </span>

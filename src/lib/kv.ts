@@ -74,7 +74,9 @@ export async function kvReadWithMigration<T>(key: string, ls: Storage | null): P
     const legacy = ls.getItem(key);
     if (legacy) {
       value = JSON.parse(legacy) as T;
-      void kvSet(key, value).then(() => ls.removeItem(key)).catch(() => {});
+      void kvSet(key, value)
+        .then(() => ls.removeItem(key))
+        .catch(() => {});
     }
   }
   if (value == null) {

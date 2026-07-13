@@ -1,6 +1,14 @@
 import { useMemo } from 'react';
 import { useStore } from '@/store';
-import { clusterStats, collectionByMonth, isPostingDay, kpis, ownPostsThisWeek, topByComments, topByRate } from '@/lib/derive';
+import {
+  clusterStats,
+  collectionByMonth,
+  isPostingDay,
+  kpis,
+  ownPostsThisWeek,
+  topByComments,
+  topByRate,
+} from '@/lib/derive';
 import { median, nf } from '@/lib/stats';
 import { Bars, Donut } from '@/components/charts';
 import { Btn, Kpi, Panel, Pill } from '@/components/ui';
@@ -64,10 +72,18 @@ export default function Overview() {
         </div>
         <div style={{ flex: 1, minWidth: 200 }}>
           <div style={{ height: 10, background: 'var(--surface-2)', borderRadius: 6, overflow: 'hidden' }}>
-            <div style={{ width: pct + '%', height: '100%', background: ownThisWeek >= 3 ? 'var(--positive)' : 'var(--warning)' }} />
+            <div
+              style={{
+                width: pct + '%',
+                height: '100%',
+                background: ownThisWeek >= 3 ? 'var(--positive)' : 'var(--warning)',
+              }}
+            />
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-2)', marginTop: 8 }}>
-            {t('ov.northstar.goalNote')}<span className="num">{ownMed}</span>{t('ov.northstar.comm')}
+            {t('ov.northstar.goalNote')}
+            <span className="num">{ownMed}</span>
+            {t('ov.northstar.comm')}
             {own.length === 0 && t('ov.northstar.none')}
           </div>
         </div>
@@ -75,26 +91,43 @@ export default function Overview() {
 
       {/* P-6: день публикации — идеи из банка под руку */}
       {showCadenceNudge && (
-        <section style={{ background: 'var(--accent-soft)', border: '1px solid var(--accent)', borderRadius: 'var(--radius-card)', padding: '14px 18px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <section
+          style={{
+            background: 'var(--accent-soft)',
+            border: '1px solid var(--accent)',
+            borderRadius: 'var(--radius-card)',
+            padding: '14px 18px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 10,
+          }}
+        >
           <div style={{ fontSize: 13.5, fontWeight: 700 }}>{t('ov.nudge.title')}</div>
           {candidateIdeas.length > 0 ? (
             <>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {candidateIdeas.map((i) => (
-                  <div key={i.id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}>
+                  <div
+                    key={i.id}
+                    style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}
+                  >
                     <span style={{ fontWeight: 500 }}>{i.title || t('today.untitled')}</span>
                     <Pill kind="cluster">{CLUSTER_LABEL[i.cluster] || i.cluster}</Pill>
                   </div>
                 ))}
               </div>
               <div>
-                <Btn variant="accent" onClick={() => setTab('today')}>{t('ov.nudge.cta')}</Btn>
+                <Btn variant="accent" onClick={() => setTab('today')}>
+                  {t('ov.nudge.cta')}
+                </Btn>
               </div>
             </>
           ) : (
             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontSize: 13, color: 'var(--text-2)' }}>{t('ov.nudge.empty')}</span>
-              <Btn variant="accent" onClick={() => setTab('ideas')}>{t('ov.nudge.create')}</Btn>
+              <Btn variant="accent" onClick={() => setTab('ideas')}>
+                {t('ov.nudge.create')}
+              </Btn>
             </div>
           )}
         </section>
@@ -103,10 +136,19 @@ export default function Overview() {
       {/* KPI */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
         <Kpi label={t('ov.kpi.total')} value={nf(k.total)} />
-        <Kpi label={t('ov.kpi.withMetrics')} value={nf(k.withMetrics)} sub={`${k.withMetricsPct}${t('ov.kpi.corpus')}`} tone="positive" />
+        <Kpi
+          label={t('ov.kpi.withMetrics')}
+          value={nf(k.withMetrics)}
+          sub={`${k.withMetricsPct}${t('ov.kpi.corpus')}`}
+          tone="positive"
+        />
         <Kpi label={t('ov.kpi.angles')} value={nf(k.angles)} />
         <Kpi label={t('ov.kpi.langs')} value={`${nf(k.ru)} / ${nf(k.en)}`} />
-        <Kpi label={t('ov.kpi.medComments')} value={k.medComments == null ? '—' : nf(k.medComments)} sub={t('ov.kpi.medComments.sub')} />
+        <Kpi
+          label={t('ov.kpi.medComments')}
+          value={k.medComments == null ? '—' : nf(k.medComments)}
+          sub={t('ov.kpi.medComments.sub')}
+        />
         <Kpi label={t('ov.kpi.maxComments')} value={k.maxComments == null ? '—' : nf(k.maxComments)} />
         <Kpi label={t('ov.kpi.medEr')} value={k.medRatePct == null ? '—' : k.medRatePct} sub={t('ov.kpi.medEr.sub')} />
       </div>
@@ -132,8 +174,7 @@ export default function Overview() {
               { label: 'EN', value: k.en, color: 'var(--warning)' },
             ]}
           />
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>
-{t('ov.panel.lang.note')}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{t('ov.panel.lang.note')}</div>
         </Panel>
 
         <Panel title={t('ov.panel.topC')}>
@@ -159,8 +200,7 @@ export default function Overview() {
               onClick: () => openPost(p.id),
             }))}
           />
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>
-{t('ov.panel.topR.note')}</div>
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{t('ov.panel.topR.note')}</div>
         </Panel>
 
         <Panel title={t('ov.panel.months')}>

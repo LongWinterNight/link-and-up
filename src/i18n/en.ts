@@ -45,13 +45,16 @@ export const en: Record<DictKey, string> = {
   'tab.forecast': 'Forecast',
 
   'onb.title': 'Welcome to ',
-  'onb.intro': 'This tool turns a stream of LinkedIn posts into decisions: engagement analytics, a pattern library, a content plan, a transparent forecast and a learning loop on your own metrics. Where do we start?',
+  'onb.intro':
+    'This tool turns a stream of LinkedIn posts into decisions: engagement analytics, a pattern library, a content plan, a transparent forecast and a learning loop on your own metrics. Where do we start?',
   'onb.demo.title': 'Explore the demo corpus →',
   'onb.demo.loaded': ' public posts (AI/content niche) are already loaded.',
   'onb.demo.loading': 'Demo corpus of public posts (AI/content niche) is loading…',
-  'onb.demo.rest': ' Walk through the tabs, see analytics and forecast on live data. This demo is not tied to any person; import your own corpus anytime with the Import button.',
+  'onb.demo.rest':
+    ' Walk through the tabs, see analytics and forecast on live data. This demo is not tied to any person; import your own corpus anytime with the Import button.',
   'onb.fresh.title': 'Start with your own posts →',
-  'onb.fresh.desc': 'Clear the demo and import your export (a JSON array of posts) right away. The import dialog opens with a preview and duplicate check. Data stays local in your browser.',
+  'onb.fresh.desc':
+    'Clear the demo and import your export (a JSON array of posts) right away. The import dialog opens with a preview and duplicate check. Data stays local in your browser.',
   'onb.footer': 'You can change this later: Reset brings the demo back, Import adds your posts.',
   'onb.niche.label': 'Your niche (you can pick later in Settings)',
   'onb.niche.none': '— not selected —',
@@ -68,7 +71,8 @@ export const en: Record<DictKey, string> = {
   'niche.other': 'Other',
 
   'empty.title': 'The corpus is empty',
-  'empty.hint': 'Import your post export (a JSON array) to get analytics, patterns and a forecast. Or bring back the demo corpus to explore on live data.',
+  'empty.hint':
+    'Import your post export (a JSON array) to get analytics, patterns and a forecast. Or bring back the demo corpus to explore on live data.',
   'empty.cta.import': 'Import my posts',
   'empty.cta.demo': 'Show demo corpus',
 
@@ -77,8 +81,10 @@ export const en: Record<DictKey, string> = {
   'today.postingDay': ' · today is a posting day (Tue/Thu)',
   'today.nextDay': ' · next post — Tue/Thu',
   'today.empty.title': 'Start with data',
-  'today.empty.hint': 'Import your corpus or explore the demo — then Today assembles a draft, an estimate and a brand check for your next post.',
-  'today.noIdeas': 'The idea bank is empty. Create an idea — the draft assembles from a proven formula, the estimate from analogous posts.',
+  'today.empty.hint':
+    'Import your corpus or explore the demo — then Today assembles a draft, an estimate and a brand check for your next post.',
+  'today.noIdeas':
+    'The idea bank is empty. Create an idea — the draft assembles from a proven formula, the estimate from analogous posts.',
   'today.createIdea': 'Create an idea',
   'today.panel.idea': 'Idea',
   'today.select.label': 'From the idea bank',
@@ -93,7 +99,8 @@ export const en: Record<DictKey, string> = {
   'today.published.toast': 'Idea marked as published — enter the facts to calibrate',
   'today.editInIdeas': 'Edit in Ideas',
   'today.panel.estimate': 'Engagement estimate (a range, not a promise)',
-  'today.lowdata': 'Not enough data for an estimate — no posts with metrics in this cluster. The number would be a placeholder; add corpus or a reference post.',
+  'today.lowdata':
+    'Not enough data for an estimate — no posts with metrics in this cluster. The number would be a placeholder; add corpus or a reference post.',
   'today.comments.by': 'comments · center ≈ ',
   'today.analogs': ' · from ',
   'today.analogs2': ' analogous posts',
@@ -115,7 +122,8 @@ export const en: Record<DictKey, string> = {
   'today.variety.c': '” formula — the audience adapts, switch it up.',
 
   'ov.empty.title': 'Start by importing posts',
-  'ov.empty.hint': 'The demo corpus is cleared. Import your export (a JSON array of posts) to see KPIs, cluster distributions and tops. Or bring the demo back to explore.',
+  'ov.empty.hint':
+    'The demo corpus is cleared. Import your export (a JSON array of posts) to see KPIs, cluster distributions and tops. Or bring the demo back to explore.',
   'ov.northstar.label': 'Your posts published this week',
   'ov.northstar.goalNote': 'Goal — 3–5 posts/week (Tue–Thu). Median response of your posts: ',
   'ov.northstar.comm': ' comments.',
@@ -187,7 +195,8 @@ export const en: Record<DictKey, string> = {
 
   // --- Posts (Explorer) ---
   'ex.empty.title': 'No posts to analyze',
-  'ex.empty.hint': 'Load your post export (a JSON array) — posts will appear here with filters, search and a table view. Or bring back the demo corpus.',
+  'ex.empty.hint':
+    'Load your post export (a JSON array) — posts will appear here with filters, search and a table view. Or bring back the demo corpus.',
   'ex.search.placeholder': 'Search by author, text, angle…',
   'ex.search.aria': 'Search posts',
   'ex.f.cluster': 'Cluster',
@@ -230,7 +239,8 @@ export const en: Record<DictKey, string> = {
 
   // --- Analytics ---
   'an.empty.title': 'No data for analytics',
-  'an.empty.hint': 'Load your corpus — hook/structure/CTA effectiveness, data quality and correlations will appear here. Or bring back the demo corpus.',
+  'an.empty.hint':
+    'Load your corpus — hook/structure/CTA effectiveness, data quality and correlations will appear here. Or bring back the demo corpus.',
   'an.insight.a': 'The strongest hook is “',
   'an.insight.b': '” — on average ',
   'an.insight.c': ' comments (',
@@ -257,7 +267,8 @@ export const en: Record<DictKey, string> = {
   'an.scatter.sample.a': 'Points: ',
   'an.scatter.sample.b': ' of ',
   'an.scatter.sample.c': ' — a stratified sample by comment level.',
-  'an.scatter.lognote': 'Both axes are logarithmic (engagement is log-normally distributed). Click a point to open the post.',
+  'an.scatter.lognote':
+    'Both axes are logarithmic (engagement is log-normally distributed). Click a point to open the post.',
   'an.emotion.title': 'Distribution by emotion',
   'an.emotion.caption': 'Posts by emotion',
   'an.modal.close': 'Close',
@@ -299,12 +310,14 @@ export const en: Record<DictKey, string> = {
   'id.form.date': 'Planned date',
   'id.form.ref': 'Reference post (optional)',
   'id.form.ref.none': '— none —',
-  'id.form.publishBlocked': 'Cannot save the “Published” status with blocking violations — fix the text or change the status.',
+  'id.form.publishBlocked':
+    'Cannot save the “Published” status with blocking violations — fix the text or change the status.',
   'id.form.cancel': 'Cancel',
   'id.form.save': 'Save',
   'id.form.saved': 'Idea saved',
   'id.draft.aria': 'Post draft',
-  'id.draft.blocked': '🚫 The draft contains blocking guardrails — publishing is not allowed until fixed (see the end of the text).',
+  'id.draft.blocked':
+    '🚫 The draft contains blocking guardrails — publishing is not allowed until fixed (see the end of the text).',
   'id.kanban.blocked': 'Cannot publish: blocking guardrails',
   'id.kanban.hard': '🚫 guardrails',
   'id.kanban.left': 'Move left',
@@ -350,16 +363,19 @@ export const en: Record<DictKey, string> = {
   'fc.mult.def.a': 'defaults (MAPE ',
   'fc.mult.def.b': '); empirical ones from your corpus (',
   'fc.mult.def.c': ') gave no improvement.',
-  'fc.mult.none': 'Multipliers are the defaults; your own empirical ones appear from 100 posts with metrics in the corpus.',
+  'fc.mult.none':
+    'Multipliers are the defaults; your own empirical ones appear from 100 posts with metrics in the corpus.',
   'fc.fresh.a': 'Corpus freshness: last collection ',
   'fc.fresh.b': ' days ago',
-  'fc.fresh.stale': 'Patterns may have gone stale along with the platform algorithm — refresh the corpus; trust in the forecast is reduced.',
+  'fc.fresh.stale':
+    'Patterns may have gone stale along with the platform algorithm — refresh the corpus; trust in the forecast is reduced.',
   'fc.idea.title': 'Idea engagement forecast',
   'fc.idea.label': 'Idea',
   'fc.idea.select': '— select an idea —',
   'fc.idea.aria': 'Select an idea to forecast',
   'fc.idea.empty': 'Select an idea to see the engagement estimate and its breakdown.',
-  'fc.lowdata': 'Not enough data for a forecast: no posts with metrics in this cluster and no valid reference post. The number below is a rough placeholder, not an estimate. Add your own posts with facts or set a reference.',
+  'fc.lowdata':
+    'Not enough data for a forecast: no posts with metrics in this cluster and no valid reference post. The number below is a rough placeholder, not an estimate. Add your own posts with facts or set a reference.',
   'fc.range.label': 'Expected comment range',
   'fc.range.center': 'estimate center ≈ ',
   'fc.steps.summary': 'How the number was derived (step-by-step breakdown)',
@@ -380,19 +396,27 @@ export const en: Record<DictKey, string> = {
   'fc.vs.fact': 'fact',
 
   // --- Clusters & knowledge ---
-  'cl.empty': 'Cluster statistics appear after loading posts. The library of formulas and anti-patterns below is always available.',
+  'cl.empty':
+    'Cluster statistics appear after loading posts. The library of formulas and anti-patterns below is always available.',
   'cl.posts': ' posts →',
   'cl.stats.a': 'with metrics: ',
   'cl.stats.b': ' · median comments: ',
   'cl.stats.c': ' · max: ',
   'cl.formulas.title': 'Winning formulas',
-  'lbl.formula.pak.body': 'Data without a takeaway fails. “I analyzed X → here are the takeaways” gets multiples more reach than a raw dump.',
-  'lbl.formula.hook.body': 'A pattern-breaking first line ↑3.2× read-throughs; white space ↑2.7× dwell time. The first 30–60 minutes are critical for the algorithm.',
-  'lbl.formula.reaction.body': 'Insightful and a comment weigh more than a like. Provoke a meaningful response, not a thumbs-up.',
-  'lbl.formula.rif.body': 'Role + Instructions + Format. Eight-part post structure: hook → context → conflict → insight → proof → lesson → generalization → CTA.',
-  'lbl.formula.fail.body': 'Honest diaries of rejections and mistakes gather 40–170 comments. Vulnerability + takeaway, not whining.',
-  'lbl.formula.arch.body': 'Domain expertise and context matter more than the model and “AI magic”. The stance of a specialist, not a “prompter”.',
-  'lbl.formula.meta.body': 'Practical value + honest experience + concrete numbers and examples, without motivational noise.',
+  'lbl.formula.pak.body':
+    'Data without a takeaway fails. “I analyzed X → here are the takeaways” gets multiples more reach than a raw dump.',
+  'lbl.formula.hook.body':
+    'A pattern-breaking first line ↑3.2× read-throughs; white space ↑2.7× dwell time. The first 30–60 minutes are critical for the algorithm.',
+  'lbl.formula.reaction.body':
+    'Insightful and a comment weigh more than a like. Provoke a meaningful response, not a thumbs-up.',
+  'lbl.formula.rif.body':
+    'Role + Instructions + Format. Eight-part post structure: hook → context → conflict → insight → proof → lesson → generalization → CTA.',
+  'lbl.formula.fail.body':
+    'Honest diaries of rejections and mistakes gather 40–170 comments. Vulnerability + takeaway, not whining.',
+  'lbl.formula.arch.body':
+    'Domain expertise and context matter more than the model and “AI magic”. The stance of a specialist, not a “prompter”.',
+  'lbl.formula.meta.body':
+    'Practical value + honest experience + concrete numbers and examples, without motivational noise.',
   'cl.anti.title': 'Anti-patterns',
   'cl.anti.1': 'Claiming “first / unique / best” without proof.',
   'cl.anti.2': 'Motivational noise burns the audience’s trust.',
@@ -401,7 +425,8 @@ export const en: Record<DictKey, string> = {
   'cl.guard.title': 'Guardrails (brand safety)',
   'cl.guard.note': 'Rules check ideas and drafts. Hard ones block publishing and export. Customizable for your brand.',
   'cl.principles.title': 'Product principles',
-  'cl.principles.body': 'Honest metrics: 0 = unknown (not zero), averages are computed only over posts with metrics. Transparent forecast: step-by-step breakdown + leave-one-out backtest and honest uncertainty, no false precision. Guardrails: customizable brand-safety rules; hard ones block publishing and export. Everything is local in the browser — data never leaves the device.',
+  'cl.principles.body':
+    'Honest metrics: 0 = unknown (not zero), averages are computed only over posts with metrics. Transparent forecast: step-by-step breakdown + leave-one-out backtest and honest uncertainty, no false precision. Guardrails: customizable brand-safety rules; hard ones block publishing and export. Everything is local in the browser — data never leaves the device.',
 
   // --- post card (PostModal) ---
   'pm.aria': 'Post: ',
@@ -417,7 +442,8 @@ export const en: Record<DictKey, string> = {
   'pm.collected': 'Collected: ',
   'pm.openSource': 'Open source ↗',
   'pm.findSearch': 'Find the post via search ↗',
-  'pm.demoNote': 'The demo corpus was collected via search sampling: direct links were not stored (they were not verified) — the source is found by exact quote.',
+  'pm.demoNote':
+    'The demo corpus was collected via search sampling: direct links were not stored (they were not verified) — the source is found by exact quote.',
 
   // --- import (ImportModal) ---
   'im.aria': 'Load posts',
@@ -430,21 +456,24 @@ export const en: Record<DictKey, string> = {
   'im.file.tooBig.b': ' MB). The limit is ',
   'im.file.tooBig.c': ' MB — split it into parts.',
   'im.file.readErr': 'Failed to read the file',
-  'im.json.hint': 'A JSON array of posts (same schema as the dataset). Duplicates and near-dups are filtered out, invalid records are rejected.',
+  'im.json.hint':
+    'A JSON array of posts (same schema as the dataset). Duplicates and near-dups are filtered out, invalid records are rejected.',
   'im.json.file.aria': 'Choose a JSON file',
   'im.json.ph': '… or paste JSON here',
   'im.json.empty': 'Paste JSON or choose a file',
   'im.li.h1': 'The official export of your posts: LinkedIn → ',
   'im.li.h2': ' → check ',
   'im.li.h3': ' → the archive arrives by email (up to 24 hours) → you need the ',
-  'im.li.h4': ' file from the archive. Texts and links come from the platform archive — verifiable data. Posts will be marked as yours (author: “',
+  'im.li.h4':
+    ' file from the archive. Texts and links come from the platform archive — verifiable data. Posts will be marked as yours (author: “',
   'im.li.h5': '”).',
   'im.li.file.aria': 'Choose Shares.csv',
   'im.li.info.a': 'Records found: ',
   'im.li.info.b': '; with text: ',
   'im.li.info.c': '; skipped (reposts without text): ',
   'im.li.info.d': '. LinkedIn export has no metrics — they honestly stay “unknown”; enter facts in the Forecast tab.',
-  'im.single.hint': 'Reference clip form: copy the text of an open post and the visible counters. Paste only a link copied from the address bar — reconstructed addresses do not work.',
+  'im.single.hint':
+    'Reference clip form: copy the text of an open post and the visible counters. Paste only a link copied from the address bar — reconstructed addresses do not work.',
   'im.single.author': 'Author',
   'im.single.text': 'Post text',
   'im.single.reactions': 'Reactions (empty = unknown)',
@@ -476,7 +505,8 @@ export const en: Record<DictKey, string> = {
   'se.guard.resetToast': 'Rules reset to defaults',
   'se.guard.note.a': 'Rules check ideas and drafts. ',
   'se.guard.note.b': ' blocks publishing and export. Add your own (e.g. forbidden terms).',
-  'se.guard.trust': 'Rules are stored in the browser in plain text. Do not enter what cannot be stored on this device (e.g. NDA client names on a shared computer) — encryption arrives with team mode.',
+  'se.guard.trust':
+    'Rules are stored in the browser in plain text. Do not enter what cannot be stored on this device (e.g. NDA client names on a shared computer) — encryption arrives with team mode.',
   'se.packs.title': 'Niche rule packs',
   'se.packs.aria': 'Pack ',
   'se.packs.rules': ' rules, ',
@@ -493,7 +523,8 @@ export const en: Record<DictKey, string> = {
   'se.add.needFields': 'Provide the rule name and pattern',
   'se.add.toast': 'Rule added',
   'se.data.title': 'Data',
-  'se.data.note': 'Data lives only in this browser. Download a backup before clearing the browser or moving to another device.',
+  'se.data.note':
+    'Data lives only in this browser. Download a backup before clearing the browser or moving to another device.',
   'se.data.download': 'Download backup',
   'se.data.downloaded': 'Backup downloaded',
   'se.data.restore': 'Restore from backup…',
@@ -508,7 +539,8 @@ export const en: Record<DictKey, string> = {
   'se.audit.title': 'Action log (local)',
   'se.audit.export': 'Export CSV (',
   'se.audit.exported': 'Log exported',
-  'se.audit.note': 'Imports, ideas, publications — the last 100 events. The log is stored only in this browser and is erased when it is cleared; immutable server-side audit arrives with team mode.',
+  'se.audit.note':
+    'Imports, ideas, publications — the last 100 events. The log is stored only in this browser and is erased when it is cleared; immutable server-side audit arrives with team mode.',
   'se.danger.title': 'Danger zone',
   'se.danger.confirm': 'Delete ALL app data from this browser (corpus, ideas, rules, settings)? This cannot be undone.',
   'se.danger.btn': 'Delete all data',

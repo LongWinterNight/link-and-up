@@ -1,29 +1,14 @@
-import type {
-  ClusterId,
-  CtaType,
-  Emotion,
-  FormatFlag,
-  HookType,
-  Lang,
-  Post,
-  RawPost,
-  Structure,
-  Tags,
-} from '@/types';
+import type { ClusterId, CtaType, Emotion, FormatFlag, HookType, Lang, Post, RawPost, Structure, Tags } from '@/types';
 
 /** Извлечь число подписчиков из headline. */
 export function parseFollowers(headline?: string): number | null {
   if (!headline) return null;
-  const m = headline.match(
-    /([\d][\d\s.,]*)\s*(тыс|k|к|млн|m|mln)?\s*(?:подписчик|followers|подписок)/i,
-  );
+  const m = headline.match(/([\d][\d\s.,]*)\s*(тыс|k|к|млн|m|mln)?\s*(?:подписчик|followers|подписок)/i);
   if (!m) return null;
   const u = (m[2] || '').toLowerCase();
   // С единицей (тыс/млн/k): точка/запятая = десятичный разделитель, убираем только пробелы.
   // Без единицы: число — полный счётчик («12 400»), точки/запятые = разделители тысяч.
-  let n = u
-    ? parseFloat(m[1].replace(/\s/g, '').replace(',', '.'))
-    : parseFloat(m[1].replace(/[\s.,]/g, ''));
+  let n = u ? parseFloat(m[1].replace(/\s/g, '').replace(',', '.')) : parseFloat(m[1].replace(/[\s.,]/g, ''));
   if (u === 'тыс' || u === 'k' || u === 'к') n *= 1000;
   if (u === 'млн' || u === 'm' || u === 'mln') n *= 1_000_000;
   return n > 0 ? Math.round(n) : null;
@@ -46,36 +31,17 @@ export function clusterOf(str: string): ClusterId {
     )
   )
     return 'spec';
-  if (has('промпт', 'prompt', 'фреймворк', 'rif', 'карусел', 'контент-план', 'хук', 'сторител'))
-    return 'prompt';
+  if (has('промпт', 'prompt', 'фреймворк', 'rif', 'карусел', 'контент-план', 'хук', 'сторител')) return 'prompt';
   if (has('агент', 'agent', 'build-in-public', 'билд-ин', 'автоном')) return 'agents';
-  if (
-    has(
-      'собеседован',
-      'отказ',
-      'ваканс',
-      'резюме',
-      'оффер',
-      'поиск работ',
-      'фриланс',
-      'interview',
-      'reject',
-    )
-  )
+  if (has('собеседован', 'отказ', 'ваканс', 'резюме', 'оффер', 'поиск работ', 'фриланс', 'interview', 'reject'))
     return 'jobs';
-  if (has('solopreneur', 'инди', 'indie', 'mvp', 'соло', 'запуск продукт', 'пет-проект'))
-    return 'solo';
+  if (has('solopreneur', 'инди', 'indie', 'mvp', 'соло', 'запуск продукт', 'пет-проект')) return 'solo';
   if (has('пузыр', 'bubble', 'скепс', 'этик', 'хайп', 'переоцен', 'пугают')) return 'bubble';
-  if (
-    has('внедрил', 'обучил', 'кейс', 'roi', 'сэконом', 'издержк', 'эффективн', 'enablement', 'автоматизир')
-  )
+  if (has('внедрил', 'обучил', 'кейс', 'roi', 'сэконом', 'издержк', 'эффективн', 'enablement', 'автоматизир'))
     return 'enable';
-  if (
-    has('строй', 'bim', 'юрист', 'финанс', 'дизайн', 'поддержк', 'логист', 'hr', 'медицин', 'отрасл', 'erp')
-  )
+  if (has('строй', 'bim', 'юрист', 'финанс', 'дизайн', 'поддержк', 'логист', 'hr', 'медицин', 'отрасл', 'erp'))
     return 'industry';
-  if (has('выгоран', 'зарплат', 'нетворк', 'релокац', 'декрет', '40+', 'карьер', 'burnout'))
-    return 'life';
+  if (has('выгоран', 'зарплат', 'нетворк', 'релокац', 'декрет', '40+', 'карьер', 'burnout')) return 'life';
   return 'other';
 }
 
@@ -84,7 +50,13 @@ export function tagPost(p: RawPost): Tags {
   const text = p.text || '';
   const t = text.toLowerCase();
   const fmtIdx = text.search(/формат\s*:/i);
-  const formatText = fmtIdx >= 0 ? text.slice(fmtIdx).replace(/^формат\s*:/i, '').trim() : '';
+  const formatText =
+    fmtIdx >= 0
+      ? text
+          .slice(fmtIdx)
+          .replace(/^формат\s*:/i, '')
+          .trim()
+      : '';
   const body = fmtIdx >= 0 ? text.slice(0, fmtIdx).trim() : text;
   const ft = formatText.toLowerCase();
   const hasNum = /\d/.test(body);
@@ -94,11 +66,7 @@ export function tagPost(p: RawPost): Tags {
   if (/[?]/.test(first) || /^как |^почему|^что если|^зачем/.test(first)) hook = 'вопрос';
   else if (/^\d|\d+\s*%|\d+\s*(из|раз)/.test(first) || ft.includes('цифр') || ft.includes('статист'))
     hook = 'цифра-статистика';
-  else if (
-    ft.includes('провок') ||
-    ft.includes('контртез') ||
-    /на самом деле|миф|заблужден|перестань/.test(first)
-  )
+  else if (ft.includes('провок') || ft.includes('контртез') || /на самом деле|миф|заблужден|перестань/.test(first))
     hook = 'провокация/контртезис';
   else if (ft.includes('истор') || /^я |^мой |^когда я|год назад/.test(first)) hook = 'личная история';
   else if (/потеря|риск|опасн|умрёт|конец|поздно/.test(first)) hook = 'пугающий факт';

@@ -110,7 +110,14 @@ export function generateDraft(idea: Idea, rules?: Rule[]): DraftResult {
   lines.push('# Черновик: ' + (idea.title || 'Без названия'));
   lines.push('');
   lines.push('> Каркас по формуле «' + (formula?.title || idea.formula) + '». Наполни реальными деталями.');
-  lines.push('> Кластер: ' + (CLUSTER_LABEL[idea.cluster] || idea.cluster) + ' · Источник: ' + (idea.source || '—') + ' · Канал: ' + idea.channel);
+  lines.push(
+    '> Кластер: ' +
+      (CLUSTER_LABEL[idea.cluster] || idea.cluster) +
+      ' · Источник: ' +
+      (idea.source || '—') +
+      ' · Канал: ' +
+      idea.channel,
+  );
   lines.push('');
   lines.push('---');
   lines.push('');
@@ -123,7 +130,9 @@ export function generateDraft(idea: Idea, rules?: Rule[]): DraftResult {
   });
   lines.push('---');
   lines.push('');
-  lines.push('⚠️ Гардрейлы: используйте проверяемые факты и конкретные цифры с источником; избегайте абсолютных обещаний и превосходной степени без доказательства; соблюдайте свои brand-safety правила.');
+  lines.push(
+    '⚠️ Гардрейлы: используйте проверяемые факты и конкретные цифры с источником; избегайте абсолютных обещаний и превосходной степени без доказательства; соблюдайте свои brand-safety правила.',
+  );
   if (flags.length) {
     lines.push('');
     lines.push(blocked ? '🚫 БЛОКИРУЮЩИЕ нарушения (исправь до публикации):' : '⚠️ Предупреждения:');

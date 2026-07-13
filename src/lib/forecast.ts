@@ -1,11 +1,4 @@
-import type {
-  BacktestResult,
-  Calibration,
-  ForecastResult,
-  ForecastStep,
-  Idea,
-  Post,
-} from '@/types';
+import type { BacktestResult, Calibration, ForecastResult, ForecastStep, Idea, Post } from '@/types';
 import { CLUSTER_LABEL } from './constants';
 import { clamp, median, nf, quantile } from './stats';
 
@@ -61,7 +54,9 @@ export interface EmpiricalFactor {
   fallback: boolean;
 }
 
-export function empiricalMultipliers(posts: Post[]): { multipliers: FactorMultipliers; details: Record<keyof FactorMultipliers, EmpiricalFactor> } | null {
+export function empiricalMultipliers(
+  posts: Post[],
+): { multipliers: FactorMultipliers; details: Record<keyof FactorMultipliers, EmpiricalFactor> } | null {
   const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
   if (metric.length < EMPIRICAL_MIN_POSTS) return null;
   const keys = Object.keys(DEFAULT_MULTIPLIERS) as (keyof FactorMultipliers)[];
@@ -101,7 +96,13 @@ export function selectMultipliers(posts: Post[]): MultiplierSelection {
   if (cached) return cached;
   const emp = empiricalMultipliers(posts);
   const defaultMape = backtest(posts, DEFAULT_MULTIPLIERS).mape;
-  let result: MultiplierSelection = { chosen: 'default', multipliers: DEFAULT_MULTIPLIERS, defaultMape, empiricalMape: null, empirical: emp };
+  let result: MultiplierSelection = {
+    chosen: 'default',
+    multipliers: DEFAULT_MULTIPLIERS,
+    defaultMape,
+    empiricalMape: null,
+    empirical: emp,
+  };
   if (emp) {
     const empiricalMape = backtest(posts, emp.multipliers).mape;
     if (empiricalMape != null && (defaultMape == null || empiricalMape < defaultMape)) {
@@ -127,9 +128,7 @@ export function forecast(
   if (!idea) return null;
   const clusterPosts = posts.filter((p) => p.has_metrics && p.meta_cluster === idea.cluster);
   const pool = clusterPosts.length >= 3 ? clusterPosts : posts.filter((p) => p.has_metrics);
-  const refPost = idea.refPostId
-    ? posts.find((p) => p.id === idea.refPostId && p.has_metrics) || null
-    : null;
+  const refPost = idea.refPostId ? posts.find((p) => p.id === idea.refPostId && p.has_metrics) || null : null;
   // COR-3: пост-референс годится как база только если у него ИЗВЕСТНЫ комментарии (comments>0).
   // comments===0 = «неизвестно» (0 ≠ ноль), иначе база=0 обнулила бы весь прогноз молча.
   const baseFromRef = !!refPost && refPost.comments > 0;
@@ -266,10 +265,9 @@ export function recalcCalibration(ideas: Idea[], currentCal: number): Calibratio
   const ratios = pub.map((i) => Number(i.actual!.comments) / i.predicted);
   const cal = ratios.reduce((a, b) => a + b, 0) / ratios.length;
   const mape =
-    pub.map((i) => Math.abs(Number(i.actual!.comments) - i.predicted) / Number(i.actual!.comments)).reduce(
-      (a, b) => a + b,
-      0,
-    ) / pub.length;
+    pub
+      .map((i) => Math.abs(Number(i.actual!.comments) - i.predicted) / Number(i.actual!.comments))
+      .reduce((a, b) => a + b, 0) / pub.length;
   return {
     calibration: clamp(cal, 0.3, 3),
     accuracy: Math.max(0, Math.round((1 - mape) * 100)),

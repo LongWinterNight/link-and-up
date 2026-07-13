@@ -16,7 +16,10 @@ for (const f of readdirSync(DIR)) {
   if (/^(index|vendor)-.*\.(js|css)$/.test(f)) initial += gz;
 }
 
-const fail = (msg) => { console.error('BUNDLE BUDGET FAIL: ' + msg); process.exit(1); };
+const fail = (msg) => {
+  console.error('BUNDLE BUDGET FAIL: ' + msg);
+  process.exit(1);
+};
 
 if (!seedChunk) fail('демо-корпус не найден отдельным чанком (seed-*.js) — сид попал в initial-бандл?');
 console.log(`initial (index+vendor+css) = ${initial.toFixed(1)} KB gzip (budget ${INITIAL_BUDGET_KB})`);

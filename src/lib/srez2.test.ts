@@ -5,11 +5,29 @@ import { DEFAULT_RULES } from './guardrails';
 import type { Idea, Rule } from '@/types';
 
 const mk = (over: Partial<Idea>): Idea => ({
-  id: 'x', title: '', hook: '', cluster: 'spec', formula: 'arch', source: '',
-  channel: 'LinkedIn', status: 'draft', date: '', refPostId: '', predicted: 0, actual: null, ...over,
+  id: 'x',
+  title: '',
+  hook: '',
+  cluster: 'spec',
+  formula: 'arch',
+  source: '',
+  channel: 'LinkedIn',
+  status: 'draft',
+  date: '',
+  refPostId: '',
+  predicted: 0,
+  actual: null,
+  ...over,
 });
 
-const ndaRule: Rule = { id: 'nda', label: 'NDA-термин', pattern: 'секретныйклиент', severity: 'hard', message: 'Запрещённый термин', enabled: true };
+const ndaRule: Rule = {
+  id: 'nda',
+  label: 'NDA-термин',
+  pattern: 'секретныйклиент',
+  severity: 'hard',
+  message: 'Запрещённый термин',
+  enabled: true,
+};
 
 describe('generateDraft — мост идея→черновик', () => {
   it('собирает каркас по формуле, не заблокирован для чистой идеи', () => {

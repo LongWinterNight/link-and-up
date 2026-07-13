@@ -1,0 +1,7 @@
+dist/
+coverage/
+node_modules/
+docs/
+public/
+*.md
+src/data/seed_posts.json

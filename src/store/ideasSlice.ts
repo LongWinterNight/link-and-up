@@ -75,7 +75,9 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
   scheduleIdea: (id) => {
     if (get().readOnly) return;
     const date = nextPostingDay();
-    const ideas = get().ideas.map((x) => (x.id === id ? { ...x, date, status: x.status === 'draft' ? ('inwork' as const) : x.status } : x));
+    const ideas = get().ideas.map((x) =>
+      x.id === id ? { ...x, date, status: x.status === 'draft' ? ('inwork' as const) : x.status } : x,
+    );
     set({ ideas });
     get().flash(tr(get().locale, 'st.scheduled.a') + date + tr(get().locale, 'st.scheduled.b'));
   },
@@ -116,7 +118,10 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
       posts,
       calibration: cal.calibration,
       calibrationCount: cal.count,
-      auditLog: audit(get().auditLog, 'Опубликован пост «' + (idea.title || '?') + '»: ' + real.comments + ' комм., ' + real.reactions + ' реакц.'),
+      auditLog: audit(
+        get().auditLog,
+        'Опубликован пост «' + (idea.title || '?') + '»: ' + real.comments + ' комм., ' + real.reactions + ' реакц.',
+      ),
     });
     get().flash(tr(get().locale, 'st.factSaved') + cal.calibration.toFixed(2));
   },

@@ -1,52 +1,21 @@
 // Доменные типы дашборда. Схема поста = исходная (из датасета) + обогащённые поля.
 
 export type ClusterId =
-  | 'spec'
-  | 'prompt'
-  | 'agents'
-  | 'jobs'
-  | 'solo'
-  | 'bubble'
-  | 'enable'
-  | 'industry'
-  | 'life'
-  | 'other';
+  'spec' | 'prompt' | 'agents' | 'jobs' | 'solo' | 'bubble' | 'enable' | 'industry' | 'life' | 'other';
 
 export type Lang = 'RU' | 'EN';
 
 export type HookType =
-  | 'вопрос'
-  | 'цифра-статистика'
-  | 'провокация/контртезис'
-  | 'личная история'
-  | 'обещание пользы'
-  | 'пугающий факт';
+  'вопрос' | 'цифра-статистика' | 'провокация/контртезис' | 'личная история' | 'обещание пользы' | 'пугающий факт';
 
 export type Structure =
-  | 'нумерованный список'
-  | 'сюжетная арка'
-  | 'кейс с цифрами'
-  | 'конспект'
-  | 'карусель'
-  | 'пошаговый гайд'
-  | 'манифест';
+  'нумерованный список' | 'сюжетная арка' | 'кейс с цифрами' | 'конспект' | 'карусель' | 'пошаговый гайд' | 'манифест';
 
 export type CtaType = 'вопрос в конце' | 'лид-магнит-в-комменты' | 'сохрани' | 'без CTA';
 
-export type Emotion =
-  | 'уязвимость'
-  | 'юмор'
-  | 'амбиция'
-  | 'тревога'
-  | 'вдохновение'
-  | 'нейтрально';
+export type Emotion = 'уязвимость' | 'юмор' | 'амбиция' | 'тревога' | 'вдохновение' | 'нейтрально';
 
-export type FormatFlag =
-  | 'has_numbers'
-  | 'personal_story'
-  | 'contrarian'
-  | 'list_format'
-  | 'save_bait';
+export type FormatFlag = 'has_numbers' | 'personal_story' | 'contrarian' | 'list_format' | 'save_bait';
 
 export interface Tags {
   hook_type: HookType;

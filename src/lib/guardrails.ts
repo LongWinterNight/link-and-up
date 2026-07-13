@@ -72,7 +72,8 @@ export function validatePattern(pattern: string): string | null {
   } catch (e) {
     return 'Некорректное регулярное выражение: ' + (e as Error).message;
   }
-  if (NESTED_QUANTIFIER.test(p)) return 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)';
+  if (NESTED_QUANTIFIER.test(p))
+    return 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)';
   const probe = 'а'.repeat(3000) + '!';
   const t0 = performance.now();
   re.test(probe);

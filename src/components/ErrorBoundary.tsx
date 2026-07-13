@@ -26,7 +26,8 @@ function logError(err: unknown, info?: ErrorInfo) {
     const e: ErrEntry = {
       t: new Date().toISOString(),
       msg: err instanceof Error ? err.message : String(err),
-      stack: ((err instanceof Error ? err.stack : '') || '').slice(0, 2000) + (info?.componentStack || '').slice(0, 1000),
+      stack:
+        ((err instanceof Error ? err.stack : '') || '').slice(0, 2000) + (info?.componentStack || '').slice(0, 1000),
     };
     const log = [e, ...readErrorLog()].slice(0, 20);
     localStorage.setItem(ERR_KEY, JSON.stringify(log));
@@ -49,21 +50,62 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
   render() {
     if (!this.state.error) return this.props.children;
     return (
-      <div role="alert" style={{ maxWidth: 560, margin: '48px auto', padding: 24, background: 'var(--surface-1)', border: '1px solid var(--critical)', borderRadius: 'var(--radius-card)' }}>
+      <div
+        role="alert"
+        style={{
+          maxWidth: 560,
+          margin: '48px auto',
+          padding: 24,
+          background: 'var(--surface-1)',
+          border: '1px solid var(--critical)',
+          borderRadius: 'var(--radius-card)',
+        }}
+      >
         <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Что-то сломалось в интерфейсе</h2>
         <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55, marginBottom: 6 }}>
-          Ваши данные целы — они сохраняются локально независимо от интерфейса. Перезагрузите страницу;
-          если повторится — скопируйте отчёт и приложите его к issue.
+          Ваши данные целы — они сохраняются локально независимо от интерфейса. Перезагрузите страницу; если повторится
+          — скопируйте отчёт и приложите его к issue.
         </p>
-        <pre style={{ fontSize: 11.5, color: 'var(--critical)', whiteSpace: 'pre-wrap', margin: '0 0 12px', maxHeight: 120, overflowY: 'auto' }}>{this.state.error.message}</pre>
+        <pre
+          style={{
+            fontSize: 11.5,
+            color: 'var(--critical)',
+            whiteSpace: 'pre-wrap',
+            margin: '0 0 12px',
+            maxHeight: 120,
+            overflowY: 'auto',
+          }}
+        >
+          {this.state.error.message}
+        </pre>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <button type="button" onClick={() => location.reload()} style={{ background: 'var(--accent)', color: '#fff', border: 'none', borderRadius: 'var(--radius-ctl)', padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}>
+          <button
+            type="button"
+            onClick={() => location.reload()}
+            style={{
+              background: 'var(--accent)',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 'var(--radius-ctl)',
+              padding: '8px 14px',
+              cursor: 'pointer',
+              fontSize: 13,
+            }}
+          >
             Перезагрузить
           </button>
           <button
             type="button"
             onClick={() => navigator.clipboard?.writeText(JSON.stringify(readErrorLog(), null, 2))}
-            style={{ background: 'var(--surface-2)', color: 'var(--text-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-ctl)', padding: '8px 14px', cursor: 'pointer', fontSize: 13 }}
+            style={{
+              background: 'var(--surface-2)',
+              color: 'var(--text-1)',
+              border: '1px solid var(--border)',
+              borderRadius: 'var(--radius-ctl)',
+              padding: '8px 14px',
+              cursor: 'pointer',
+              fontSize: 13,
+            }}
           >
             Скопировать отчёт
           </button>
