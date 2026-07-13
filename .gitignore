@@ -21,3 +21,7 @@ design_handoff_content_dashboard/
 
 .vercel
 .env*
+
+# Playwright (Б9)
+test-results/
+playwright-report/
