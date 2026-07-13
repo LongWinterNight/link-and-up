@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
-import { analyzeIngest, diceSim, dedupKey, MAX_IMPORT_RECORDS } from './dedup';
+import { analyzeIngest, analyzeIngestChunked, diceSim, dedupKey, MAX_IMPORT_RECORDS } from './dedup';
 import { backtest, effectiveCalibration, forecast, postMultipliers, recalcCalibration } from './forecast';
 import { median } from './stats';
 import { validateIdea, validateContent, validatePattern, hasHardFlag, DEFAULT_RULES, MAX_PATTERN_LENGTH } from './guardrails';
@@ -368,6 +368,26 @@ describe('SEC-4: лимиты импорта', () => {
     const r = analyzeIngest([], incoming);
     expect(r.added).toBe(MAX_IMPORT_RECORDS);
     expect(r.reasons.some((x) => x.includes('ограничен'))).toBe(true);
+  });
+
+  it('SCALE-9: chunked-вариант даёт результат, идентичный синхронному, и умеет отменяться', async () => {
+    const existing = [enrich({ author: 'Игорь Ветров', text: 'Спека до кода — и Claude Code перестал фантазировать полностью совсем', reactions: 1, comments: 1 })];
+    const incoming = Array.from({ length: 230 }, (_, i) => ({ author: 'A' + (i % 40), text: 'уникальный текст номер ' + i + ' про инженерию и контекст' }));
+    const sync = analyzeIngest(existing, incoming);
+    const progress: number[] = [];
+    const chunked = await analyzeIngestChunked(existing, incoming, { chunkSize: 50, onProgress: (p) => progress.push(p.processed) });
+    expect(chunked).toEqual(sync);
+    expect(progress).toEqual([50, 100, 150, 200, 230]);
+
+    const signal = { cancelled: false };
+    const partial = await analyzeIngestChunked(existing, incoming, {
+      chunkSize: 50,
+      signal,
+      onProgress: () => { signal.cancelled = true; }, // отмена после первого чанка
+    });
+    // отмена: обработан ровно один чанк (50), тогда как полный прогон обработал все 230
+    expect(partial.added + partial.dupes + partial.rejected).toBe(50);
+    expect(sync.added + sync.dupes + sync.rejected).toBe(230);
   });
 
   it('бакетизация по автору не сломала near-dup детекцию', () => {

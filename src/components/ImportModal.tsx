@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useStore } from '@/store';
-import { MAX_IMPORT_BYTES } from '@/lib/dedup';
+import { MAX_IMPORT_BYTES, type IngestProgress } from '@/lib/dedup';
 import { Btn } from './ui';
 import { Modal } from './Modal';
 
@@ -8,11 +8,13 @@ export default function ImportModal() {
   const open = useStore((s) => s.importOpen);
   const setOpen = useStore((s) => s.setImportOpen);
   const preview = useStore((s) => s.importPreview);
-  const previewImport = useStore((s) => s.previewImport);
+  const previewImportChunked = useStore((s) => s.previewImportChunked);
   const commitImport = useStore((s) => s.commitImport);
   const clearImport = useStore((s) => s.clearImport);
   const [text, setText] = useState('');
   const [error, setError] = useState('');
+  const [prog, setProg] = useState<IngestProgress | null>(null);
+  const cancelRef = useRef({ cancelled: false });
 
   if (!open) return null;
 
@@ -30,13 +32,17 @@ export default function ImportModal() {
     rd.readAsText(f);
   };
 
-  const doPreview = () => {
+  const doPreview = async () => {
     if (!text.trim()) { setError('Вставьте JSON или выберите файл'); return; }
+    setError('');
+    cancelRef.current = { cancelled: false };
+    setProg({ processed: 0, total: 0 });
     try {
-      previewImport(text);
-      setError('');
+      await previewImportChunked(text, setProg, cancelRef.current);
     } catch (e) {
       setError('Не удалось разобрать JSON: ' + (e as Error).message);
+    } finally {
+      setProg(null);
     }
   };
 
@@ -60,6 +66,19 @@ export default function ImportModal() {
 
         {error && <div style={{ color: 'var(--critical)', fontSize: 12.5, marginTop: 8 }}>{error}</div>}
 
+        {/* SCALE-9: прогресс проверки больших файлов + отмена */}
+        {prog && (
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 10 }}>
+            <div style={{ flex: 1, height: 8, background: 'var(--surface-2)', borderRadius: 4, overflow: 'hidden' }}>
+              <div style={{ width: (prog.total ? Math.round((prog.processed / prog.total) * 100) : 0) + '%', height: '100%', background: 'var(--accent)' }} />
+            </div>
+            <span className="num" style={{ fontSize: 12, color: 'var(--text-3)', flexShrink: 0 }}>
+              {prog.processed}/{prog.total || '…'}
+            </span>
+            <Btn onClick={() => { cancelRef.current.cancelled = true; }}>Отменить</Btn>
+          </div>
+        )}
+
         {preview && (
           <div style={{ marginTop: 12, background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, padding: 12, fontSize: 12.5 }}>
             <div style={{ fontWeight: 600, marginBottom: 6 }}>Предпросмотр (без изменений):</div>
@@ -82,7 +101,7 @@ export default function ImportModal() {
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 14 }}>
           <Btn onClick={() => setOpen(false)}>Отмена</Btn>
           {!preview ? (
-            <Btn variant="accent" onClick={doPreview}>Проверить</Btn>
+            <Btn variant="accent" disabled={!!prog} onClick={() => void doPreview()}>Проверить</Btn>
           ) : (
             <Btn variant="accent" disabled={preview.added === 0} onClick={() => { commitImport(); setText(''); }}>
               Подтвердить загрузку ({preview.added})

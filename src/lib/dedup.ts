@@ -91,13 +91,8 @@ export interface IngestReport {
 export const MAX_IMPORT_RECORDS = 5000;
 export const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
-/**
- * Чистый анализ импорта БЕЗ мутации: считает, что будет добавлено/дублей/near-dup/отклонено.
- * near-dup: тот же нормализованный автор + Dice ≥ 0.82 по первым 160 символам.
- * SEC-4: скан near-dup бакетизован по автору (O(n×bucket) вместо O(n×m));
- * входной массив капится MAX_IMPORT_RECORDS.
- */
-export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestReport {
+/** Внутреннее состояние прогона импорта: общее для синхронного и чанкованного вариантов. */
+function createIngestRun(existing: Post[], incoming: unknown[]) {
   const keys = new Set(existing.map((p) => dedupKey(p)));
   const buckets = new Map<string, string[]>();
   for (const p of existing) {
@@ -107,32 +102,27 @@ export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestRepo
     if (arr) arr.push(body);
     else buckets.set(a, [body]);
   }
-  let added = 0;
-  let dupes = 0;
-  let rejected = 0;
-  let nearDupes = 0;
-  const reasons: string[] = [];
-  const valid: RawPost[] = [];
+  const st = { added: 0, dupes: 0, rejected: 0, nearDupes: 0, reasons: [] as string[], valid: [] as RawPost[] };
 
   let capped = incoming;
   if (incoming.length > MAX_IMPORT_RECORDS) {
     capped = incoming.slice(0, MAX_IMPORT_RECORDS);
-    reasons.push(
+    st.reasons.push(
       'импорт ограничен ' + MAX_IMPORT_RECORDS + ' записями за раз (получено ' + incoming.length + ') — остальные загрузите следующим файлом',
     );
   }
 
-  capped.forEach((raw, idx) => {
+  const processOne = (raw: unknown, idx: number) => {
     const v = validateRecord(raw, idx);
     if (!v.ok) {
-      rejected++;
-      reasons.push(...v.errs);
+      st.rejected++;
+      st.reasons.push(...v.errs);
       return;
     }
     const rp = raw as RawPost;
     const k = dedupKey(rp);
     if (keys.has(k)) {
-      dupes++;
+      st.dupes++;
       return;
     }
     const na = normAuthor(rp.author);
@@ -147,19 +137,70 @@ export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestRepo
         return diceSim(body, nb) >= 0.82;
       })
     ) {
-      nearDupes++;
-      dupes++;
-      reasons.push('запись #' + (idx + 1) + ' (' + (rp.author || '?') + '): near-dup — будет пропущено');
+      st.nearDupes++;
+      st.dupes++;
+      st.reasons.push('запись #' + (idx + 1) + ' (' + (rp.author || '?') + '): near-dup — будет пропущено');
       return;
     }
     keys.add(k);
     const arr = buckets.get(na);
     if (arr) arr.push(nb);
     else buckets.set(na, [nb]);
-    valid.push(rp);
-    added++;
-  });
+    st.valid.push(rp);
+    st.added++;
+  };
 
+  return { capped, st, processOne };
+}
+
+/**
+ * Чистый анализ импорта БЕЗ мутации: считает, что будет добавлено/дублей/near-dup/отклонено.
+ * near-dup: тот же нормализованный автор + Dice ≥ 0.82 по первым 160 символам.
+ * SEC-4: скан near-dup бакетизован по автору; входной массив капится MAX_IMPORT_RECORDS.
+ */
+export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestReport {
+  const run = createIngestRun(existing, incoming);
+  run.capped.forEach(run.processOne);
+  const { added, dupes, rejected, nearDupes, reasons, valid } = run.st;
+
+  return {
+    total: incoming.length,
+    added,
+    dupes,
+    rejected,
+    nearDupes,
+    reasons: reasons.slice(0, 12),
+    more: Math.max(0, reasons.length - 12),
+    valid,
+  };
+}
+
+export interface IngestProgress {
+  processed: number;
+  total: number;
+}
+
+/**
+ * SCALE-9: чанкованный анализ импорта — порции по chunkSize с уступкой главному потоку
+ * (на 20K-корпусе синхронный вариант фризил вкладку до ~5.6с). Прогресс и отмена.
+ * Результат идентичен analyzeIngest (общий processOne).
+ */
+export async function analyzeIngestChunked(
+  existing: Post[],
+  incoming: unknown[],
+  opts?: { chunkSize?: number; onProgress?: (p: IngestProgress) => void; signal?: { cancelled: boolean } },
+): Promise<IngestReport> {
+  const { chunkSize = 500, onProgress, signal } = opts || {};
+  const run = createIngestRun(existing, incoming);
+  const total = run.capped.length;
+  for (let i = 0; i < total; i += chunkSize) {
+    if (signal?.cancelled) break;
+    const end = Math.min(i + chunkSize, total);
+    for (let j = i; j < end; j++) run.processOne(run.capped[j], j);
+    onProgress?.({ processed: end, total });
+    await new Promise((r) => setTimeout(r, 0));
+  }
+  const { added, dupes, rejected, nearDupes, reasons, valid } = run.st;
   return {
     total: incoming.length,
     added,

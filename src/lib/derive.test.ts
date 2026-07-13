@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { corpusFreshness, filterPosts, isPostingDay, ownPostsThisWeek } from './derive';
+import { corpusFreshness, filterPosts, isPostingDay, kpis, ownPostsThisWeek, topByComments } from './derive';
 import { enrich } from './enrich';
 import { DEFAULT_FILTERS, type Filters } from '@/store';
 import type { Post } from '@/types';
@@ -102,6 +102,18 @@ describe('isPostingDay (P-6)', () => {
     expect(isPostingDay(new Date('2026-07-16'))).toBe(true); // четверг
     expect(isPostingDay(new Date('2026-07-12'))).toBe(false); // воскресенье
     expect(isPostingDay(new Date('2026-07-13'))).toBe(false); // понедельник
+  });
+});
+
+describe('SCALE-11: WeakMap-кэш производных', () => {
+  it('одна ссылка на posts → тот же объект результата; новая ссылка → пересчёт', () => {
+    const a = kpis(POSTS);
+    expect(kpis(POSTS)).toBe(a); // идентичность, не equality
+    expect(topByComments(POSTS, 12)).toBe(topByComments(POSTS, 12));
+    expect(topByComments(POSTS, 5)).not.toBe(topByComments(POSTS, 12)); // разные ключи
+    const copy = [...POSTS];
+    expect(kpis(copy)).not.toBe(a); // новая ссылка — новая запись кэша
+    expect(kpis(copy)).toEqual(a); // но значения те же
   });
 });
 

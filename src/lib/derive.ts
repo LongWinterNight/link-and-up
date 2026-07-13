@@ -8,6 +8,22 @@ export function angleOf(query: string): string {
   return (query || '').replace(/^(tavily|own):/, '').trim() || '—';
 }
 
+/**
+ * SCALE-11: кэш производных по ссылке на массив постов. React.lazy размонтирует вкладку
+ * при переключении — useMemo теряется, и агрегаты (~500мс на 20K) считались заново на каждый
+ * переход. Стор иммутабелен: любое изменение постов = новая ссылка = автоматическая инвалидация.
+ */
+const deriveCache = new WeakMap<readonly Post[], Map<string, unknown>>();
+function memo<T>(posts: Post[], key: string, compute: () => T): T {
+  let m = deriveCache.get(posts);
+  if (!m) {
+    m = new Map();
+    deriveCache.set(posts, m);
+  }
+  if (!m.has(key)) m.set(key, compute());
+  return m.get(key) as T;
+}
+
 export interface Kpis {
   total: number;
   withMetrics: number;
@@ -22,6 +38,7 @@ export interface Kpis {
 
 /** Ключевые метрики. 0=неизвестно НЕ попадает в средние (учитываем только has_metrics). */
 export function kpis(posts: Post[]): Kpis {
+  return memo(posts, 'kpis', () => {
   const metric = posts.filter((p) => p.has_metrics);
   const comments = metric.map((p) => p.comments);
   const rates = metric.filter((p) => p.rate != null).map((p) => (p.rate as number) * 100);
@@ -37,6 +54,7 @@ export function kpis(posts: Post[]): Kpis {
     maxComments: comments.length ? Math.max(...comments) : null,
     medRatePct: rates.length ? Math.round(median(rates) * 100) / 100 : null,
   };
+  });
 }
 
 export interface ClusterStat {
@@ -49,7 +67,7 @@ export interface ClusterStat {
 }
 
 export function clusterStats(posts: Post[]): ClusterStat[] {
-  return CLUSTERS.map(([id, label]) => {
+  return memo(posts, 'clusterStats', () => CLUSTERS.map(([id, label]) => {
     const inCluster = posts.filter((p) => p.meta_cluster === id);
     const metric = inCluster.filter((p) => p.has_metrics);
     const comments = metric.map((p) => p.comments);
@@ -61,25 +79,27 @@ export function clusterStats(posts: Post[]): ClusterStat[] {
       medComments: comments.length ? median(comments) : null,
       maxComments: comments.length ? Math.max(...comments) : null,
     };
-  }).sort((a, b) => b.count - a.count);
+  }).sort((a, b) => b.count - a.count));
 }
 
 export function topByComments(posts: Post[], n = 15): Post[] {
-  return posts.filter((p) => p.has_metrics).sort((a, b) => b.comments - a.comments).slice(0, n);
+  return memo(posts, 'topC:' + n, () => posts.filter((p) => p.has_metrics).sort((a, b) => b.comments - a.comments).slice(0, n));
 }
 
 export function topByRate(posts: Post[], n = 15): Post[] {
-  return posts.filter((p) => p.rate != null).sort((a, b) => (b.rate as number) - (a.rate as number)).slice(0, n);
+  return memo(posts, 'topR:' + n, () => posts.filter((p) => p.rate != null).sort((a, b) => (b.rate as number) - (a.rate as number)).slice(0, n));
 }
 
 /** Динамика сбора по месяцам (YYYY-MM). */
 export function collectionByMonth(posts: Post[]): { label: string; value: number }[] {
+  return memo(posts, 'byMonth', () => {
   const m = new Map<string, number>();
   for (const p of posts) {
     const key = (p.collected_at || '').slice(0, 7) || '—';
     m.set(key, (m.get(key) || 0) + 1);
   }
   return [...m.entries()].filter(([k]) => k !== '—').sort((a, b) => a[0].localeCompare(b[0])).map(([label, value]) => ({ label, value }));
+  });
 }
 
 export interface DataQuality {
@@ -90,6 +110,7 @@ export interface DataQuality {
 }
 
 export function dataQuality(posts: Post[]): DataQuality {
+  return memo(posts, 'quality', () => {
   const n = posts.length || 1;
   return {
     metricsPct: Math.round((posts.filter((p) => p.has_metrics).length / n) * 100),
@@ -97,10 +118,12 @@ export function dataQuality(posts: Post[]): DataQuality {
     ratePct: Math.round((posts.filter((p) => p.rate != null).length / n) * 100),
     clusteredPct: Math.round((posts.filter((p) => p.meta_cluster !== 'other').length / n) * 100),
   };
+  });
 }
 
 /** Средние комментарии среди постов с метриками, сгруппированные по приёму (hook/structure/cta/emotion). */
 export function effectivenessBy(posts: Post[], key: 'hook_type' | 'structure' | 'cta_type' | 'emotion'): { label: string; avg: number; n: number }[] {
+  return memo(posts, 'eff:' + key, () => {
   const metric = posts.filter((p) => p.has_metrics);
   const groups = new Map<string, number[]>();
   for (const p of metric) {
@@ -110,13 +133,16 @@ export function effectivenessBy(posts: Post[], key: 'hook_type' | 'structure' | 
   return [...groups.entries()]
     .map(([label, vals]) => ({ label, avg: Math.round(vals.reduce((a, b) => a + b, 0) / vals.length), n: vals.length }))
     .sort((a, b) => b.avg - a.avg);
+  });
 }
 
 /** Распределение по значению приёма (для donut). */
 export function distributionBy(posts: Post[], key: 'hook_type' | 'structure' | 'cta_type' | 'emotion'): { label: string; value: number }[] {
+  return memo(posts, 'dist:' + key, () => {
   const m = new Map<string, number>();
   for (const p of posts) m.set(p.tags[key], (m.get(p.tags[key]) || 0) + 1);
   return [...m.entries()].map(([label, value]) => ({ label, value })).sort((a, b) => b.value - a.value);
+  });
 }
 
 /** P-6: день публикации по каденсу (вт/чт) — триггер «что публикуем сегодня». */

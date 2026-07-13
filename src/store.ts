@@ -3,7 +3,7 @@ import { persist, type PersistStorage, type StorageValue } from 'zustand/middlew
 import type { Idea, Post, Rule } from '@/types';
 import { CADENCE_GOAL, FORMULAS, LS_KEY, OWN_AUTHOR, SCHEMA_VERSION } from '@/lib/constants';
 import { enrich, enrichAll, tagPost } from '@/lib/enrich';
-import { analyzeIngest, mergeIngest, type IngestReport } from '@/lib/dedup';
+import { analyzeIngest, analyzeIngestChunked, mergeIngest, type IngestProgress, type IngestReport } from '@/lib/dedup';
 import { effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
 import { DEFAULT_RULES } from '@/lib/guardrails';
 import { NICHE_PACKS } from '@/lib/nichePacks';
@@ -116,6 +116,12 @@ interface State {
   retagPost: (id: string) => void;
   setImportOpen: (v: boolean) => void;
   previewImport: (text: string) => IngestReport;
+  /** SCALE-9: чанкованный предпросмотр — не фризит вкладку на больших файлах; отмена через signal. */
+  previewImportChunked: (
+    text: string,
+    onProgress: (p: IngestProgress) => void,
+    signal: { cancelled: boolean },
+  ) => Promise<IngestReport | null>;
   commitImport: () => void;
   clearImport: () => void;
   // настройки
@@ -430,6 +436,15 @@ export const useStore = create<State>()(
       },
 
       setImportOpen: (importOpen) => set({ importOpen, importPreview: null }),
+      previewImportChunked: async (text, onProgress, signal) => {
+        const parsed = JSON.parse(text);
+        const arr = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.posts) ? parsed.posts : null;
+        if (!arr) throw new Error('Ожидался JSON-массив постов (или объект с полем posts)');
+        const report = await analyzeIngestChunked(get().posts, arr, { onProgress, signal });
+        if (signal.cancelled) return null;
+        set({ importPreview: report });
+        return report;
+      },
       previewImport: (text) => {
         const parsed = JSON.parse(text);
         const arr = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.posts) ? parsed.posts : null;
