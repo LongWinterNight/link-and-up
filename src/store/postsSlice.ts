@@ -28,6 +28,12 @@ export interface PostsSlice {
     onProgress: (p: IngestProgress) => void,
     signal: { cancelled: boolean },
   ) => Promise<IngestReport | null>;
+  /** Б4/Б4b: превью уже разобранных записей (LinkedIn CSV, клип-форма) — тот же пайплайн дедупа. */
+  previewImportRaws: (
+    raws: unknown[],
+    onProgress: (p: IngestProgress) => void,
+    signal: { cancelled: boolean },
+  ) => Promise<IngestReport | null>;
   commitImport: () => void;
   clearImport: () => void;
 }
@@ -123,8 +129,10 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
 
   setImportOpen: (importOpen) => set({ importOpen, importPreview: null }),
   previewImportChunked: async (text, onProgress, signal) => {
-    const arr = parsePostsJson(text);
-    const report = await analyzeIngestChunked(get().posts, arr, { onProgress, signal });
+    return get().previewImportRaws(parsePostsJson(text), onProgress, signal);
+  },
+  previewImportRaws: async (raws, onProgress, signal) => {
+    const report = await analyzeIngestChunked(get().posts, raws, { onProgress, signal });
     if (signal.cancelled) return null;
     set({ importPreview: report });
     return report;
