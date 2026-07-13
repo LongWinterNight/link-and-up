@@ -18,7 +18,7 @@ const cspPlugin = () => ({
       "object-src 'none'",
       "base-uri 'self'",
       "form-action 'self'",
-      "frame-ancestors 'none'",
+      // frame-ancestors в <meta> игнорируется браузером (шумит в консоли) — доставляется HTTP-заголовком (vercel.json)
     ].join('; ');
     return html.replace('<head>', `<head>\n    <meta http-equiv="Content-Security-Policy" content="${csp}" />`);
   },
