@@ -6,6 +6,7 @@ import { Bars, Donut, Scatter } from '@/components/charts';
 import { EmptyState, Panel } from '@/components/ui';
 import { Modal } from '@/components/Modal';
 import EmptyCorpus from '@/components/EmptyCorpus';
+import { useLbl, useT } from '@/i18n/useT';
 
 function QualityBar({ label, pct }: { label: string; pct: number }) {
   const color = pct >= 60 ? 'var(--positive)' : pct >= 30 ? 'var(--warning)' : 'var(--critical)';
@@ -23,6 +24,8 @@ function QualityBar({ label, pct }: { label: string; pct: number }) {
 }
 
 export default function Analytics() {
+  const t = useT();
+  const lbl = useLbl();
   const posts = useStore((s) => s.posts);
   const openPost = useStore((s) => s.openPost);
   const [scatterZoom, setScatterZoom] = useState(false);
@@ -47,83 +50,83 @@ export default function Analytics() {
   const scatter = useMemo(() => sample(1000), [scatterAll]); // eslint-disable-line react-hooks/exhaustive-deps
   const scatterZoomPts = useMemo(() => sample(3000), [scatterAll]); // eslint-disable-line react-hooks/exhaustive-deps
   const sampleNote = (shown: number) =>
-    scatterAll.length > shown ? `Точек: ${shown} из ${scatterAll.length} — стратифицированная выборка по уровню комментариев.` : '';
+    scatterAll.length > shown ? t('an.scatter.sample.a') + shown + t('an.scatter.sample.b') + scatterAll.length + t('an.scatter.sample.c') : '';
 
   const topInsight = byHook[0];
 
   if (posts.length === 0) {
-    return <EmptyCorpus title="Нет данных для аналитики" hint="Загрузите свой корпус — здесь появятся эффективность хуков/структур/CTA, качество данных и корреляции. Или верните демо-корпус." />;
+    return <EmptyCorpus title={t('an.empty.title')} hint={t('an.empty.hint')} />;
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
       {topInsight && (
         <div style={{ background: 'var(--accent-soft)', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', padding: 14, fontSize: 13.5 }}>
-          Сильнее всего заходит хук <strong>«{topInsight.label}»</strong> — в среднем <span className="num">{topInsight.avg}</span> комментариев ({topInsight.n} постов).
+          {t('an.insight.a')}<strong>{lbl(topInsight.label)}</strong>{t('an.insight.b')}<span className="num">{topInsight.avg}</span>{t('an.insight.c')}{topInsight.n}{t('an.insight.d')}
         </div>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: 16 }}>
-        <Panel title="Качество данных">
-          <QualityBar label="Постов с метриками" pct={dq.metricsPct} />
-          <QualityBar label="С распознанными подписчиками" pct={dq.followersPct} />
-          <QualityBar label="С рассчитанным ER" pct={dq.ratePct} />
-          <QualityBar label="С определённым кластером (не «Другое»)" pct={dq.clusteredPct} />
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>Метрики вовлечения считаются только по постам с метриками (0 = неизвестно, не ноль).</div>
+        <Panel title={t('an.quality.title')}>
+          <QualityBar label={t('an.quality.metrics')} pct={dq.metricsPct} />
+          <QualityBar label={t('an.quality.followers')} pct={dq.followersPct} />
+          <QualityBar label={t('an.quality.er')} pct={dq.ratePct} />
+          <QualityBar label={t('an.quality.cluster')} pct={dq.clusteredPct} />
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>{t('an.quality.note')}</div>
         </Panel>
 
-        <Panel title="Эффективность по типу хука">
-          <Bars caption="Средние комментарии по типу хука" color="var(--positive)" items={byHook.map((x) => ({ label: `${x.label} (${x.n})`, value: x.avg }))} />
+        <Panel title={t('an.hook.title')}>
+          <Bars caption={t('an.hook.caption')} color="var(--positive)" items={byHook.map((x) => ({ label: `${lbl(x.label)} (${x.n})`, value: x.avg }))} />
         </Panel>
 
-        <Panel title="Эффективность по структуре">
-          <Bars caption="Средние комментарии по структуре" items={byStruct.map((x) => ({ label: `${x.label} (${x.n})`, value: x.avg }))} />
+        <Panel title={t('an.struct.title')}>
+          <Bars caption={t('an.struct.caption')} items={byStruct.map((x) => ({ label: `${lbl(x.label)} (${x.n})`, value: x.avg }))} />
         </Panel>
 
-        <Panel title="Эффективность по CTA">
-          <Bars caption="Средние комментарии по CTA" color="var(--warning)" items={byCta.map((x) => ({ label: `${x.label} (${x.n})`, value: x.avg }))} />
+        <Panel title={t('an.cta.title')}>
+          <Bars caption={t('an.cta.caption')} color="var(--warning)" items={byCta.map((x) => ({ label: `${lbl(x.label)} (${x.n})`, value: x.avg }))} />
         </Panel>
 
-        <Panel title="Реакции ↔ комментарии">
+        <Panel title={t('an.scatter.title')}>
           {scatter.length ? (
             <>
               {/* клик по графику или кнопке — увеличенная версия поверх экрана */}
               <div
                 onClick={() => setScatterZoom(true)}
                 style={{ cursor: 'zoom-in' }}
-                title="Увеличить график"
+                title={t('an.scatter.zoomTitle')}
               >
-                <Scatter caption="Реакции против комментариев" points={scatter} />
+                <Scatter caption={t('an.scatter.caption')} points={scatter} />
               </div>
               <button
                 type="button"
                 onClick={() => setScatterZoom(true)}
                 style={{ fontSize: 12, background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', padding: 0, marginTop: 6 }}
               >
-                ⤢ Увеличить
+                {t('an.scatter.zoom')}
               </button>
               {sampleNote(scatter.length) && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{sampleNote(scatter.length)}</div>}
             </>
           ) : (
-            <EmptyState>Нет постов с метриками</EmptyState>
+            <EmptyState>{t('an.scatter.none')}</EmptyState>
           )}
         </Panel>
 
-        <Panel title="Распределение по эмоции">
-          <Donut caption="Посты по эмоции" segments={emotionDist.map((s, i) => ({ label: s.label, value: s.value, color: CHART_PALETTE[i % CHART_PALETTE.length] }))} />
+        <Panel title={t('an.emotion.title')}>
+          <Donut caption={t('an.emotion.caption')} segments={emotionDist.map((s, i) => ({ label: lbl(s.label), value: s.value, color: CHART_PALETTE[i % CHART_PALETTE.length] }))} />
         </Panel>
       </div>
 
       {/* увеличенный scatter поверх экрана; клик по точке открывает пост (PostModal выше по z) */}
       {scatterZoom && (
-        <Modal onClose={() => setScatterZoom(false)} label="Реакции ↔ комментарии (увеличено)" width={1100} zIndex={40}>
+        <Modal onClose={() => setScatterZoom(false)} label={t('an.scatter.zoomed')} width={1100} zIndex={40}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-            <h2 style={{ fontSize: 16, fontWeight: 700 }}>Реакции ↔ комментарии</h2>
-            <button type="button" onClick={() => setScatterZoom(false)} aria-label="Закрыть" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
+            <h2 style={{ fontSize: 16, fontWeight: 700 }}>{t('an.scatter.title')}</h2>
+            <button type="button" onClick={() => setScatterZoom(false)} aria-label={t('an.modal.close')} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
           </div>
-          <Scatter caption="Реакции против комментариев (увеличено)" points={scatterZoomPts} width={1040} height={560} />
+          <Scatter caption={t('an.scatter.zoomed.caption')} points={scatterZoomPts} width={1040} height={560} />
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
-            Обе оси — логарифмические (вовлечение распределено лог-нормально). Клик по точке — открыть пост.
+            {t('an.scatter.lognote')}
             {sampleNote(scatterZoomPts.length) && ' ' + sampleNote(scatterZoomPts.length)}
           </div>
         </Modal>
