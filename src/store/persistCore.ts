@@ -21,6 +21,7 @@ export function toPersistedSlice(s: State): PersistedSlice {
     cadenceGoal: s.cadenceGoal,
     presets: s.presets,
     niche: s.niche,
+    clusters: s.clusters,
   };
 }
 

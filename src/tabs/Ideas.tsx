@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
-import { CHANNELS, CLUSTERS, FORMULAS, STATUS } from '@/lib/constants';
+import { CHANNELS, FORMULAS, STATUS } from '@/lib/constants';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
 import { generateDraft } from '@/lib/draft';
 import { download } from '@/lib/download';
@@ -154,6 +154,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
   const flash = useStore((s) => s.flash);
   const posts = useStore((s) => s.posts);
   const rules = useStore((s) => s.rules);
+  const clusterDefs = useStore((s) => s.clusters);
   const [idea, setIdea] = useState<Idea>(initial);
   const upd = (patch: Partial<Idea>) => setIdea((i) => ({ ...i, ...patch }));
   const flags = useMemo(() => validateIdea(idea, rules), [idea, rules]);
@@ -191,9 +192,9 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
               onChange={(e) => upd({ cluster: e.target.value as ClusterId })}
               style={{ ...inp, marginTop: 4 }}
             >
-              {CLUSTERS.map(([v]) => (
-                <option key={v} value={v}>
-                  {cl(v)}
+              {clusterDefs.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {cl(c.id)}
                 </option>
               ))}
             </select>

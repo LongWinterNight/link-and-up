@@ -15,9 +15,14 @@ export function useLbl(): (value: string) => string {
   return (value) => lbl(locale, value);
 }
 
-/** Хук метки мета-кластера по id. */
+/** Хук метки мета-кластера: пользовательские кластеры (NICHE-1) берут label из реестра, встроенные — из словаря. */
 export function useClusterLabel(): (id: string) => string {
   const locale = useStore((s) => s.locale);
   useStore((s) => s.i18nVersion);
-  return (id) => clusterLabel(locale, id);
+  const clusters = useStore((s) => s.clusters);
+  return (id) => {
+    const def = clusters.find((c) => c.id === id);
+    if (def && !def.builtin) return def.label;
+    return clusterLabel(locale, id);
+  };
 }

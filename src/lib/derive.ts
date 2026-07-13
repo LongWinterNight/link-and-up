@@ -1,4 +1,4 @@
-import type { ClusterId, Idea, Post } from '@/types';
+import type { ClusterDef, ClusterId, Idea, Post } from '@/types';
 import { CLUSTERS } from './constants';
 import { median } from './stats';
 import type { Filters } from '@/store';
@@ -66,21 +66,26 @@ export interface ClusterStat {
   maxComments: number | null;
 }
 
-export function clusterStats(posts: Post[]): ClusterStat[] {
-  return memo(posts, 'clusterStats', () =>
-    CLUSTERS.map(([id, label]) => {
-      const inCluster = posts.filter((p) => p.meta_cluster === id);
-      const metric = inCluster.filter((p) => p.has_metrics);
-      const comments = metric.map((p) => p.comments);
-      return {
-        id,
-        label,
-        count: inCluster.length,
-        metricCount: metric.length,
-        medComments: comments.length ? median(comments) : null,
-        maxComments: comments.length ? Math.max(...comments) : null,
-      };
-    }).sort((a, b) => b.count - a.count),
+/** Статистика по кластерам; defs — реестр из стора (NICHE-1), без него — встроенная AI-ниша. */
+export function clusterStats(posts: Post[], defs?: ClusterDef[]): ClusterStat[] {
+  const list: [string, string][] = defs ? defs.map((d) => [d.id, d.label]) : CLUSTERS;
+  const key = 'clusterStats:' + (defs ? defs.map((d) => d.id).join('|') : 'builtin');
+  return memo(posts, key, () =>
+    list
+      .map(([id, label]) => {
+        const inCluster = posts.filter((p) => p.meta_cluster === id);
+        const metric = inCluster.filter((p) => p.has_metrics);
+        const comments = metric.map((p) => p.comments);
+        return {
+          id,
+          label,
+          count: inCluster.length,
+          metricCount: metric.length,
+          medComments: comments.length ? median(comments) : null,
+          maxComments: comments.length ? Math.max(...comments) : null,
+        };
+      })
+      .sort((a, b) => b.count - a.count),
   );
 }
 

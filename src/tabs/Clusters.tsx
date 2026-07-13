@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { clusterStats } from '@/lib/derive';
 import { FORMULAS } from '@/lib/constants';
@@ -6,9 +6,186 @@ import { DEFAULT_RULES } from '@/lib/guardrails';
 import { NICHE_PACKS } from '@/lib/nichePacks';
 import { topByComments } from '@/lib/derive';
 import { nf } from '@/lib/stats';
-import { Panel } from '@/components/ui';
+import { Btn, Input, Panel } from '@/components/ui';
 import { useClusterLabel, useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
+
+/** NICHE-1: редактор кластеров тем — имя + видимые ключевые слова, без магии. */
+function ClusterEditor() {
+  const t = useT();
+  const clusters = useStore((s) => s.clusters);
+  const posts = useStore((s) => s.posts);
+  const readOnly = useStore((s) => s.readOnly);
+  const rebuildClusters = useStore((s) => s.rebuildClusters);
+  const resetClusters = useStore((s) => s.resetClusters);
+  const updateCluster = useStore((s) => s.updateCluster);
+  const addCluster = useStore((s) => s.addCluster);
+  const deleteCluster = useStore((s) => s.deleteCluster);
+  const askConfirm = useStore((s) => s.askConfirm);
+  const [newName, setNewName] = useState('');
+  const [newKw, setNewKw] = useState('');
+
+  const counts = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of posts) m.set(p.meta_cluster, (m.get(p.meta_cluster) || 0) + 1);
+    return m;
+  }, [posts]);
+
+  const parseKw = (s: string) =>
+    s
+      .split(',')
+      .map((x) => x.trim().toLowerCase())
+      .filter(Boolean)
+      .slice(0, 20);
+
+  const add = () => {
+    const label = newName.trim();
+    if (!label) return;
+    addCluster({
+      id: 'custom-' + Date.now(),
+      label,
+      keywords: parseKw(newKw),
+    });
+    setNewName('');
+    setNewKw('');
+  };
+
+  return (
+    <Panel title={t('nc.title')}>
+      <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>{t('nc.note')}</div>
+      {!readOnly && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+          <Btn
+            variant="accent"
+            disabled={posts.length < 10}
+            onClick={() => {
+              void askConfirm(t('nc.rebuild.confirm')).then((ok) => {
+                if (ok) rebuildClusters();
+              });
+            }}
+          >
+            {t('nc.rebuild')}
+          </Btn>
+          <Btn
+            onClick={() => {
+              void askConfirm(t('nc.reset.confirm')).then((ok) => {
+                if (ok) resetClusters();
+              });
+            }}
+          >
+            {t('nc.reset')}
+          </Btn>
+        </div>
+      )}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {clusters.map((c) => (
+          <div
+            key={c.id}
+            style={{
+              display: 'flex',
+              gap: 8,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+              padding: '6px 0',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
+            {c.builtin ? (
+              <>
+                <span style={{ fontSize: 13, fontWeight: 500, minWidth: 180 }}>
+                  {c.id === 'other' ? c.label : c.label}
+                </span>
+                <span style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('nc.builtin')}</span>
+              </>
+            ) : (
+              <>
+                <input
+                  value={c.label}
+                  onChange={(e) => updateCluster(c.id, { label: e.target.value })}
+                  aria-label={t('nc.name.aria') + c.id}
+                  disabled={readOnly}
+                  style={{
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-ctl)',
+                    padding: '6px 8px',
+                    color: 'var(--text-1)',
+                    fontSize: 13,
+                    width: 200,
+                  }}
+                />
+                <input
+                  value={c.keywords.join(', ')}
+                  onChange={(e) => updateCluster(c.id, { keywords: parseKw(e.target.value) })}
+                  placeholder={t('nc.kw.ph')}
+                  aria-label={t('nc.kw.aria') + c.label}
+                  disabled={readOnly}
+                  style={{
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-ctl)',
+                    padding: '6px 8px',
+                    color: 'var(--text-2)',
+                    fontSize: 12,
+                    fontFamily: 'var(--mono)',
+                    flex: 1,
+                    minWidth: 220,
+                  }}
+                />
+              </>
+            )}
+            <span className="num" style={{ fontSize: 12, color: 'var(--text-3)', marginLeft: 'auto' }}>
+              {counts.get(c.id) || 0}
+              {t('nc.posts')}
+            </span>
+            {!c.builtin && !readOnly && (
+              <button
+                type="button"
+                onClick={() => deleteCluster(c.id)}
+                aria-label={t('nc.del') + c.label}
+                style={{
+                  background: 'var(--surface-2)',
+                  border: '1px solid var(--border)',
+                  borderRadius: 6,
+                  width: 26,
+                  height: 26,
+                  cursor: 'pointer',
+                  color: 'var(--critical)',
+                  flexShrink: 0,
+                }}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      {!readOnly && (
+        <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap', marginTop: 12 }}>
+          <Input
+            label={t('nc.add.name')}
+            id="new-cluster-name"
+            name="new-cluster-name"
+            autoComplete="off"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <Input
+            label={t('nc.kw.ph')}
+            id="new-cluster-kw"
+            name="new-cluster-kw"
+            autoComplete="off"
+            value={newKw}
+            onChange={(e) => setNewKw(e.target.value)}
+          />
+          <Btn onClick={add} disabled={!newName.trim()}>
+            {t('nc.add')}
+          </Btn>
+        </div>
+      )}
+    </Panel>
+  );
+}
 
 export default function Clusters() {
   const t = useT();
@@ -18,10 +195,11 @@ export default function Clusters() {
   const openPost = useStore((s) => s.openPost);
   const setTab = useStore((s) => s.setTab);
   const setFilters = useStore((s) => s.setFilters);
+  const clusterDefs = useStore((s) => s.clusters);
   // Б3: активные нишевые пакеты — их формулы/анти-паттерны показываются рядом с базовыми
   const activePacks = NICHE_PACKS.filter((p) => rules.some((r) => r.pack === p.id));
 
-  const stats = useMemo(() => clusterStats(posts), [posts]);
+  const stats = useMemo(() => clusterStats(posts, clusterDefs), [posts, clusterDefs]);
   const exemplarsByCluster = useMemo(() => {
     const m = new Map<string, ReturnType<typeof topByComments>>();
     for (const s of stats)
@@ -109,6 +287,9 @@ export default function Clusters() {
           ))}
         </div>
       )}
+
+      {/* NICHE-1: редактор кластеров тем */}
+      <ClusterEditor />
 
       {/* Формулы победителей */}
       <Panel title={t('cl.formulas.title')}>

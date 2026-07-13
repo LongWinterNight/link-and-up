@@ -1,7 +1,19 @@
 // Доменные типы дашборда. Схема поста = исходная (из датасета) + обогащённые поля.
 
-export type ClusterId =
-  'spec' | 'prompt' | 'agents' | 'jobs' | 'solo' | 'bubble' | 'enable' | 'industry' | 'life' | 'other';
+/**
+ * NICHE-1: id кластера — строка. Встроенные id AI-ниши ('spec'…'other') остаются валидными
+ * значениями; пользовательские/авто-кластеры добавляют свои id через реестр ClusterDef в сторе.
+ */
+export type ClusterId = string;
+
+/** Кластер тем: builtin — из дефолтной AI-ниши (правила в clusterOf), остальные — по keywords. */
+export interface ClusterDef {
+  id: string;
+  label: string;
+  /** Ключевые слова для назначения постов (assignCluster); у builtin пусто — работает clusterOf. */
+  keywords: string[];
+  builtin?: boolean;
+}
 
 export type Lang = 'RU' | 'EN';
 

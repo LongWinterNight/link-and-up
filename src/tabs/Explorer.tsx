@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useStore } from '@/store';
 import { filterPosts } from '@/lib/derive';
-import { CLUSTERS } from '@/lib/constants';
 import type { HookType, Post, Structure } from '@/types';
 import { nf } from '@/lib/stats';
 import { EmptyState, Pill } from '@/components/ui';
@@ -318,6 +317,7 @@ export default function Explorer() {
   const resetFilters = useStore((s) => s.resetFilters);
   const openPost = useStore((s) => s.openPost);
   const viewMode = useStore((s) => s.viewMode);
+  const clusterDefs = useStore((s) => s.clusters);
   const setViewMode = useStore((s) => s.setViewMode);
 
   // SCALE-4: debounce поиска — на 20K постов каждый keystroke стоил ~50мс фильтрации
@@ -380,7 +380,7 @@ export default function Explorer() {
           label={t('ex.f.cluster')}
           value={filters.cluster}
           onChange={(v) => setFilters({ cluster: v })}
-          options={[['all', t('ex.f.cluster.all')], ...CLUSTERS.map(([id]) => [id, cl(id)] as [string, string])]}
+          options={[['all', t('ex.f.cluster.all')], ...clusterDefs.map((c) => [c.id, cl(c.id)] as [string, string])]}
         />
         <Sel
           label={t('ex.f.lang')}

@@ -1,4 +1,4 @@
-import type { Post, Idea, Rule } from '@/types';
+import type { ClusterDef, Post, Idea, Rule } from '@/types';
 import type { Locale } from '@/i18n';
 import type { UiSlice } from './uiSlice';
 import type { PostsSlice } from './postsSlice';
@@ -67,6 +67,8 @@ export interface PersistedSlice {
   presets: Preset[];
   /** NICHE-2 (опционально для обратной совместимости бэкапов). */
   niche?: string;
+  /** NICHE-1: реестр кластеров тем (опционально — бэкапы схемы ≤2 его не содержат). */
+  clusters?: ClusterDef[];
 }
 
 /** Полное состояние = композиция слайсов (Б10: расслоение под воркспейсы Б5 и синк G-1). */

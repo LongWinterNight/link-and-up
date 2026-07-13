@@ -33,8 +33,9 @@ export function parseBackup(text: string): BackupFile {
   }
   const f = raw as Partial<BackupFile>;
   if (f?.app !== 'link-and-up') throw new Error('Это не бэкап Link-and-Up (нет маркера app)');
-  if (f.schema !== SCHEMA_VERSION) {
-    throw new Error(`Версия схемы бэкапа (${f.schema}) не совпадает с текущей (${SCHEMA_VERSION})`);
+  // старые схемы принимаем (недостающие поля дозаполняет applyBackup); будущие — нет
+  if (typeof f.schema !== 'number' || f.schema < 1 || f.schema > SCHEMA_VERSION) {
+    throw new Error(`Версия схемы бэкапа (${f.schema}) новее текущей (${SCHEMA_VERSION}) или некорректна`);
   }
   const s = f.state as PersistedSlice | undefined;
   if (!s || !Array.isArray(s.posts) || !Array.isArray(s.ideas) || !Array.isArray(s.rules)) {

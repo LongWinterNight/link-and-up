@@ -209,9 +209,12 @@ describe('store: бэкап/восстановление (М32)', () => {
 
   it('parseBackup отклоняет чужой/битый файл с человеческим сообщением', async () => {
     const { parseBackup } = await import('./lib/backup');
+    const { SCHEMA_VERSION } = await import('./lib/constants');
     expect(() => parseBackup('не json')).toThrow('JSON');
     expect(() => parseBackup('{"app":"other"}')).toThrow('не бэкап');
-    expect(() => parseBackup('{"app":"link-and-up","schema":1}')).toThrow('Версия схемы');
+    // бэкап из будущей схемы — отказ; из прошлой (schema 1..текущая-1) — принимается (NICHE-1)
+    expect(() => parseBackup(`{"app":"link-and-up","schema":${SCHEMA_VERSION + 1}}`)).toThrow('Версия схемы');
+    expect(() => parseBackup('{"app":"link-and-up","schema":1}')).toThrow('Бэкап повреждён');
   });
 });
 

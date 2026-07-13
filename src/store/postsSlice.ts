@@ -1,6 +1,7 @@
 import type { StateCreator } from 'zustand';
 import type { Post, Tags } from '@/types';
 import { enrichAll, tagPost } from '@/lib/enrich';
+import { assignCluster } from '@/lib/autoCluster';
 import { analyzeIngest, analyzeIngestChunked, mergeIngest, type IngestProgress, type IngestReport } from '@/lib/dedup';
 import { tr } from '@/i18n';
 import { DEFAULT_FILTERS, type State } from './types';
@@ -150,8 +151,13 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
       get().flash(tr(get().locale, 'st.noValid'));
       return;
     }
+    // NICHE-1: при пользовательских кластерах новые посты назначаются по их keywords
+    const custom = get().clusters.filter((c) => !c.builtin);
+    const incoming = custom.length
+      ? pv.valid.map((p) => ({ ...p, meta_cluster: assignCluster(p.text || '', custom) }))
+      : pv.valid;
     set({
-      posts: mergeIngest(get().posts, pv.valid),
+      posts: mergeIngest(get().posts, incoming),
       importPreview: null,
       importOpen: false,
       isDemo: false,

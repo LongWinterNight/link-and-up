@@ -1,7 +1,7 @@
-import type { ClusterId, Formula } from '@/types';
+import type { ClusterDef, ClusterId, Formula } from '@/types';
 
 export const LS_KEY = 'lidb_state_v4';
-export const SCHEMA_VERSION = 2;
+export const SCHEMA_VERSION = 3;
 
 /** Имя продукта (placeholder — меняется одной строкой). */
 export const PRODUCT_NAME = 'Link-and-Up';
@@ -25,6 +25,17 @@ export const CLUSTERS: [ClusterId, string][] = [
 ];
 
 export const CLUSTER_LABEL: Record<string, string> = Object.fromEntries(CLUSTERS);
+
+/**
+ * NICHE-1: дефолтный реестр кластеров = встроенная AI-ниша. keywords пусты — назначение
+ * builtin-кластеров делает эвристика clusterOf; пользовательские кластеры работают по keywords.
+ */
+export const DEFAULT_CLUSTER_DEFS: ClusterDef[] = CLUSTERS.map(([id, label]) => ({
+  id,
+  label,
+  keywords: [],
+  builtin: true,
+}));
 
 export const FORMULAS: Formula[] = [
   {

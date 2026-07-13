@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { LS_KEY, SCHEMA_VERSION } from '@/lib/constants';
+import { DEFAULT_CLUSTER_DEFS, LS_KEY, SCHEMA_VERSION } from '@/lib/constants';
 import { enrich } from '@/lib/enrich';
 import { recalcCalibration } from '@/lib/forecast';
 import { createUiSlice } from './uiSlice';
@@ -35,6 +35,10 @@ export const useStore = create<State>()(
         // v1 → v2: гарантировать обогащённые поля на постах
         if (fromVersion < 2 && Array.isArray(s.posts)) {
           s.posts = s.posts.map((p) => enrich(p));
+        }
+        // v2 → v3 (NICHE-1): реестр кластеров — встроенная AI-ниша по умолчанию
+        if (fromVersion < 3 && !Array.isArray(s.clusters)) {
+          s.clusters = DEFAULT_CLUSTER_DEFS.map((c) => ({ ...c }));
         }
         return s as State;
       },

@@ -571,4 +571,22 @@ export const en: Record<DictKey, string> = {
   'st.presetName': 'Enter a preset name',
   'st.presetSaved': 'Preset saved: ',
   'st.presetApplied': 'Preset applied: ',
+  // --- NICHE-1: topic cluster editor ---
+  'st.clustersRebuilt': 'Clusters rebuilt from the corpus: topics — ',
+  'nc.title': 'Topic clusters (editor)',
+  'nc.note':
+    'A cluster = a name + keywords (visible and editable — no magic). “Rebuild from corpus” derives topics from your texts via TF-IDF; the built-in AI-niche clusters are assigned heuristically and are not editable.',
+  'nc.rebuild': 'Rebuild from corpus',
+  'nc.rebuild.confirm':
+    'Rebuild clusters from the corpus texts? Current post-to-cluster assignments will be replaced with automatic ones.',
+  'nc.reset': 'Reset to built-in',
+  'nc.reset.confirm': 'Bring back the built-in AI-niche clusters and re-assign all posts heuristically?',
+  'nc.name.aria': 'Cluster name ',
+  'nc.kw.ph': 'keywords, comma-separated',
+  'nc.kw.aria': 'Cluster keywords ',
+  'nc.add.name': 'New cluster name',
+  'nc.add': 'Add cluster',
+  'nc.builtin': 'built-in',
+  'nc.del': 'Delete cluster ',
+  'nc.posts': ' posts',
 };

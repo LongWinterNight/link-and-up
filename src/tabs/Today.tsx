@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
-import { CLUSTER_LABEL, STATUS_LABEL } from '@/lib/constants';
 import { generateDraft } from '@/lib/draft';
 import { CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, selectMultipliers } from '@/lib/forecast';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
@@ -11,7 +10,8 @@ import { Btn, EmptyState, Input, Panel, Pill, Select } from '@/components/ui';
 import { FORMULAS } from '@/lib/constants';
 import type { ClusterId } from '@/types';
 import EmptyCorpus from '@/components/EmptyCorpus';
-import { useT } from '@/i18n/useT';
+import { useClusterLabel, useT } from '@/i18n/useT';
+import type { DictKey } from '@/i18n';
 
 /**
  * P-1 «Пост сегодня» — дефолтный экран: главная петля продукта в одном месте.
@@ -31,7 +31,9 @@ export default function Today() {
   const scheduleIdea = useStore((s) => s.scheduleIdea);
   const moveIdeaStatus = useStore((s) => s.moveIdeaStatus);
   const flash = useStore((s) => s.flash);
+  const clusterDefs = useStore((s) => s.clusters);
   const t = useT();
+  const cl = useClusterLabel();
 
   const saveIdea = useStore((s) => s.saveIdea);
   const candidates = useMemo(() => ideas.filter((i) => i.status !== 'published'), [ideas]);
@@ -47,7 +49,7 @@ export default function Today() {
       flash(t('toast.idea.titleRequired'));
       return;
     }
-    const cluster = (clusterStats(posts)[0]?.id || 'spec') as ClusterId;
+    const cluster = (clusterStats(posts, clusterDefs)[0]?.id || 'other') as ClusterId;
     const id = 'idea-' + Date.now();
     saveIdea({
       id,
@@ -183,7 +185,7 @@ export default function Today() {
               >
                 {candidates.map((i) => (
                   <option key={i.id} value={i.id}>
-                    {(i.title || t('today.untitled')).slice(0, 70)} · {STATUS_LABEL[i.status]}
+                    {(i.title || t('today.untitled')).slice(0, 70)} · {t(('lbl.status.' + i.status) as DictKey)}
                   </option>
                 ))}
               </Select>
@@ -209,7 +211,7 @@ export default function Today() {
               {idea && (
                 <>
                   <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                    <Pill kind="cluster">{CLUSTER_LABEL[idea.cluster] || idea.cluster}</Pill>
+                    <Pill kind="cluster">{cl(idea.cluster)}</Pill>
                     <Pill>{idea.channel}</Pill>
                     {idea.date && (
                       <Pill>

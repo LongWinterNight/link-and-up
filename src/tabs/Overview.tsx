@@ -12,9 +12,8 @@ import {
 import { median, nf } from '@/lib/stats';
 import { Bars, Donut } from '@/components/charts';
 import { Btn, Kpi, Panel, Pill } from '@/components/ui';
-import { CLUSTER_LABEL } from '@/lib/constants';
 import EmptyCorpus from '@/components/EmptyCorpus';
-import { useT } from '@/i18n/useT';
+import { useClusterLabel, useT } from '@/i18n/useT';
 
 export default function Overview() {
   const posts = useStore((s) => s.posts);
@@ -23,9 +22,11 @@ export default function Overview() {
   const setTab = useStore((s) => s.setTab);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
   const t = useT();
+  const cl = useClusterLabel();
+  const clusterDefs = useStore((s) => s.clusters);
 
   const k = useMemo(() => kpis(posts), [posts]);
-  const clusters = useMemo(() => clusterStats(posts), [posts]);
+  const clusters = useMemo(() => clusterStats(posts, clusterDefs), [posts, clusterDefs]);
   const topC = useMemo(() => topByComments(posts, 12), [posts]);
   const topR = useMemo(() => topByRate(posts, 12), [posts]);
   const byMonth = useMemo(() => collectionByMonth(posts), [posts]);
@@ -112,7 +113,7 @@ export default function Overview() {
                     style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, flexWrap: 'wrap' }}
                   >
                     <span style={{ fontWeight: 500 }}>{i.title || t('today.untitled')}</span>
-                    <Pill kind="cluster">{CLUSTER_LABEL[i.cluster] || i.cluster}</Pill>
+                    <Pill kind="cluster">{cl(i.cluster)}</Pill>
                   </div>
                 ))}
               </div>
