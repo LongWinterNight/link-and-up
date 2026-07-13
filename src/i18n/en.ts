@@ -600,4 +600,15 @@ export const en: Record<DictKey, string> = {
   'p2.makeMain': 'Make primary',
   'p2.swapped': 'Hook replaced — the previous one is kept in variants',
   'p2.empty': 'Add up to 3 alternative first lines — see them ranked by expected engagement.',
+  // --- Б8 (P-4): shareable card ---
+  'sc.open': 'Breakdown card',
+  'sc.title': 'Shareable breakdown card',
+  'sc.consent':
+    'The card is generated locally in your browser and contains: the author, a quote of the post (up to 4 lines), techniques, metrics and the Link-and-Up watermark. By publishing it you share this post’s text and metrics — make sure you have the right to. No autoposting: you decide where and when to publish.',
+  'sc.generate': 'Generate PNG',
+  'sc.download': 'Download PNG',
+  'sc.alt.label': 'Alt text for accessibility (paste it when publishing the card)',
+  'sc.alt.copy': 'Copy alt text',
+  'sc.alt.copied': 'Alt text copied',
+  'sc.error': 'Failed to generate the card: ',
 };

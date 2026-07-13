@@ -5,6 +5,7 @@ import { nf } from '@/lib/stats';
 import type { CtaType, Emotion, FormatFlag, HookType, Structure } from '@/types';
 import { Btn, Pill } from './ui';
 import { useClusterLabel, useLbl, useT } from '@/i18n/useT';
+import ShareCardModal from './ShareCardModal';
 
 const HOOKS: HookType[] = [
   'вопрос',
@@ -48,6 +49,7 @@ export default function PostModal() {
   const updatePostTag = useStore((s) => s.updatePostTag);
   const retagPost = useStore((s) => s.retagPost);
   const [editTags, setEditTags] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false); // Б8: карточка разбора
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastFocus = useRef<Element | null>(null);
 
@@ -353,8 +355,23 @@ export default function PostModal() {
           <a href={buildPostSearchUrl(post)} target="_blank" rel="noopener noreferrer">
             {t('pm.findSearch')}
           </a>
+          <button
+            type="button"
+            onClick={() => setShareOpen(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-accent)',
+              cursor: 'pointer',
+              fontSize: 12,
+              padding: 0,
+            }}
+          >
+            {t('sc.open')} ↗
+          </button>
         </div>
         {isDemo && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>{t('pm.demoNote')}</div>}
+        {shareOpen && <ShareCardModal post={post} onClose={() => setShareOpen(false)} />}
       </div>
     </div>
   );
