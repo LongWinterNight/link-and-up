@@ -1,8 +1,12 @@
 import { useStore } from '@/store';
-import { CLUSTER_LABEL, FORMULAS, STATUS_LABEL } from '@/lib/constants';
+import { intlLocale, type DictKey } from '@/i18n';
+import { useClusterLabel, useT } from '@/i18n/useT';
 
 /** Печатный отчёт недели (виден только в print). */
 export default function PrintReport() {
+  const t = useT();
+  const cl = useClusterLabel();
+  const locale = useStore((s) => s.locale);
   const ideas = useStore((s) => s.ideas);
   const posts = useStore((s) => s.posts);
 
@@ -22,22 +26,22 @@ export default function PrintReport() {
 
   return (
     <div id="print-report">
-      <h1 style={{ fontSize: 20 }}>Отчёт недели — контент-план LinkedIn</h1>
+      <h1 style={{ fontSize: 20 }}>{t('pr.title')}</h1>
       <p style={{ fontSize: 13 }}>
-        {weekStart.toLocaleDateString('ru-RU')} — {weekEnd.toLocaleDateString('ru-RU')}
+        {weekStart.toLocaleDateString(intlLocale(locale))} — {weekEnd.toLocaleDateString(intlLocale(locale))}
       </p>
       <p style={{ fontSize: 13 }}>
-        Опубликовано своих постов: <b>{ownThisWeek}</b> из цели 3–5.
+        {t('pr.published.a')}<b>{ownThisWeek}</b>{t('pr.published.b')}
       </p>
 
-      <h2 style={{ fontSize: 16, marginTop: 16 }}>Запланировано на неделю</h2>
+      <h2 style={{ fontSize: 16, marginTop: 16 }}>{t('pr.planned')}</h2>
       {planned.length === 0 ? (
-        <p style={{ fontSize: 13 }}>Ничего не запланировано на эту неделю.</p>
+        <p style={{ fontSize: 13 }}>{t('pr.none')}</p>
       ) : (
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
           <thead>
             <tr>
-              {['Дата', 'Заголовок', 'Кластер', 'Канал', 'Статус'].map((h) => (
+              {[t('pr.col.date'), t('pr.col.title'), t('pr.col.cluster'), t('pr.col.channel'), t('pr.col.status')].map((h) => (
                 <th key={h} style={{ textAlign: 'left', borderBottom: '1px solid #000', padding: 4 }}>{h}</th>
               ))}
             </tr>
@@ -47,20 +51,20 @@ export default function PrintReport() {
               <tr key={i.id}>
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{i.date}</td>
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{i.title}</td>
-                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{CLUSTER_LABEL[i.cluster]}</td>
+                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{cl(i.cluster)}</td>
                 <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{i.channel}</td>
-                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{STATUS_LABEL[i.status]}</td>
+                <td style={{ padding: 4, borderBottom: '1px solid #ccc' }}>{t(('lbl.status.' + i.status) as DictKey)}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
 
-      <h2 style={{ fontSize: 16, marginTop: 16 }}>Шпаргалка формул</h2>
+      <h2 style={{ fontSize: 16, marginTop: 16 }}>{t('pr.cheatsheet')}</h2>
       <ul style={{ fontSize: 12 }}>
-        {FORMULAS.map((f) => (
-          <li key={f.id}>
-            <b>{f.title}:</b> {f.body}
+        {(['pak', 'hook', 'reaction', 'rif', 'fail', 'arch', 'meta'] as const).map((id) => (
+          <li key={id}>
+            <b>{t(('lbl.formula.' + id) as DictKey)}:</b> {t(('lbl.formula.' + id + '.body') as DictKey)}
           </li>
         ))}
       </ul>

@@ -1,5 +1,5 @@
 import type { StateCreator } from 'zustand';
-import { ensureLocale, detectLocale, type Locale } from '@/i18n';
+import { ensureLocale, detectLocale, tr, type Locale } from '@/i18n';
 import { DEFAULT_FILTERS, type Filters, type Preset, type State, type TabId, type Theme, type ViewMode } from './types';
 
 /** UI-слайс: навигация, тема/локаль, фильтры/пресеты, тосты, модалки настроек. */
@@ -94,18 +94,18 @@ export const createUiSlice: StateCreator<State, [], [], UiSlice> = (set, get) =>
   savePreset: (name) => {
     const n = name.trim();
     if (!n) {
-      get().flash('Введите название пресета');
+      get().flash(tr(get().locale, 'st.presetName'));
       return;
     }
     const preset: Preset = { name: n, search: get().search, filters: { ...get().filters } };
     set({ presets: [...get().presets.filter((p) => p.name !== n), preset] });
-    get().flash('Пресет сохранён: ' + n);
+    get().flash(tr(get().locale, 'st.presetSaved') + n);
   },
   applyPreset: (name) => {
     const p = get().presets.find((x) => x.name === name);
     if (!p) return;
     set({ search: p.search, filters: { ...p.filters } });
-    get().flash('Применён пресет: ' + name);
+    get().flash(tr(get().locale, 'st.presetApplied') + name);
   },
   deletePreset: (name) => set({ presets: get().presets.filter((p) => p.name !== name) }),
 

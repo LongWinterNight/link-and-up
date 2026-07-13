@@ -22,6 +22,7 @@ const inp: React.CSSProperties = {
 };
 
 function RuleRow({ rule }: { rule: Rule }) {
+  const t = useT();
   const updateRule = useStore((s) => s.updateRule);
   const deleteRule = useStore((s) => s.deleteRule);
   return (
@@ -30,7 +31,7 @@ function RuleRow({ rule }: { rule: Rule }) {
         type="checkbox"
         checked={rule.enabled}
         onChange={(e) => updateRule(rule.id, { enabled: e.target.checked })}
-        aria-label={'Включить правило ' + rule.label}
+        aria-label={t('se.rule.enable') + rule.label}
       />
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 500, color: rule.enabled ? 'var(--text-1)' : 'var(--text-3)' }}>{rule.label}</div>
@@ -39,14 +40,14 @@ function RuleRow({ rule }: { rule: Rule }) {
       <select
         value={rule.severity}
         onChange={(e) => updateRule(rule.id, { severity: e.target.value as Rule['severity'] })}
-        aria-label="Строгость"
+        aria-label={t('se.rule.severity')}
         style={{ ...inp, width: 'auto', color: rule.severity === 'hard' ? 'var(--critical)' : 'var(--warning)' }}
       >
-        <option value="soft">soft (предупредить)</option>
-        <option value="hard">hard (блокировать)</option>
+        <option value="soft">{t('se.rule.soft')}</option>
+        <option value="hard">{t('se.rule.hard')}</option>
       </select>
       {!rule.builtin && (
-        <button type="button" onClick={() => deleteRule(rule.id)} aria-label="Удалить правило" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 6, width: 28, height: 28, cursor: 'pointer', color: 'var(--critical)', flexShrink: 0 }}>×</button>
+        <button type="button" onClick={() => deleteRule(rule.id)} aria-label={t('se.rule.del')} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 6, width: 28, height: 28, cursor: 'pointer', color: 'var(--critical)', flexShrink: 0 }}>×</button>
       )}
     </div>
   );
@@ -80,14 +81,14 @@ export default function SettingsModal() {
         const backup = parseBackup(String(rd.result));
         const cur = useStore.getState();
         void askConfirm(
-          `Восстановить бэкап от ${backup.exportedAt.slice(0, 16).replace('T', ' ')}?\n` +
-            `Текущее состояние (постов: ${cur.posts.length}, идей: ${cur.ideas.length}) будет ЗАМЕНЕНО на ` +
-            `(постов: ${backup.state.posts.length}, идей: ${backup.state.ideas.length}).`,
+          t('se.data.confirm.a') + backup.exportedAt.slice(0, 16).replace('T', ' ') +
+            t('se.data.confirm.b') + cur.posts.length + t('se.data.confirm.c') + cur.ideas.length +
+            t('se.data.confirm.d') + backup.state.posts.length + t('se.data.confirm.e') + backup.state.ideas.length + t('se.data.confirm.f'),
         ).then((ok) => {
           if (ok) applyBackup(backup.state);
         });
       } catch (err) {
-        flash('Не удалось восстановить: ' + (err as Error).message);
+        flash(t('se.data.restoreErr') + (err as Error).message);
       }
     };
     rd.readAsText(f);
@@ -104,7 +105,7 @@ export default function SettingsModal() {
 
   const addCustom = () => {
     if (!nLabel.trim() || !nPattern.trim()) {
-      flash('Укажите название и паттерн правила');
+      flash(t('se.add.needFields'));
       return;
     }
     // SEC-2: длина, компиляция, вложенные квантификаторы, тайминг-проба
@@ -126,25 +127,25 @@ export default function SettingsModal() {
     setNMsg('');
     setNSev('soft');
     setPatternErr('');
-    flash('Правило добавлено');
+    flash(t('se.add.toast'));
   };
 
   return (
-    <Modal onClose={() => setOpen(false)} label="Настройки" width={720} zIndex={55}>
+    <Modal onClose={() => setOpen(false)} label={t('se.title')} width={720} zIndex={55}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-          <h2 style={{ fontSize: 16, fontWeight: 700 }}>Настройки</h2>
-          <button type="button" onClick={() => setOpen(false)} aria-label="Закрыть" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
+          <h2 style={{ fontSize: 16, fontWeight: 700 }}>{t('se.title')}</h2>
+          <button type="button" onClick={() => setOpen(false)} aria-label={t('an.modal.close')} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18 }}>×</button>
         </div>
 
         {/* Общие */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px,1fr))', gap: 12, marginBottom: 22 }}>
-          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="own-author">Автор своих постов
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="own-author">{t('se.general.author')}
             <input id="own-author" name="own-author" value={ownAuthor} onChange={(e) => setOwnAuthor(e.target.value)} style={{ ...inp, marginTop: 4 }} />
           </label>
-          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="cadence-goal">Цель каденса (постов/нед)
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="cadence-goal">{t('se.general.cadence')}
             <input id="cadence-goal" name="cadence-goal" type="number" min={1} max={14} value={cadenceGoal} onChange={(e) => setCadenceGoal(Number(e.target.value))} style={{ ...inp, marginTop: 4 }} />
           </label>
-          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="settings-niche">Ниша
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="settings-niche">{t('se.general.niche')}
             <select id="settings-niche" name="settings-niche" value={niche || ''} onChange={(e) => setNiche(e.target.value)} style={{ ...inp, marginTop: 4 }}>
               <option value="">{t('onb.niche.none')}</option>
               {NICHES.map((n) => (
@@ -156,14 +157,13 @@ export default function SettingsModal() {
 
         {/* Гардрейлы */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600 }}>Гардрейлы (brand-safety)</h3>
-          <button type="button" onClick={() => { resetRules(); flash('Правила сброшены к дефолтным'); }} style={{ fontSize: 12, color: 'var(--text-accent)', background: 'none', border: 'none', cursor: 'pointer' }}>Сбросить к дефолтным</button>
+          <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('cl.guard.title')}</h3>
+          <button type="button" onClick={() => { resetRules(); flash(t('se.guard.resetToast')); }} style={{ fontSize: 12, color: 'var(--text-accent)', background: 'none', border: 'none', cursor: 'pointer' }}>{t('se.guard.reset')}</button>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6 }}>Правила проверяют идеи и черновики. <b>hard</b> блокирует публикацию и экспорт. Добавьте свои (напр. запрещённые термины).</div>
+        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 6 }}>{t('se.guard.note.a')}<b>hard</b>{t('se.guard.note.b')}</div>
         {/* SEC-6: честная граница доверия localStorage */}
         <div style={{ fontSize: 12, color: 'var(--warning)', marginBottom: 10 }}>
-          Правила хранятся в браузере в открытом виде. Не вводите то, что нельзя хранить на этом устройстве
-          (например, имена клиентов под NDA на общем компьютере) — шифрование появится вместе с командным режимом.
+          {t('se.guard.trust')}
         </div>
 
         <div style={{ marginBottom: 16 }}>
@@ -172,7 +172,7 @@ export default function SettingsModal() {
 
         {/* Б3: нишевые пакеты правил */}
         <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12, marginBottom: 16 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Пакеты правил под нишу</div>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>{t('se.packs.title')}</div>
           {NICHE_PACKS.map((pack) => {
             const active = rules.some((r) => r.pack === pack.id);
             return (
@@ -182,12 +182,12 @@ export default function SettingsModal() {
                   id={'pack-' + pack.id}
                   checked={active}
                   onChange={() => toggleNichePack(pack.id)}
-                  aria-label={'Пакет ' + pack.label}
+                  aria-label={t('se.packs.aria') + pack.label}
                   style={{ marginTop: 3 }}
                 />
                 <label htmlFor={'pack-' + pack.id} style={{ cursor: 'pointer' }}>
                   <span style={{ fontSize: 13, fontWeight: 500 }}>{pack.label}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-3)' }}> · {pack.rules.length} правил, {pack.formulas.length} формулы</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-3)' }}> · {pack.rules.length}{t('se.packs.rules')}{pack.formulas.length}{t('se.packs.formulas')}</span>
                   <div style={{ fontSize: 11.5, color: 'var(--warning)', marginTop: 2 }}>{pack.disclaimer}</div>
                 </label>
               </div>
@@ -197,41 +197,41 @@ export default function SettingsModal() {
 
         {/* Добавить правило */}
         <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12 }}>
-          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>Добавить своё правило</div>
+          <div style={{ fontSize: 12, fontWeight: 600, marginBottom: 8 }}>{t('se.add.title')}</div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
-            <input id="rule-label" name="rule-label" autoComplete="off" value={nLabel} onChange={(e) => setNLabel(e.target.value)} placeholder="Название" style={inp} aria-label="Название правила" />
-            <input id="rule-pattern" name="rule-pattern" autoComplete="off" value={nPattern} onChange={(e) => { setNPattern(e.target.value); setPatternErr(''); }} placeholder="паттерн (regex, напр. запрещённыйтермин)" style={{ ...inp, fontFamily: 'var(--mono)' }} aria-label="Паттерн" />
-            <input id="rule-message" name="rule-message" autoComplete="off" value={nMsg} onChange={(e) => setNMsg(e.target.value)} placeholder="Сообщение (необязательно)" style={inp} aria-label="Сообщение" />
-            <select value={nSev} onChange={(e) => setNSev(e.target.value as Rule['severity'])} style={inp} aria-label="Строгость нового правила">
-              <option value="soft">soft (предупредить)</option>
-              <option value="hard">hard (блокировать)</option>
+            <input id="rule-label" name="rule-label" autoComplete="off" value={nLabel} onChange={(e) => setNLabel(e.target.value)} placeholder={t('se.add.name.ph')} style={inp} aria-label={t('se.add.name.aria')} />
+            <input id="rule-pattern" name="rule-pattern" autoComplete="off" value={nPattern} onChange={(e) => { setNPattern(e.target.value); setPatternErr(''); }} placeholder={t('se.add.pattern.ph')} style={{ ...inp, fontFamily: 'var(--mono)' }} aria-label={t('se.add.pattern.aria')} />
+            <input id="rule-message" name="rule-message" autoComplete="off" value={nMsg} onChange={(e) => setNMsg(e.target.value)} placeholder={t('se.add.msg.ph')} style={inp} aria-label={t('se.add.msg.aria')} />
+            <select value={nSev} onChange={(e) => setNSev(e.target.value as Rule['severity'])} style={inp} aria-label={t('se.add.sev.aria')}>
+              <option value="soft">{t('se.rule.soft')}</option>
+              <option value="hard">{t('se.rule.hard')}</option>
             </select>
           </div>
           {patternErr && <div style={{ color: 'var(--critical)', fontSize: 12, marginTop: 8 }}>{patternErr}</div>}
           <div style={{ marginTop: 10, textAlign: 'right' }}>
-            <Btn variant="accent" onClick={addCustom}>Добавить правило</Btn>
+            <Btn variant="accent" onClick={addCustom}>{t('se.add.btn')}</Btn>
           </div>
         </div>
 
         {/* М32 (Б10): бэкап и восстановление всего состояния */}
         <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-          <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>Данные</h3>
+          <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{t('se.data.title')}</h3>
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>
-            Данные живут только в этом браузере. Скачивайте бэкап перед очисткой браузера или переездом на другое устройство.
+            {t('se.data.note')}
           </div>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             <Btn
               variant="accent"
               onClick={() => {
                 download('link-and-up-backup.json', exportStateJson(toPersistedSlice(useStore.getState())));
-                flash('Бэкап скачан');
+                flash(t('se.data.downloaded'));
               }}
             >
-              Скачать бэкап
+              {t('se.data.download')}
             </Btn>
             <label style={{ fontSize: 13, cursor: 'pointer', color: 'var(--text-accent)' }}>
-              Восстановить из бэкапа…
-              <input type="file" accept="application/json,.json" onChange={onRestoreFile} style={{ display: 'none' }} aria-label="Файл бэкапа" />
+              {t('se.data.restore')}
+              <input type="file" accept="application/json,.json" onChange={onRestoreFile} style={{ display: 'none' }} aria-label={t('se.data.restore.aria')} />
             </label>
           </div>
         </div>
@@ -239,25 +239,24 @@ export default function SettingsModal() {
         {/* OBS-1: локальный журнал действий */}
         <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, flexWrap: 'wrap' }}>
-            <h3 style={{ fontSize: 14, fontWeight: 600 }}>Журнал действий (локальный)</h3>
-            <Btn disabled={!auditLog.length} onClick={() => { download('audit-log.csv', exportAuditCsv(auditLog), 'text/csv;charset=utf-8'); flash('Журнал экспортирован'); }}>
-              Экспорт CSV ({auditLog.length})
+            <h3 style={{ fontSize: 14, fontWeight: 600 }}>{t('se.audit.title')}</h3>
+            <Btn disabled={!auditLog.length} onClick={() => { download('audit-log.csv', exportAuditCsv(auditLog), 'text/csv;charset=utf-8'); flash(t('se.audit.exported')); }}>
+              {t('se.audit.export')}{auditLog.length})
             </Btn>
           </div>
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 6 }}>
-            Импорты, идеи, публикации — последние 100 событий. Журнал хранится только в этом браузере и
-            стирается его очисткой; неизменяемый серверный аудит появится в командном режиме.
+            {t('se.audit.note')}
           </div>
         </div>
 
         {/* SEC-6: полное удаление данных */}
         <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--critical)', marginBottom: 6 }}>Опасная зона</div>
+          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--critical)', marginBottom: 6 }}>{t('se.danger.title')}</div>
           <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
             <button
               type="button"
               onClick={() => {
-                void askConfirm('Удалить ВСЕ данные приложения из этого браузера (корпус, идеи, правила, настройки)? Действие необратимо.').then((ok) => {
+                void askConfirm(t('se.danger.confirm')).then((ok) => {
                   if (!ok) return;
                   useStore.persist.clearStorage();
                   location.reload();
@@ -265,9 +264,9 @@ export default function SettingsModal() {
               }}
               style={{ background: 'var(--critical-soft)', border: '1px solid var(--critical)', borderRadius: 'var(--radius-ctl)', padding: '8px 12px', color: 'var(--critical)', fontSize: 13, cursor: 'pointer' }}
             >
-              Удалить все данные
+              {t('se.danger.btn')}
             </button>
-            <span style={{ fontSize: 12, color: 'var(--text-3)' }}>Стирает localStorage полностью; приложение перезапустится с онбординга.</span>
+            <span style={{ fontSize: 12, color: 'var(--text-3)' }}>{t('se.danger.note')}</span>
           </div>
         </div>
     </Modal>

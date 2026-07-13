@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@/store';
-import { CLUSTER_LABEL } from '@/lib/constants';
 import { buildPostSearchUrl } from '@/lib/links';
 import { nf } from '@/lib/stats';
 import type { CtaType, Emotion, FormatFlag, HookType, Structure } from '@/types';
 import { Btn, Pill } from './ui';
+import { useClusterLabel, useLbl, useT } from '@/i18n/useT';
 
 const HOOKS: HookType[] = ['вопрос', 'цифра-статистика', 'провокация/контртезис', 'личная история', 'обещание пользы', 'пугающий факт'];
 const STRUCTS: Structure[] = ['нумерованный список', 'сюжетная арка', 'кейс с цифрами', 'конспект', 'карусель', 'пошаговый гайд', 'манифест'];
@@ -15,6 +15,9 @@ const FLAGS: FormatFlag[] = ['has_numbers', 'personal_story', 'contrarian', 'lis
 const tagSel: React.CSSProperties = { background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-ctl)', padding: '6px 8px', color: 'var(--text-1)', fontSize: 12.5 };
 
 export default function PostModal() {
+  const t = useT();
+  const lbl = useLbl();
+  const cl = useClusterLabel();
   const id = useStore((s) => s.selectedPostId);
   const post = useStore((s) => s.posts.find((p) => p.id === id) || null);
   const close = useStore((s) => s.closePost);
@@ -67,7 +70,7 @@ export default function PostModal() {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={'Пост: ' + post.author}
+        aria-label={t('pm.aria') + post.author}
         onClick={(e) => e.stopPropagation()}
         style={{
           background: 'var(--surface-1)',
@@ -85,18 +88,18 @@ export default function PostModal() {
             <h2 style={{ fontSize: 16, fontWeight: 700 }}>{post.author}</h2>
             {post.headline && <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginTop: 2 }}>{post.headline}</div>}
           </div>
-          <button type="button" onClick={close} aria-label="Закрыть" style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18, flexShrink: 0 }}>
+          <button type="button" onClick={close} aria-label={t('an.modal.close')} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 8, width: 32, height: 32, cursor: 'pointer', color: 'var(--text-1)', fontSize: 18, flexShrink: 0 }}>
             ×
           </button>
         </div>
 
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-          <Pill kind="cluster">{CLUSTER_LABEL[post.meta_cluster]}</Pill>
+          <Pill kind="cluster">{cl(post.meta_cluster)}</Pill>
           <Pill kind="lang">{post.lang}</Pill>
           {post.has_metrics ? (
             <Pill kind="metric">♥ {nf(post.reactions)} · 💬 {nf(post.comments)}{post.rate != null ? ` · ER ${(post.rate * 100).toFixed(2)}%` : ''}</Pill>
           ) : (
-            <Pill kind="nometric">метрика неизвестна (0 ≠ ноль)</Pill>
+            <Pill kind="nometric">{t('pm.nometric')}</Pill>
           )}
         </div>
 
@@ -104,48 +107,48 @@ export default function PostModal() {
 
         {fmt && (
           <div style={{ background: 'var(--warning-soft)', border: '1px solid var(--border-warning)', borderRadius: 10, padding: '12px 14px', marginBottom: 14 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--warning)', letterSpacing: '0.04em', marginBottom: 6 }}>ФОРМАТ / ПРИЁМ</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--warning)', letterSpacing: '0.04em', marginBottom: 6 }}>{t('pm.format')}</div>
             <div style={{ fontSize: 13.5, color: 'var(--text-1)', whiteSpace: 'pre-wrap' }}>{fmt}</div>
           </div>
         )}
 
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 14 }}>
-          <Pill>{post.tags.hook_type}</Pill>
-          <Pill>{post.tags.structure}</Pill>
-          <Pill>{post.tags.cta_type}</Pill>
-          <Pill>{post.tags.emotion}</Pill>
+          <Pill>{lbl(post.tags.hook_type)}</Pill>
+          <Pill>{lbl(post.tags.structure)}</Pill>
+          <Pill>{lbl(post.tags.cta_type)}</Pill>
+          <Pill>{lbl(post.tags.emotion)}</Pill>
           {post.tags.flags.map((f) => (
             <Pill key={f}>{f}</Pill>
           ))}
           {!readOnly && (
             <button type="button" onClick={() => setEditTags((v) => !v)} style={{ fontSize: 11, background: 'none', border: 'none', color: 'var(--text-accent)', cursor: 'pointer', marginLeft: 'auto' }}>
-              {editTags ? 'Скрыть редактор' : 'Редактировать теги'}
+              {editTags ? t('pm.tags.hide') : t('pm.tags.edit')}
             </button>
           )}
         </div>
 
         {editTags && !readOnly && (
           <div style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12, marginBottom: 14 }}>
-            {post.tags_edited && <div style={{ fontSize: 11, color: 'var(--warning)', marginBottom: 8 }}>Теги правились вручную (golden-set для контроля авто-теггинга).</div>}
+            {post.tags_edited && <div style={{ fontSize: 11, color: 'var(--warning)', marginBottom: 8 }}>{t('pm.tags.edited')}</div>}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px,1fr))', gap: 8 }}>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>Хук
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('ex.f.hook')}
                 <select value={post.tags.hook_type} onChange={(e) => updatePostTag(post.id, 'hook_type', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {HOOKS.map((h) => <option key={h} value={h}>{h}</option>)}
+                  {HOOKS.map((h) => <option key={h} value={h}>{lbl(h)}</option>)}
                 </select>
               </label>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>Структура
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('ex.f.structure')}
                 <select value={post.tags.structure} onChange={(e) => updatePostTag(post.id, 'structure', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {STRUCTS.map((s) => <option key={s} value={s}>{s}</option>)}
+                  {STRUCTS.map((s) => <option key={s} value={s}>{lbl(s)}</option>)}
                 </select>
               </label>
               <label style={{ fontSize: 11, color: 'var(--text-3)' }}>CTA
                 <select value={post.tags.cta_type} onChange={(e) => updatePostTag(post.id, 'cta_type', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {CTAS.map((c) => <option key={c} value={c}>{c}</option>)}
+                  {CTAS.map((c) => <option key={c} value={c}>{lbl(c)}</option>)}
                 </select>
               </label>
-              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>Эмоция
+              <label style={{ fontSize: 11, color: 'var(--text-3)' }}>{t('pm.tags.emotion')}
                 <select value={post.tags.emotion} onChange={(e) => updatePostTag(post.id, 'emotion', e.target.value)} style={{ ...tagSel, width: '100%', marginTop: 4 }}>
-                  {EMOS.map((e2) => <option key={e2} value={e2}>{e2}</option>)}
+                  {EMOS.map((e2) => <option key={e2} value={e2}>{lbl(e2)}</option>)}
                 </select>
               </label>
             </div>
@@ -160,29 +163,29 @@ export default function PostModal() {
               })}
             </div>
             <div style={{ marginTop: 10 }}>
-              <Btn onClick={() => retagPost(post.id)}>Сбросить к авто-тегам</Btn>
+              <Btn onClick={() => retagPost(post.id)}>{t('pm.tags.reset')}</Btn>
             </div>
           </div>
         )}
 
         <div style={{ fontSize: 12, color: 'var(--text-3)', display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-          <span>Угол: {post.query.replace(/^tavily:/, '')}</span>
-          {post.followers != null && <span>Подписчиков: {nf(post.followers)}</span>}
-          {post.collected_at && <span>Собран: {post.collected_at}</span>}
+          <span>{t('pm.angle')}{post.query.replace(/^tavily:/, '')}</span>
+          {post.followers != null && <span>{t('pm.followers')}{nf(post.followers)}</span>}
+          {post.collected_at && <span>{t('pm.collected')}{post.collected_at}</span>}
           {post.url && (
             <a href={/^https?:\/\//.test(post.url) ? post.url : `https://${post.url}`} target="_blank" rel="noopener noreferrer">
-              Открыть источник ↗
+              {t('pm.openSource')}
             </a>
           )}
           {/* пермалинки демо-корпуса реконструированы при сборе и могут не открываться —
               поиск по точной цитате находит пост надёжнее прямой ссылки */}
           <a href={buildPostSearchUrl(post)} target="_blank" rel="noopener noreferrer">
-            Найти пост поиском ↗
+            {t('pm.findSearch')}
           </a>
         </div>
         {isDemo && (
           <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>
-            Демо-корпус собран поисковой выборкой: прямые ссылки не сохранялись (не были верифицированы) — источник ищется по точной цитате.
+            {t('pm.demoNote')}
           </div>
         )}
       </div>

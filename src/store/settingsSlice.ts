@@ -3,7 +3,7 @@ import type { Rule } from '@/types';
 import { CADENCE_GOAL, OWN_AUTHOR } from '@/lib/constants';
 import { DEFAULT_RULES } from '@/lib/guardrails';
 import { NICHE_PACKS, NICHES } from '@/lib/nichePacks';
-import { ensureLocale } from '@/i18n';
+import { ensureLocale, tr } from '@/i18n';
 import type { AuditEntry, PersistedSlice, State } from './types';
 import { audit } from './utils';
 
@@ -68,6 +68,6 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
   applyBackup: (slice) => {
     set({ ...slice, selectedPostId: null, importPreview: null, lastDeletedIdea: null });
     void ensureLocale(slice.locale);
-    get().flash('Бэкап восстановлен: постов ' + slice.posts.length + ', идей ' + slice.ideas.length);
+    get().flash(tr(get().locale, 'st.backupRestored.a') + slice.posts.length + tr(get().locale, 'st.backupRestored.b') + slice.ideas.length);
   },
 });

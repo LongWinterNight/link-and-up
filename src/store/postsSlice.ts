@@ -2,6 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { Post, Tags } from '@/types';
 import { enrichAll, tagPost } from '@/lib/enrich';
 import { analyzeIngest, analyzeIngestChunked, mergeIngest, type IngestProgress, type IngestReport } from '@/lib/dedup';
+import { tr } from '@/i18n';
 import { DEFAULT_FILTERS, type State } from './types';
 import { audit } from './utils';
 
@@ -124,7 +125,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
     if (get().readOnly) return;
     const posts = get().posts.map((p) => (p.id === id ? { ...p, tags: tagPost(p), tags_edited: false } : p));
     set({ posts });
-    get().flash('Теги пересчитаны эвристикой');
+    get().flash(tr(get().locale, 'st.retagged'));
   },
 
   setImportOpen: (importOpen) => set({ importOpen, importPreview: null }),
@@ -146,7 +147,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
   commitImport: () => {
     const pv = get().importPreview;
     if (!pv || !pv.valid.length) {
-      get().flash('Нет валидных записей для загрузки');
+      get().flash(tr(get().locale, 'st.noValid'));
       return;
     }
     set({
@@ -156,7 +157,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
       isDemo: false,
       auditLog: audit(get().auditLog, 'Импорт: добавлено ' + pv.added + ' постов'),
     });
-    get().flash('Добавлено постов: ' + pv.added);
+    get().flash(tr(get().locale, 'st.added') + pv.added);
   },
   clearImport: () => set({ importPreview: null }),
 });

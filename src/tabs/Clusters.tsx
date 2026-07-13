@@ -1,14 +1,18 @@
 import { useMemo } from 'react';
 import { useStore } from '@/store';
 import { clusterStats } from '@/lib/derive';
-import { ANTIPATTERNS, CLUSTER_LABEL, FORMULAS } from '@/lib/constants';
+import { FORMULAS } from '@/lib/constants';
 import { DEFAULT_RULES } from '@/lib/guardrails';
 import { NICHE_PACKS } from '@/lib/nichePacks';
 import { topByComments } from '@/lib/derive';
 import { nf } from '@/lib/stats';
 import { Panel } from '@/components/ui';
+import { useClusterLabel, useT } from '@/i18n/useT';
+import type { DictKey } from '@/i18n';
 
 export default function Clusters() {
+  const t = useT();
+  const cl = useClusterLabel();
   const posts = useStore((s) => s.posts);
   const rules = useStore((s) => s.rules);
   const openPost = useStore((s) => s.openPost);
@@ -35,7 +39,7 @@ export default function Clusters() {
       {posts.length === 0 ? (
         <Panel>
           <div style={{ fontSize: 13, color: 'var(--text-3)' }}>
-            Статистика по кластерам появится после загрузки постов. Библиотека формул и анти-паттернов ниже доступна всегда.
+            {t('cl.empty')}
           </div>
         </Panel>
       ) : (
@@ -43,13 +47,13 @@ export default function Clusters() {
         {stats.map((s) => (
           <Panel key={s.id}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8 }}>
-              <h3 style={{ fontSize: 14, fontWeight: 600 }}>{s.label}</h3>
+              <h3 style={{ fontSize: 14, fontWeight: 600 }}>{cl(s.id)}</h3>
               <button type="button" onClick={() => gotoCluster(s.id)} style={{ fontSize: 12, color: 'var(--text-accent)', background: 'none', border: 'none', cursor: 'pointer' }}>
-                {s.count} постов →
+                {s.count}{t('cl.posts')}
               </button>
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', margin: '4px 0 10px' }}>
-              с метриками: {s.metricCount} · медиана комм.: <span className="num">{s.medComments == null ? '—' : nf(s.medComments)}</span> · макс: <span className="num">{s.maxComments == null ? '—' : nf(s.maxComments)}</span>
+              {t('cl.stats.a')}{s.metricCount}{t('cl.stats.b')}<span className="num">{s.medComments == null ? '—' : nf(s.medComments)}</span>{t('cl.stats.c')}<span className="num">{s.maxComments == null ? '—' : nf(s.maxComments)}</span>
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
               {(exemplarsByCluster.get(s.id) || []).map((p) => (
@@ -65,17 +69,17 @@ export default function Clusters() {
       )}
 
       {/* Формулы победителей */}
-      <Panel title="Формулы победителей">
+      <Panel title={t('cl.formulas.title')}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 12 }}>
           {FORMULAS.map((f) => (
             <div key={f.id} style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 10, padding: 12 }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginBottom: 6 }}>
-                <strong style={{ fontSize: 13.5 }}>{f.title}</strong>
+                <strong style={{ fontSize: 13.5 }}>{t(('lbl.formula.' + f.id) as DictKey)}</strong>
                 <button type="button" onClick={() => gotoCluster(f.cluster)} style={{ fontSize: 11, color: 'var(--text-accent)', background: 'none', border: 'none', cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                  {CLUSTER_LABEL[f.cluster]} →
+                  {cl(f.cluster)} →
                 </button>
               </div>
-              <div style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{f.body}</div>
+              <div style={{ fontSize: 12.5, color: 'var(--text-2)' }}>{t(('lbl.formula.' + f.id + '.body') as DictKey)}</div>
             </div>
           ))}
           {activePacks.flatMap((pack) =>
@@ -96,10 +100,10 @@ export default function Clusters() {
       </Panel>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
-        <Panel title="Анти-паттерны">
+        <Panel title={t('cl.anti.title')}>
           <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
-            {ANTIPATTERNS.map((a, i) => (
-              <li key={i} style={{ fontSize: 13, color: 'var(--critical)' }}>{a}</li>
+            {(['cl.anti.1', 'cl.anti.2', 'cl.anti.3', 'cl.anti.4'] as DictKey[]).map((k) => (
+              <li key={k} style={{ fontSize: 13, color: 'var(--critical)' }}>{t(k)}</li>
             ))}
             {activePacks.flatMap((pack) =>
               pack.antipatterns.map((a, i) => (
@@ -110,8 +114,8 @@ export default function Clusters() {
             )}
           </ul>
         </Panel>
-        <Panel title="Гардрейлы (brand-safety)">
-          <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginBottom: 8 }}>Правила проверяют идеи и черновики. Жёсткие (hard) блокируют публикацию и экспорт. Настраиваются под ваш бренд.</div>
+        <Panel title={t('cl.guard.title')}>
+          <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginBottom: 8 }}>{t('cl.guard.note')}</div>
           <ul style={{ margin: 0, paddingLeft: 18, display: 'flex', flexDirection: 'column', gap: 6 }}>
             {DEFAULT_RULES.map((r) => (
               <li key={r.id} style={{ fontSize: 13, color: r.severity === 'hard' ? 'var(--critical)' : 'var(--warning)' }}>
@@ -122,13 +126,8 @@ export default function Clusters() {
         </Panel>
       </div>
 
-      <Panel title="Принципы продукта">
-        <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>
-          Честные метрики: 0 = неизвестно (не ноль), средние считаются только по постам с метриками.
-          Прозрачный прогноз: пошаговое разложение + бэктест leave-one-out и честная неопределённость, без ложной точности.
-          Гардрейлы: настраиваемые правила brand-safety; жёсткие блокируют публикацию и экспорт. Всё локально в браузере,
-          данные не покидают устройство.
-        </div>
+      <Panel title={t('cl.principles.title')}>
+        <div style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.6 }}>{t('cl.principles.body')}</div>
       </Panel>
     </div>
   );
