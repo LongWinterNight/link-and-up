@@ -20,7 +20,7 @@
   "dependencies": {
     "@fontsource/ibm-plex-mono": "^5.2.7",
     "@fontsource/ibm-plex-sans": "^5.2.8",
-    "@tanstack/react-virtual": "^3.10.9",
+    "@tanstack/react-virtual": "^3.14.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^4.5.5"
