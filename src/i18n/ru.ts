@@ -618,5 +618,9 @@ export const ru = {
   'sc.alt.copy': 'Копировать alt-текст',
   'sc.alt.copied': 'Alt-текст скопирован',
   'sc.error': 'Не удалось сгенерировать карточку: ',
+  // --- SCALE-12: индикатор занятого хранилища ---
+  'se.data.storage.a': 'Занято хранилища: ',
+  'se.data.storage.b': ' из ',
+  'se.data.storage.c': ' доступных.',
 };
 export type DictKey = keyof typeof ru;

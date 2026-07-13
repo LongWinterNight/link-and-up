@@ -611,4 +611,8 @@ export const en: Record<DictKey, string> = {
   'sc.alt.copy': 'Copy alt text',
   'sc.alt.copied': 'Alt text copied',
   'sc.error': 'Failed to generate the card: ',
+  // --- SCALE-12: storage usage indicator ---
+  'se.data.storage.a': 'Storage used: ',
+  'se.data.storage.b': ' of ',
+  'se.data.storage.c': ' available.',
 };

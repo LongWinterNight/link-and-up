@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toPersistedSlice, useStore } from '@/store';
 import { exportStateJson, parseBackup } from '@/lib/backup';
 import { validatePattern } from '@/lib/guardrails';
@@ -139,6 +139,17 @@ export default function SettingsModal() {
     rd.readAsText(f);
     e.target.value = '';
   };
+
+  // SCALE-12: сколько занято хранилища (IndexedDB); квота браузера — гигабайты
+  const [storage, setStorage] = useState<{ used: number; quota: number } | null>(null);
+  useEffect(() => {
+    if (!open || !navigator.storage?.estimate) return;
+    void navigator.storage.estimate().then((e) => {
+      if (e.usage != null && e.quota != null) setStorage({ used: e.usage, quota: e.quota });
+    });
+  }, [open]);
+  const fmtBytes = (b: number) =>
+    b >= 1073741824 ? (b / 1073741824).toFixed(1) + ' GB' : (b / 1048576).toFixed(1) + ' MB';
 
   const [nLabel, setNLabel] = useState('');
   const [nPattern, setNPattern] = useState('');
@@ -374,7 +385,19 @@ export default function SettingsModal() {
       {/* М32 (Б10): бэкап и восстановление всего состояния */}
       <div style={{ marginTop: 20, paddingTop: 14, borderTop: '1px solid var(--border)' }}>
         <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 6 }}>{t('se.data.title')}</h3>
-        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>{t('se.data.note')}</div>
+        <div style={{ fontSize: 12, color: 'var(--text-3)', marginBottom: 10 }}>
+          {t('se.data.note')}
+          {storage && (
+            <>
+              {' '}
+              {t('se.data.storage.a')}
+              <span className="num">{fmtBytes(storage.used)}</span>
+              {t('se.data.storage.b')}
+              <span className="num">{fmtBytes(storage.quota)}</span>
+              {t('se.data.storage.c')}
+            </>
+          )}
+        </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
           <Btn
             variant="accent"

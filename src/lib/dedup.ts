@@ -48,6 +48,42 @@ export function diceSim(a: string, b: string): number {
   return (2 * inter) / (a.length - 1 + (b.length - 1));
 }
 
+/**
+ * SCALE-10: LSH-префильтр для одноавторных бакетов. Dice ≥ 0.82 ⇒ Жаккар биграмм ≥ ~0.7;
+ * k-minhash (k=8) оценивает Жаккар долей совпавших минимумов — непохожие пары (J≈0.1)
+ * отсекаются без квадратичного Dice. Порог 4/8 консервативен: recall близок к 1.
+ */
+const MINHASH_K = 8;
+const SEEDS = new Uint32Array(MINHASH_K);
+for (let i = 0; i < MINHASH_K; i++) SEEDS[i] = (2654435761 * (i + 1)) >>> 0;
+
+function fnv1a(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+
+export function minhashSig(s: string): Uint32Array {
+  const sig = new Uint32Array(MINHASH_K).fill(0xffffffff);
+  for (let i = 0; i < s.length - 1; i++) {
+    const h = fnv1a(s.substr(i, 2));
+    for (let k = 0; k < MINHASH_K; k++) {
+      const v = (h ^ SEEDS[k]) >>> 0;
+      if (v < sig[k]) sig[k] = v;
+    }
+  }
+  return sig;
+}
+
+export function sigOverlap(a: Uint32Array, b: Uint32Array): number {
+  let n = 0;
+  for (let i = 0; i < MINHASH_K; i++) if (a[i] === b[i]) n++;
+  return n;
+}
+
 export interface RecordValidation {
   ok: boolean;
   errs: string[];
@@ -94,13 +130,17 @@ export const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 /** Внутреннее состояние прогона импорта: общее для синхронного и чанкованного вариантов. */
 function createIngestRun(existing: Post[], incoming: unknown[]) {
   const keys = new Set(existing.map((p) => dedupKey(p)));
-  const buckets = new Map<string, string[]>();
-  for (const p of existing) {
-    const a = normAuthor(p.author);
+  // SCALE-10: бакет хранит тело + minhash-сигнатуру для LSH-префильтра
+  type Entry = { body: string; sig: Uint32Array };
+  const buckets = new Map<string, Entry[]>();
+  const pushEntry = (a: string, body: string) => {
+    const e = { body, sig: minhashSig(body) };
     const arr = buckets.get(a);
-    const body = normText(p.text).slice(0, 160);
-    if (arr) arr.push(body);
-    else buckets.set(a, [body]);
+    if (arr) arr.push(e);
+    else buckets.set(a, [e]);
+  };
+  for (const p of existing) {
+    pushEntry(normAuthor(p.author), normText(p.text).slice(0, 160));
   }
   const st = { added: 0, dupes: 0, rejected: 0, nearDupes: 0, reasons: [] as string[], valid: [] as RawPost[] };
 
@@ -131,14 +171,17 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
     }
     const na = normAuthor(rp.author);
     const nb = normText(rp.text).slice(0, 160);
+    const nbSig = minhashSig(nb);
     // SCALE-5: префильтр по длине — при разнице >35% Dice заведомо < 0.82, diceSim не считаем.
+    // SCALE-10: затем LSH-префильтр по minhash — Dice остаётся только для похожих кандидатов.
     // Критично для одноавторных бакетов (импорт собственного корпуса: все посты одного автора).
     if (
-      (buckets.get(na) || []).some((body) => {
-        const min = Math.min(body.length, nb.length);
-        const max = Math.max(body.length, nb.length);
+      (buckets.get(na) || []).some((e) => {
+        const min = Math.min(e.body.length, nb.length);
+        const max = Math.max(e.body.length, nb.length);
         if (max > 0 && min / max < 0.65) return false;
-        return diceSim(body, nb) >= 0.82;
+        if (nb.length >= 24 && e.body.length >= 24 && sigOverlap(e.sig, nbSig) < 4) return false;
+        return diceSim(e.body, nb) >= 0.82;
       })
     ) {
       st.nearDupes++;
@@ -147,9 +190,7 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
       return;
     }
     keys.add(k);
-    const arr = buckets.get(na);
-    if (arr) arr.push(nb);
-    else buckets.set(na, [nb]);
+    pushEntry(na, nb);
     st.valid.push(rp);
     st.added++;
   };
