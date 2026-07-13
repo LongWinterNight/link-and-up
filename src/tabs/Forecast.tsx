@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
-import { backtest, CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, recalcCalibration } from '@/lib/forecast';
+import { backtest, CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, recalcCalibration, selectMultipliers } from '@/lib/forecast';
 import { corpusFreshness } from '@/lib/derive';
 import { CLUSTER_LABEL } from '@/lib/constants';
 import { nf } from '@/lib/stats';
@@ -38,12 +38,14 @@ export default function Forecast() {
   const scheduleIdea = useStore((s) => s.scheduleIdea);
   const readOnly = useStore((s) => s.readOnly);
 
-  const bt = useMemo(() => backtest(posts), [posts]);
+  // FCST-2: набор множителей выбирается автоматически по leave-one-out бэктесту на этом корпусе
+  const sel = useMemo(() => selectMultipliers(posts), [posts]);
+  const bt = useMemo(() => backtest(posts, sel.multipliers), [posts, sel]);
   const fresh = useMemo(() => corpusFreshness(posts), [posts]);
   const idea = ideas.find((i) => i.id === forecastId) || null;
   // COR-8: множитель калибровки активен только от CALIBRATION_MIN_FACTS фактов
   const effCal = effectiveCalibration(calibration, calibrationCount);
-  const fc = useMemo(() => forecast(idea, posts, effCal), [idea, posts, effCal]);
+  const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);
   const cal = useMemo(() => recalcCalibration(ideas, calibration), [ideas, calibration]);
 
   const published = useMemo(() => ideas.filter((i) => i.status === 'published' && i.actual && i.predicted > 0), [ideas]);
@@ -84,6 +86,23 @@ export default function Forecast() {
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{bt.note} Прогноз ниже — ОЦЕНКА, не факт: относитесь к диапазону, а не к точному числу.</div>
           </>
+        )}
+        {/* FCST-2: честное сравнение наборов множителей */}
+        {sel.empirical ? (
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
+            Множители: {sel.chosen === 'empirical'
+              ? <>применяются <b style={{ color: 'var(--positive)' }}>ваши эмпирические</b> (MAPE {sel.empiricalMape}) — точнее дефолтных ({sel.defaultMape}) на вашем корпусе.</>
+              : <>дефолтные (MAPE {sel.defaultMape}); эмпирические из вашего корпуса ({sel.empiricalMape ?? '—'}) выигрыша не дали.</>}
+            {' '}
+            {Object.entries(sel.empirical.details)
+              .filter(([, d]) => !d.fallback)
+              .map(([k, d]) => `${k} ×${d.value} (n=${d.nWith}/${d.nWithout})`)
+              .join(' · ')}
+          </div>
+        ) : (
+          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
+            Множители — дефолтные; свои эмпирические появятся от 100 постов с метриками в корпусе.
+          </div>
         )}
         {fresh.latest && (
           <div style={{ fontSize: 12, color: fresh.stale ? 'var(--warning)' : 'var(--text-3)', marginTop: 8 }}>

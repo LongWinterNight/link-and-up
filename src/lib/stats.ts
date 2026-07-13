@@ -31,3 +31,9 @@ export function nf(n: number | null | undefined): string {
 export function clamp(v: number, lo: number, hi: number): number {
   return Math.max(lo, Math.min(hi, v));
 }
+
+/** М8: доля значений строго меньше v, % (перцентиль «выше, чем у X%»). */
+export function percentileOf(values: number[], v: number): number {
+  if (!values.length) return 0;
+  return Math.round((values.filter((x) => x < v).length / values.length) * 100);
+}

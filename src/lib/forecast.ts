@@ -9,17 +9,109 @@ import type {
 import { CLUSTER_LABEL } from './constants';
 import { clamp, median, nf, quantile } from './stats';
 
-/** Множители формата поста — зеркалят множители идеи (для бэктеста). */
-function postMultipliers(p: Post): number {
-  let m = 1;
+/** FCST-2: именованные факторы формата — общие для дефолтных и эмпирических множителей. */
+export interface FactorMultipliers {
+  hook: number;
+  personal: number;
+  numbers: number;
+  cta: number;
+  ru: number;
+}
+
+export const DEFAULT_MULTIPLIERS: FactorMultipliers = { hook: 1.4, personal: 1.25, numbers: 1.2, cta: 1.15, ru: 1.1 };
+
+/** Бинарные признаки поста (для множителей и их эмпирической оценки). */
+export function postFactors(p: Post): Record<keyof FactorMultipliers, boolean> {
   const first = (p.text || '').split('\n')[0].toLowerCase();
-  if (p.tags.hook_type === 'вопрос' || /[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first))
-    m *= 1.4;
-  if (p.tags.flags.includes('personal_story') || p.tags.hook_type === 'личная история') m *= 1.25;
-  if (p.tags.flags.includes('has_numbers')) m *= 1.2;
-  if (p.tags.cta_type === 'вопрос в конце') m *= 1.15;
-  if (p.lang === 'RU') m *= 1.1;
+  return {
+    hook: p.tags.hook_type === 'вопрос' || /[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first),
+    personal: p.tags.flags.includes('personal_story') || p.tags.hook_type === 'личная история',
+    numbers: p.tags.flags.includes('has_numbers'),
+    cta: p.tags.cta_type === 'вопрос в конце',
+    ru: p.lang === 'RU',
+  };
+}
+
+/** Множители формата поста — зеркалят множители идеи (для бэктеста). */
+function postMultipliers(p: Post, mult: FactorMultipliers = DEFAULT_MULTIPLIERS): number {
+  const f = postFactors(p);
+  let m = 1;
+  if (f.hook) m *= mult.hook;
+  if (f.personal) m *= mult.personal;
+  if (f.numbers) m *= mult.numbers;
+  if (f.cta) m *= mult.cta;
+  if (f.ru) m *= mult.ru;
   return m;
+}
+
+/**
+ * FCST-2: эмпирические множители из корпуса пользователя. Для каждого фактора —
+ * медиана комментариев «с фактором» / медиана «без», клип [0.7–1.6]; при малой стороне
+ * (<20 постов) фактор остаётся дефолтным. Требует ≥100 постов с метриками, иначе null.
+ * Никаких скрытых весов: каждый множитель объясним и показывается с n.
+ */
+export const EMPIRICAL_MIN_POSTS = 100;
+export const EMPIRICAL_MIN_SIDE = 20;
+
+export interface EmpiricalFactor {
+  value: number;
+  nWith: number;
+  nWithout: number;
+  /** true, если сторона мала и взят дефолт. */
+  fallback: boolean;
+}
+
+export function empiricalMultipliers(posts: Post[]): { multipliers: FactorMultipliers; details: Record<keyof FactorMultipliers, EmpiricalFactor> } | null {
+  const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
+  if (metric.length < EMPIRICAL_MIN_POSTS) return null;
+  const keys = Object.keys(DEFAULT_MULTIPLIERS) as (keyof FactorMultipliers)[];
+  const multipliers = { ...DEFAULT_MULTIPLIERS };
+  const details = {} as Record<keyof FactorMultipliers, EmpiricalFactor>;
+  for (const k of keys) {
+    const withF: number[] = [];
+    const withoutF: number[] = [];
+    for (const p of metric) (postFactors(p)[k] ? withF : withoutF).push(p.comments);
+    if (withF.length < EMPIRICAL_MIN_SIDE || withoutF.length < EMPIRICAL_MIN_SIDE) {
+      details[k] = { value: DEFAULT_MULTIPLIERS[k], nWith: withF.length, nWithout: withoutF.length, fallback: true };
+      continue;
+    }
+    const v = clamp(median(withF) / Math.max(1, median(withoutF)), 0.7, 1.6);
+    multipliers[k] = Math.round(v * 100) / 100;
+    details[k] = { value: multipliers[k], nWith: withF.length, nWithout: withoutF.length, fallback: false };
+  }
+  return { multipliers, details };
+}
+
+export interface MultiplierSelection {
+  chosen: 'default' | 'empirical';
+  multipliers: FactorMultipliers;
+  defaultMape: number | null;
+  empiricalMape: number | null;
+  empirical: ReturnType<typeof empiricalMultipliers>;
+}
+
+const selectionCache = new WeakMap<readonly Post[], MultiplierSelection>();
+
+/**
+ * FCST-2: автовыбор набора множителей — leave-one-out бэктест гоняется на обоих,
+ * применяется тот, что честно точнее НА ЭТОМ корпусе. Кэш по ссылке на posts.
+ */
+export function selectMultipliers(posts: Post[]): MultiplierSelection {
+  const cached = selectionCache.get(posts);
+  if (cached) return cached;
+  const emp = empiricalMultipliers(posts);
+  const defaultMape = backtest(posts, DEFAULT_MULTIPLIERS).mape;
+  let result: MultiplierSelection = { chosen: 'default', multipliers: DEFAULT_MULTIPLIERS, defaultMape, empiricalMape: null, empirical: emp };
+  if (emp) {
+    const empiricalMape = backtest(posts, emp.multipliers).mape;
+    if (empiricalMape != null && (defaultMape == null || empiricalMape < defaultMape)) {
+      result = { chosen: 'empirical', multipliers: emp.multipliers, defaultMape, empiricalMape, empirical: emp };
+    } else {
+      result = { ...result, empiricalMape };
+    }
+  }
+  selectionCache.set(posts, result);
+  return result;
 }
 
 /**
@@ -30,6 +122,7 @@ export function forecast(
   idea: Idea | null,
   posts: Post[],
   calibration: number,
+  mults: FactorMultipliers = DEFAULT_MULTIPLIERS,
 ): ForecastResult | null {
   if (!idea) return null;
   const clusterPosts = posts.filter((p) => p.has_metrics && p.meta_cluster === idea.cluster);
@@ -65,12 +158,12 @@ export function forecast(
       steps.push({ label, factor: '×' + f, running: Math.round(running) });
     }
   };
-  apply(/[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first.toLowerCase()), 'Сильный хук', 1.4);
+  apply(/[?]/.test(first) || /^как|^почему|миф|на самом деле/.test(first.toLowerCase()), 'Сильный хук', mults.hook);
   const personal = /\bя\b|\bмой\b|\bмоя\b|честно|признаюсь/.test(txt);
-  apply(personal, 'Личная история', 1.25);
-  apply(/\d/.test(txt), 'Есть цифры', 1.2);
-  apply(/[?]\s*$/.test((idea.hook || '').trim()), 'Вопрос-CTA', 1.15);
-  apply(idea.channel === 'LinkedIn' || idea.channel === 'Telegram', 'RU-рынок', 1.1);
+  apply(personal, 'Личная история', mults.personal);
+  apply(/\d/.test(txt), 'Есть цифры', mults.numbers);
+  apply(/[?]\s*$/.test((idea.hook || '').trim()), 'Вопрос-CTA', mults.cta);
+  apply(idea.channel === 'LinkedIn' || idea.channel === 'Telegram', 'RU-рынок', mults.ru);
   const cal = calibration || 1;
   running *= cal;
   steps.push({ label: 'Калибровка по фактам', factor: '×' + cal.toFixed(2), running: Math.round(running) });
@@ -211,7 +304,7 @@ function medianExcluding(sorted: number[], skip: number): number {
   return L % 2 ? at(m) : (at(m - 1) + at(m)) / 2;
 }
 
-export function backtest(posts: Post[]): BacktestResult {
+export function backtest(posts: Post[], mult: FactorMultipliers = DEFAULT_MULTIPLIERS): BacktestResult {
   const metric = posts.filter((p) => p.has_metrics && p.comments > 0);
   if (metric.length < 8) {
     return {
@@ -240,7 +333,7 @@ export function backtest(posts: Post[]): BacktestResult {
     const clusterArr = byCluster.get(p.meta_cluster)!;
     const pool = clusterArr.length - 1 >= 3 ? clusterArr : all;
     const base = medianExcluding(pool, lowerBound(pool, p.comments)) || 8;
-    const pred = Math.max(1, Math.round(base * postMultipliers(p)));
+    const pred = Math.max(1, Math.round(base * postMultipliers(p, mult)));
     const actual = p.comments;
     apes.push(Math.abs(actual - pred) / actual);
     absErrs.push(Math.abs(actual - pred));

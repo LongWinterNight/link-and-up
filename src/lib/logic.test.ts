@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { clusterOf, detectLang, enrich, parseFollowers, tagPost } from './enrich';
 import { analyzeIngest, analyzeIngestChunked, diceSim, dedupKey, MAX_IMPORT_RECORDS } from './dedup';
-import { backtest, effectiveCalibration, forecast, postMultipliers, recalcCalibration } from './forecast';
+import { backtest, effectiveCalibration, empiricalMultipliers, forecast, postMultipliers, recalcCalibration, selectMultipliers } from './forecast';
 import { median } from './stats';
 import { validateIdea, validateContent, validatePattern, hasHardFlag, DEFAULT_RULES, MAX_PATTERN_LENGTH } from './guardrails';
 import { redactHard } from './guardrails';
@@ -184,6 +184,56 @@ describe('forecast', () => {
     const fc = forecast({ ...idea, refPostId: ref.id }, pool, 1);
     expect(fc!.lowData).toBe(false);
     expect(fc!.base).toBe(50); // медиана 40/50/60, а не 0 от референса
+  });
+});
+
+describe('FCST-2: эмпирические множители из корпуса', () => {
+  // 120 постов: у всех RU, у половины — цифры в тексте; комментарии НЕ зависят от факторов (все = 50)
+  const mkCorpus = () =>
+    Array.from({ length: 120 }, (_, i) => {
+      const withNumbers = i % 2 === 0;
+      return enrich({
+        author: 'Автор ' + i,
+        text: withNumbers ? 'пост про рост выручки 37 процентов делюсь опытом' : 'пост про рост выручки делюсь опытом коротко',
+        reactions: 5,
+        comments: 50,
+      });
+    });
+
+  it('меньше 100 метрик → null (честный отказ)', () => {
+    expect(empiricalMultipliers(mkCorpus().slice(0, 60))).toBeNull();
+  });
+
+  it('фактор без эффекта получает ×1.0; малая сторона — дефолт с пометкой fallback', () => {
+    const emp = empiricalMultipliers(mkCorpus())!;
+    expect(emp.multipliers.numbers).toBe(1); // 50/50 — эффекта нет
+    expect(emp.details.ru.fallback).toBe(true); // все RU — стороны «без» нет
+    expect(emp.multipliers.ru).toBe(1.1); // дефолт сохранён
+  });
+
+  it('selectMultipliers выбирает эмпирические, когда они точнее на бэктесте', () => {
+    const posts = mkCorpus();
+    const sel = selectMultipliers(posts);
+    expect(sel.chosen).toBe('empirical'); // дефолтный ×1.2 за цифры здесь только вредит
+    expect(sel.empiricalMape).not.toBeNull();
+    expect(sel.empiricalMape!).toBeLessThan(sel.defaultMape!);
+    // кэш по ссылке
+    expect(selectMultipliers(posts)).toBe(sel);
+  });
+
+  it('клип сверху: аномальный фактор не даёт множитель больше 1.6', () => {
+    // цифры «дают» ×4 — эмпирика обязана обрезаться до 1.6
+    const posts = Array.from({ length: 120 }, (_, i) => {
+      const withNumbers = i % 2 === 0;
+      return enrich({
+        author: 'А' + i,
+        text: withNumbers ? 'кейс с цифрой 42 внутри текста поста' : 'кейс без чисел внутри текста поста',
+        reactions: 5,
+        comments: withNumbers ? 200 : 50,
+      });
+    });
+    const emp = empiricalMultipliers(posts)!;
+    expect(emp.multipliers.numbers).toBe(1.6);
   });
 });
 

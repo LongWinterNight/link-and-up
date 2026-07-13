@@ -2,11 +2,11 @@ import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { CLUSTER_LABEL, STATUS_LABEL } from '@/lib/constants';
 import { generateDraft } from '@/lib/draft';
-import { CALIBRATION_MIN_FACTS, effectiveCalibration, forecast } from '@/lib/forecast';
+import { CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, selectMultipliers } from '@/lib/forecast';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
 import { clusterStats, isPostingDay, ownPostsThisWeek } from '@/lib/derive';
 import { download } from '@/lib/download';
-import { nf } from '@/lib/stats';
+import { nf, percentileOf } from '@/lib/stats';
 import { Btn, EmptyState, Input, Panel, Pill, Select } from '@/components/ui';
 import { FORMULAS } from '@/lib/constants';
 import type { ClusterId } from '@/types';
@@ -73,7 +73,11 @@ export default function Today() {
   const hard = hasHardFlag(flags);
   const draft = useMemo(() => (idea ? generateDraft(idea, rules) : null), [idea, rules]);
   const effCal = effectiveCalibration(calibration, calibrationCount);
-  const fc = useMemo(() => forecast(idea, posts, effCal), [idea, posts, effCal]);
+  const sel = useMemo(() => selectMultipliers(posts), [posts]);
+  const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);
+  // М8: перцентиль честен только на достаточной выборке (резолюция раунда 3: ≥30 метрик)
+  const metricComments = useMemo(() => posts.filter((p) => p.has_metrics && p.comments > 0).map((p) => p.comments), [posts]);
+  const pctl = fc && !fc.lowData && metricComments.length >= 30 ? percentileOf(metricComments, fc.expected) : null;
 
   const ownThisWeek = ownPostsThisWeek(posts);
   const postingDay = isPostingDay();
@@ -184,6 +188,11 @@ export default function Today() {
                       {t('today.comments.by')}<span className="num">{nf(fc.expected)}</span>{t('today.analogs')}{fc.poolSize}{t('today.analogs2')}
                       {calibrationCount < CALIBRATION_MIN_FACTS && t('today.noCalib')}
                     </span>
+                    {pctl != null && (
+                      <span style={{ fontSize: 'var(--fs-xs)', padding: '2px 9px', borderRadius: 'var(--radius-pill)', background: 'var(--positive-soft)', color: 'var(--positive)', border: '1px solid var(--positive)' }}>
+                        {t('today.pctl.above')}{pctl}{t('today.pctl.rest')}
+                      </span>
+                    )}
                   </div>
                 )}
                 <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginTop: 8 }}>{t('today.fullBreakdown')}</div>

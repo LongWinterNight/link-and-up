@@ -105,6 +105,8 @@ export const en: Record<DictKey, string> = {
   'today.quick.title': 'Title',
   'today.quick.hook': 'Hook (first line of the post)',
   'today.quick.create': 'Create',
+  'today.pctl.above': 'center beats ',
+  'today.pctl.rest': '% of the corpus',
 
   'ov.empty.title': 'Start by importing posts',
   'ov.empty.hint': 'The demo corpus is cleared. Import your export (a JSON array of posts) to see KPIs, cluster distributions and tops. Or bring the demo back to explore.',

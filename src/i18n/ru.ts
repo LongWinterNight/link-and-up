@@ -111,6 +111,8 @@ export const ru = {
   'today.quick.title': 'Заголовок',
   'today.quick.hook': 'Хук (первая строка поста)',
   'today.quick.create': 'Создать',
+  'today.pctl.above': 'центр выше, чем у ',
+  'today.pctl.rest': '% постов корпуса',
 
   // --- «Обзор» ---
   'ov.empty.title': 'Начните с загрузки постов',
