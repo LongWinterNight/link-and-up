@@ -116,6 +116,21 @@ export function selectMultipliers(posts: Post[]): MultiplierSelection {
 }
 
 /**
+ * Б7 (P-2, решение D3): прогноз идеи с подменённым хуком — для ранжирования вариантов
+ * МЕЖДУ СОБОЙ. Абсолюты неустойчивы к смене алгоритма платформы, порядок вариантов — устойчив.
+ */
+export function forecastWithHook(
+  idea: Idea | null,
+  hook: string,
+  posts: Post[],
+  calibration: number,
+  mults: FactorMultipliers = DEFAULT_MULTIPLIERS,
+): ForecastResult | null {
+  if (!idea) return null;
+  return forecast({ ...idea, hook }, posts, calibration, mults);
+}
+
+/**
  * Прогноз вовлечения идеи — прозрачная эвристика с пошаговым разложением.
  * ВСЕ числа — ОЦЕНКА, не факт. Показывать разложение и посты-основания.
  */

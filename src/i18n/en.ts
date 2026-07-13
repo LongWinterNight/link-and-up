@@ -589,4 +589,15 @@ export const en: Record<DictKey, string> = {
   'nc.builtin': 'built-in',
   'nc.del': 'Delete cluster ',
   'nc.posts': ' posts',
+  // --- Б7 (P-2): hook variant comparison ---
+  'p2.title': 'Hook variants (comparison)',
+  'p2.note':
+    'The product ranks variants AGAINST EACH OTHER: the order is more robust than absolute numbers. The winner is by range center; guardrails are checked for every variant.',
+  'p2.ph': 'Hook variant ',
+  'p2.current': 'current',
+  'p2.best': 'best',
+  'p2.guard': 'guardrails',
+  'p2.makeMain': 'Make primary',
+  'p2.swapped': 'Hook replaced — the previous one is kept in variants',
+  'p2.empty': 'Add up to 3 alternative first lines — see them ranked by expected engagement.',
 };

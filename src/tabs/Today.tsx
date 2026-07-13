@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useStore } from '@/store';
 import { generateDraft } from '@/lib/draft';
-import { CALIBRATION_MIN_FACTS, effectiveCalibration, forecast, selectMultipliers } from '@/lib/forecast';
+import {
+  CALIBRATION_MIN_FACTS,
+  effectiveCalibration,
+  forecast,
+  forecastWithHook,
+  selectMultipliers,
+} from '@/lib/forecast';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
 import { clusterStats, formulaVariety, isPostingDay, ownPostsThisWeek } from '@/lib/derive';
 import { download } from '@/lib/download';
@@ -12,6 +18,123 @@ import type { ClusterId } from '@/types';
 import EmptyCorpus from '@/components/EmptyCorpus';
 import { useClusterLabel, useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
+
+/** Б7 (P-2, D3-полный режим): ранжирование вариантов хука между собой. */
+function VariantsPanel({ idea }: { idea: import('@/types').Idea }) {
+  const t = useT();
+  const posts = useStore((s) => s.posts);
+  const rules = useStore((s) => s.rules);
+  const readOnly = useStore((s) => s.readOnly);
+  const saveIdea = useStore((s) => s.saveIdea);
+  const flash = useStore((s) => s.flash);
+  const calibration = useStore((s) => s.calibration);
+  const calibrationCount = useStore((s) => s.calibrationCount);
+  const effCal = effectiveCalibration(calibration, calibrationCount);
+  const sel = useMemo(() => selectMultipliers(posts), [posts]);
+  const variants = useMemo(() => idea.variants ?? [], [idea.variants]);
+
+  const setVariant = (i: number, v: string) => {
+    const next = [variants[0] ?? '', variants[1] ?? '', variants[2] ?? ''];
+    next[i] = v;
+    while (next.length && !next[next.length - 1].trim()) next.pop();
+    saveIdea({ ...idea, variants: next });
+  };
+
+  const rows = useMemo(() => {
+    const hooks = [
+      { hook: idea.hook, current: true },
+      ...variants.filter((v) => v.trim()).map((v) => ({ hook: v, current: false })),
+    ];
+    return hooks
+      .map((h) => {
+        const fc = forecastWithHook(idea, h.hook, posts, effCal, sel.multipliers);
+        const hard = hasHardFlag(validateIdea({ ...idea, hook: h.hook }, rules));
+        return { ...h, fc, hard };
+      })
+      .sort((a, b) => (b.fc?.expected || 0) - (a.fc?.expected || 0));
+  }, [idea, variants, posts, effCal, sel, rules]);
+
+  const makeMain = (hook: string) => {
+    const rest = variants.filter((v) => v.trim() && v !== hook);
+    saveIdea({ ...idea, hook, variants: [idea.hook, ...rest].slice(0, 3) });
+    flash(t('p2.swapped'));
+  };
+
+  const hasVariants = variants.some((v) => v.trim());
+
+  return (
+    <Panel title={t('p2.title')}>
+      <div style={{ fontSize: 'var(--fs-2xs)', color: 'var(--text-3)', marginBottom: 10 }}>{t('p2.note')}</div>
+      {!readOnly && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 640, marginBottom: 12 }}>
+          {[0, 1, 2].map((i) => (
+            <Input
+              key={i}
+              label={t('p2.ph') + (i + 1)}
+              id={'variant-' + i}
+              name={'variant-' + i}
+              autoComplete="off"
+              value={variants[i] ?? ''}
+              onChange={(e) => setVariant(i, e.target.value)}
+            />
+          ))}
+        </div>
+      )}
+      {!hasVariants ? (
+        <div style={{ fontSize: 'var(--fs-xs)', color: 'var(--text-3)' }}>{t('p2.empty')}</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {rows.map((r, i) => (
+            <div
+              key={r.hook + i}
+              style={{
+                display: 'flex',
+                gap: 10,
+                alignItems: 'center',
+                flexWrap: 'wrap',
+                padding: '8px 10px',
+                borderRadius: 8,
+                background: i === 0 ? 'var(--positive-soft)' : 'var(--surface-2)',
+                border: `1px solid ${i === 0 ? 'var(--positive)' : 'var(--border)'}`,
+              }}
+            >
+              <span
+                style={{
+                  flex: 1,
+                  minWidth: 200,
+                  fontSize: 'var(--fs-sm)',
+                  color: 'var(--text-1)',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {r.hook || '—'}
+              </span>
+              {i === 0 && (
+                <span style={{ fontSize: 'var(--fs-2xs)', color: 'var(--positive)', fontWeight: 700 }}>
+                  {t('p2.best')}
+                </span>
+              )}
+              {r.current && <Pill>{t('p2.current')}</Pill>}
+              {r.hard && (
+                <span style={{ fontSize: 'var(--fs-2xs)', color: 'var(--critical)' }}>🚫 {t('p2.guard')}</span>
+              )}
+              <span className="num" style={{ fontSize: 'var(--fs-sm)', color: 'var(--text-2)', flexShrink: 0 }}>
+                {r.fc ? nf(r.fc.low) + '–' + nf(r.fc.high) : '—'}
+              </span>
+              {!r.current && !readOnly && (
+                <Btn disabled={r.hard} onClick={() => makeMain(r.hook)}>
+                  {t('p2.makeMain')}
+                </Btn>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </Panel>
+  );
+}
 
 /**
  * P-1 «Пост сегодня» — дефолтный экран: главная петля продукта в одном месте.
@@ -370,6 +493,9 @@ export default function Today() {
           </div>
         </div>
       )}
+
+      {/* Б7 (P-2): сравнение вариантов хука — полный режим D3 */}
+      {idea && <VariantsPanel idea={idea} />}
     </div>
   );
 }

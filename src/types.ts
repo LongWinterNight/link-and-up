@@ -105,6 +105,8 @@ export interface Idea {
   refPostId: string;
   predicted: number;
   actual: IdeaActual | null;
+  /** Б7 (P-2): до 3 альтернативных хуков для сравнения; отсутствие поля = нет вариантов. */
+  variants?: string[];
 }
 
 export interface Formula {
