@@ -1,7 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { useStore } from '@/store';
 import { PRODUCT_NAME } from '@/lib/constants';
+import { NICHES } from '@/lib/nichePacks';
+import { Select } from './ui';
 import { useT } from '@/i18n/useT';
+import type { DictKey } from '@/i18n';
 
 const card: React.CSSProperties = {
   display: 'flex',
@@ -21,7 +24,10 @@ export default function OnboardingModal() {
   const onboarded = useStore((s) => s.onboarded);
   const posts = useStore((s) => s.posts);
   const complete = useStore((s) => s.completeOnboarding);
+  const niche = useStore((s) => s.niche);
+  const setNiche = useStore((s) => s.setNiche);
   const t = useT();
+  const nichePicked = NICHES.find((n) => n.id === niche);
   const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -67,6 +73,23 @@ export default function OnboardingModal() {
             <div style={{ fontSize: 15, fontWeight: 700 }}>{t('onb.fresh.title')}</div>
             <div style={{ fontSize: 12.5, color: 'var(--text-3)', lineHeight: 1.5 }}>{t('onb.fresh.desc')}</div>
           </button>
+        </div>
+
+        {/* NICHE-2: выбор ниши — подключает пакет правил (если есть) и даёт сигнал спроса */}
+        <div style={{ marginTop: 16 }}>
+          <Select label={t('onb.niche.label')} id="onb-niche" name="onb-niche" value={niche || ''} onChange={(e) => setNiche(e.target.value)}>
+            <option value="">{t('onb.niche.none')}</option>
+            {NICHES.map((n) => (
+              <option key={n.id} value={n.id}>
+                {t(('niche.' + n.id) as DictKey)}
+              </option>
+            ))}
+          </Select>
+          {niche && (
+            <div style={{ fontSize: 11.5, color: nichePicked?.packId ? 'var(--positive)' : 'var(--text-3)', marginTop: 6 }}>
+              {nichePicked?.packId ? t('onb.niche.pack') : t('onb.niche.nopack')}
+            </div>
+          )}
         </div>
 
         <p style={{ fontSize: 11.5, color: 'var(--text-3)', marginTop: 16 }}>{t('onb.footer')}</p>

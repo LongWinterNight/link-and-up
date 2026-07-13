@@ -65,6 +65,8 @@ export interface PersistedSlice {
   ownAuthor: string;
   cadenceGoal: number;
   presets: Preset[];
+  /** NICHE-2 (опционально для обратной совместимости бэкапов). */
+  niche?: string;
 }
 
 /** Полное состояние = композиция слайсов (Б10: расслоение под воркспейсы Б5 и синк G-1). */

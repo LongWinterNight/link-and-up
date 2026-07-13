@@ -2,7 +2,7 @@ import type { StateCreator } from 'zustand';
 import type { Rule } from '@/types';
 import { CADENCE_GOAL, OWN_AUTHOR } from '@/lib/constants';
 import { DEFAULT_RULES } from '@/lib/guardrails';
-import { NICHE_PACKS } from '@/lib/nichePacks';
+import { NICHE_PACKS, NICHES } from '@/lib/nichePacks';
 import { ensureLocale } from '@/i18n';
 import type { AuditEntry, PersistedSlice, State } from './types';
 import { audit } from './utils';
@@ -14,8 +14,11 @@ export interface SettingsSlice {
   rules: Rule[];
   ownAuthor: string;
   cadenceGoal: number;
+  /** NICHE-2: выбранная ниша ('' = не выбрана); локальный сигнал спроса на пакеты. */
+  niche: string;
 
   setReadOnly: (v: boolean) => void;
+  setNiche: (id: string) => void;
   setOwnAuthor: (name: string) => void;
   setCadenceGoal: (n: number) => void;
   addRule: (rule: Rule) => void;
@@ -34,8 +37,17 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
   rules: DEFAULT_RULES.map((r) => ({ ...r })),
   ownAuthor: OWN_AUTHOR,
   cadenceGoal: CADENCE_GOAL,
+  niche: '',
 
   setReadOnly: (readOnly) => set({ readOnly }),
+  setNiche: (id) => {
+    const opt = NICHES.find((n) => n.id === id);
+    set({ niche: id, auditLog: audit(get().auditLog, 'Выбрана ниша: ' + (id || '—')) });
+    // если для ниши есть пакет правил и он ещё не подключён — подключаем
+    if (opt?.packId && !get().rules.some((r) => r.pack === opt.packId)) {
+      get().toggleNichePack(opt.packId);
+    }
+  },
   setOwnAuthor: (ownAuthor) => set({ ownAuthor: ownAuthor.trim() || OWN_AUTHOR }),
   setCadenceGoal: (cadenceGoal) => set({ cadenceGoal: Math.max(1, Math.min(14, Math.round(cadenceGoal) || 1)) }),
   addRule: (rule) => set({ rules: [...get().rules, rule] }),

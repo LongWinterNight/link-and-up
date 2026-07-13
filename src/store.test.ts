@@ -144,6 +144,22 @@ describe('store: undo удаления идеи (М12)', () => {
   });
 });
 
+describe('store: выбор ниши (NICHE-2)', () => {
+  it('setNiche(fintech) сохраняет нишу и автоподключает пакет; ниша без пакета — только сигнал', async () => {
+    const { DEFAULT_RULES } = await import('./lib/guardrails');
+    useStore.setState({ rules: DEFAULT_RULES.map((r) => ({ ...r })), niche: '' });
+    S().setNiche('fintech');
+    expect(S().niche).toBe('fintech');
+    expect(S().rules.some((r) => r.pack === 'fintech')).toBe(true);
+
+    S().setNiche('health');
+    expect(S().niche).toBe('health');
+    // пакет финтеха не отключается сам — правила пользователь снимает явно
+    expect(S().rules.some((r) => r.pack === 'fintech')).toBe(true);
+    expect(S().auditLog[0].msg).toContain('health');
+  });
+});
+
 describe('store: нишевый пакет правил (Б3, финтех)', () => {
   it('toggleNichePack подключает и отключает правила пакета; hard-правило реально блокирует', async () => {
     const { validateIdea, hasHardFlag, DEFAULT_RULES } = await import('./lib/guardrails');

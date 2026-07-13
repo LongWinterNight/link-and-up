@@ -100,3 +100,25 @@ export const FINTECH_PACK: NichePack = {
 };
 
 export const NICHE_PACKS: NichePack[] = [FINTECH_PACK];
+
+/**
+ * NICHE-2: справочник ниш для онбординга. Пакет правил есть пока только у финтеха;
+ * выбор остальных сохраняется как локальный сигнал спроса (какой пакет делать следующим).
+ */
+export interface NicheOption {
+  id: string;
+  /** id пакета правил, если для ниши он уже существует. */
+  packId?: string;
+}
+
+export const NICHES: NicheOption[] = [
+  { id: 'fintech', packId: 'fintech' },
+  { id: 'health' },
+  { id: 'legal' },
+  { id: 'hr' },
+  { id: 'saas' },
+  { id: 'ecom' },
+  { id: 'agency' },
+  { id: 'devrel' },
+  { id: 'other' },
+];

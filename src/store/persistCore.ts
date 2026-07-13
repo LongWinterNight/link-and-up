@@ -20,6 +20,7 @@ export function toPersistedSlice(s: State): PersistedSlice {
     ownAuthor: s.ownAuthor,
     cadenceGoal: s.cadenceGoal,
     presets: s.presets,
+    niche: s.niche,
   };
 }
 

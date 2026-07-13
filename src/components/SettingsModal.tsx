@@ -2,7 +2,9 @@ import { useState } from 'react';
 import { toPersistedSlice, useStore } from '@/store';
 import { exportStateJson, parseBackup } from '@/lib/backup';
 import { validatePattern } from '@/lib/guardrails';
-import { NICHE_PACKS } from '@/lib/nichePacks';
+import { NICHE_PACKS, NICHES } from '@/lib/nichePacks';
+import { useT } from '@/i18n/useT';
+import type { DictKey } from '@/i18n';
 import { exportAuditCsv } from '@/lib/exports';
 import { download } from '@/lib/download';
 import type { Rule } from '@/types';
@@ -63,7 +65,10 @@ export default function SettingsModal() {
   const setCadenceGoal = useStore((s) => s.setCadenceGoal);
   const auditLog = useStore((s) => s.auditLog);
   const applyBackup = useStore((s) => s.applyBackup);
+  const niche = useStore((s) => s.niche);
+  const setNiche = useStore((s) => s.setNiche);
   const flash = useStore((s) => s.flash);
+  const t = useT();
 
   const onRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -139,6 +144,14 @@ export default function SettingsModal() {
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="cadence-goal">Цель каденса (постов/нед)
             <input id="cadence-goal" name="cadence-goal" type="number" min={1} max={14} value={cadenceGoal} onChange={(e) => setCadenceGoal(Number(e.target.value))} style={{ ...inp, marginTop: 4 }} />
+          </label>
+          <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="settings-niche">Ниша
+            <select id="settings-niche" name="settings-niche" value={niche || ''} onChange={(e) => setNiche(e.target.value)} style={{ ...inp, marginTop: 4 }}>
+              <option value="">{t('onb.niche.none')}</option>
+              {NICHES.map((n) => (
+                <option key={n.id} value={n.id}>{t(('niche.' + n.id) as DictKey)}</option>
+              ))}
+            </select>
           </label>
         </div>
 

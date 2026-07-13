@@ -33,6 +33,12 @@ describe('демо-корпус (seed_posts.json)', () => {
     }
   });
 
+  it('провенанс (P-5): прямых url в демо нет — пермалинки при сборе не верифицировались', () => {
+    // директива data-provenance-rule: непроверенное не хранится; источник ищется по цитате (links.ts)
+    const withUrl = seedPosts.filter((p) => (p.url || '').trim());
+    expect(withUrl.map((p) => p.url)).toEqual([]);
+  });
+
   it('enrichAll обрабатывает корпус без исключений и без личных аннотаций', () => {
     const posts = enrichAll(seedPosts);
     expect(posts).toHaveLength(289);
