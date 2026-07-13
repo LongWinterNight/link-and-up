@@ -72,37 +72,45 @@ export default function Forecast() {
         <Kpi label="Бизнес-результат" value={nf(leads + interviews)} sub={`${leads} лидов · ${interviews} интервью`} tone="positive" />
       </div>
 
-      {/* Честность модели: бэктест */}
-      <Panel title="Точность модели прогноза (бэктест leave-one-out по корпусу)">
+      {/* М51: двухслойная честность — простая строка по умолчанию, математика под раскрытием */}
+      <Panel title="Точность модели прогноза">
         {bt.mape == null ? (
           <EmptyState>{bt.note}</EmptyState>
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 12 }}>
-              <Kpi label="Постов в бэктесте" value={nf(bt.n)} />
-              <Kpi label="Прогнозов «в пределах 2×»" value={bt.within2x + '%'} tone={bt.within2x! >= 50 ? 'positive' : 'warning'} sub="того же порядка, что факт" />
-              <Kpi label="MAPE" value={bt.mape} sub="средн. относит. ошибка" />
-              <Kpi label="Медианная ошибка" value={nf(bt.medianAbsErr)} sub="комментариев" />
+            <div style={{ fontSize: 13.5, color: 'var(--text-1)' }}>
+              Модель проверила себя на <span className="num">{nf(bt.n)}</span> постах вашего корпуса:{' '}
+              <b style={{ color: bt.within2x! >= 50 ? 'var(--positive)' : 'var(--warning)' }}>{bt.within2x}%</b> прогнозов того же порядка, что факт.
+              {sel.chosen === 'empirical' && <> Применяются <b style={{ color: 'var(--positive)' }}>множители из вашего корпуса</b> — они точнее дефолтных здесь.</>}
             </div>
-            <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{bt.note} Прогноз ниже — ОЦЕНКА, не факт: относитесь к диапазону, а не к точному числу.</div>
+            <details style={{ marginTop: 10 }}>
+              <summary style={{ cursor: 'pointer', fontSize: 12.5, color: 'var(--text-accent)' }}>Подробности для эксперта: MAPE, бэктест, множители</summary>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 12, marginTop: 10 }}>
+                <Kpi label="Постов в бэктесте" value={nf(bt.n)} />
+                <Kpi label="Прогнозов «в пределах 2×»" value={bt.within2x + '%'} tone={bt.within2x! >= 50 ? 'positive' : 'warning'} sub="того же порядка, что факт" />
+                <Kpi label="MAPE" value={bt.mape} sub="средн. относит. ошибка" />
+                <Kpi label="Медианная ошибка" value={nf(bt.medianAbsErr)} sub="комментариев" />
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 10 }}>{bt.note} Прогноз ниже — ОЦЕНКА, не факт: относитесь к диапазону, а не к точному числу.</div>
+              {/* FCST-2: честное сравнение наборов множителей */}
+              {sel.empirical ? (
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
+                  Множители: {sel.chosen === 'empirical'
+                    ? <>применяются <b style={{ color: 'var(--positive)' }}>ваши эмпирические</b> (MAPE {sel.empiricalMape}) — точнее дефолтных ({sel.defaultMape}) на вашем корпусе.</>
+                    : <>дефолтные (MAPE {sel.defaultMape}); эмпирические из вашего корпуса ({sel.empiricalMape ?? '—'}) выигрыша не дали.</>}
+                  {' '}
+                  {Object.entries(sel.empirical.details)
+                    .filter(([, d]) => !d.fallback)
+                    .map(([k, d]) => `${k} ×${d.value} (n=${d.nWith}/${d.nWithout})`)
+                    .join(' · ')}
+                </div>
+              ) : (
+                <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
+                  Множители — дефолтные; свои эмпирические появятся от 100 постов с метриками в корпусе.
+                </div>
+              )}
+            </details>
           </>
-        )}
-        {/* FCST-2: честное сравнение наборов множителей */}
-        {sel.empirical ? (
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
-            Множители: {sel.chosen === 'empirical'
-              ? <>применяются <b style={{ color: 'var(--positive)' }}>ваши эмпирические</b> (MAPE {sel.empiricalMape}) — точнее дефолтных ({sel.defaultMape}) на вашем корпусе.</>
-              : <>дефолтные (MAPE {sel.defaultMape}); эмпирические из вашего корпуса ({sel.empiricalMape ?? '—'}) выигрыша не дали.</>}
-            {' '}
-            {Object.entries(sel.empirical.details)
-              .filter(([, d]) => !d.fallback)
-              .map(([k, d]) => `${k} ×${d.value} (n=${d.nWith}/${d.nWithout})`)
-              .join(' · ')}
-          </div>
-        ) : (
-          <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
-            Множители — дефолтные; свои эмпирические появятся от 100 постов с метриками в корпусе.
-          </div>
         )}
         {fresh.latest && (
           <div style={{ fontSize: 12, color: fresh.stale ? 'var(--warning)' : 'var(--text-3)', marginTop: 8 }}>
@@ -178,9 +186,10 @@ export default function Forecast() {
             )}
             <div style={{ fontSize: 12.5, color: 'var(--text-3)' }}>{fc.bandNote}</div>
 
-            <div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-2)', marginBottom: 8 }}>Как получено число</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {/* М51: разложение — эксперт-слой, по умолчанию свёрнуто */}
+            <details>
+              <summary style={{ cursor: 'pointer', fontSize: 12.5, color: 'var(--text-accent)' }}>Как получено число (разложение по шагам)</summary>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginTop: 8 }}>
                 {fc.steps.map((s, i) => (
                   <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center', fontSize: 13 }}>
                     <span style={{ flex: 1, color: 'var(--text-2)' }}>{s.label}</span>
@@ -190,7 +199,7 @@ export default function Forecast() {
                 ))}
               </div>
               <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>{fc.explain}</div>
-            </div>
+            </details>
 
             {fc.evidence.length > 0 && (
               <div>
