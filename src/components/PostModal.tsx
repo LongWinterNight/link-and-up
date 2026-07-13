@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '@/store';
 import { CLUSTER_LABEL } from '@/lib/constants';
+import { buildPostSearchUrl } from '@/lib/links';
 import { nf } from '@/lib/stats';
 import type { CtaType, Emotion, FormatFlag, HookType, Structure } from '@/types';
 import { Btn, Pill } from './ui';
@@ -18,6 +19,7 @@ export default function PostModal() {
   const post = useStore((s) => s.posts.find((p) => p.id === id) || null);
   const close = useStore((s) => s.closePost);
   const readOnly = useStore((s) => s.readOnly);
+  const isDemo = useStore((s) => s.isDemo);
   const updatePostTag = useStore((s) => s.updatePostTag);
   const retagPost = useStore((s) => s.retagPost);
   const [editTags, setEditTags] = useState(false);
@@ -172,7 +174,17 @@ export default function PostModal() {
               Открыть источник ↗
             </a>
           )}
+          {/* пермалинки демо-корпуса реконструированы при сборе и могут не открываться —
+              поиск по точной цитате находит пост надёжнее прямой ссылки */}
+          <a href={buildPostSearchUrl(post)} target="_blank" rel="noopener noreferrer">
+            Найти пост поиском ↗
+          </a>
         </div>
+        {isDemo && (
+          <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>
+            Демо-корпус: ссылки на источники собраны поисковой выборкой и могут не открываться — используйте «Найти пост поиском».
+          </div>
+        )}
       </div>
     </div>
   );

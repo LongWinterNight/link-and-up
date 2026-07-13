@@ -96,6 +96,19 @@ describe('filterPosts — golden-set', () => {
   });
 });
 
+describe('buildPostSearchUrl — поисковый fallback источника', () => {
+  it('первые 10 слов в кавычках + site:linkedin.com для linkedin-ссылок и пустых', async () => {
+    const { buildPostSearchUrl } = await import('./links');
+    const u = buildPostSearchUrl({ text: 'Спека до кода — и «Claude Code» перестал фантазировать полностью совсем навсегда точка', url: 'linkedin.com/posts/x_activity-1' });
+    const q = decodeURIComponent(u.split('q=')[1]);
+    expect(q).toContain('"Спека до кода — и Claude Code перестал фантазировать');
+    expect(q).toContain('site:linkedin.com');
+    expect(q).not.toContain('«');
+    const u2 = buildPostSearchUrl({ text: 'короткий текст', url: 'https://example.com/a' });
+    expect(decodeURIComponent(u2.split('q=')[1])).not.toContain('site:linkedin.com');
+  });
+});
+
 describe('isPostingDay (P-6)', () => {
   it('вт и чт — дни публикации, остальные — нет', () => {
     expect(isPostingDay(new Date('2026-07-14'))).toBe(true); // вторник
