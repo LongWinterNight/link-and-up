@@ -234,10 +234,21 @@ const flushPersist = () => {
     useStore.getState().flash('Хранилище браузера переполнено — данные не сохраняются. Экспортируйте корпус.');
   }
 };
+/**
+ * Гейт записи до конца гидратации: эффекты (локаль/тема) успевают дёрнуть set() ДО того,
+ * как асинхронная IDB-гидратация вернёт сохранённое состояние — без гейта persist записал бы
+ * дефолтный снапшот поверх данных пользователя (поймано live-проверкой миграции).
+ */
+let persistWritable = false;
+export const markPersistWritable = () => {
+  persistWritable = true;
+};
+
 const debouncedStorage: PersistStorage<PersistedSlice> = {
   // SCALE-1: чтение с миграцией из legacy-localStorage и восстановлением из .bak-снапшота
   getItem: (name) => kvReadWithMigration<StorageValue<PersistedSlice>>(name, rawLS),
   setItem: (name, value) => {
+    if (!persistWritable) return; // пре-гидратационный снапшот = дефолты, писать нельзя
     pendingWrite = { name, value };
     clearTimeout(writeTimer);
     writeTimer = setTimeout(flushPersist, 300);
@@ -558,6 +569,10 @@ export const useStore = create<State>()(
     },
   ),
 );
+
+// запись persist открывается только после гидратации (race пойман live-проверкой миграции)
+useStore.persist.onFinishHydration(markPersistWritable);
+if (useStore.persist.hasHydrated()) markPersistWritable();
 
 /** Пересчитать калибровку из текущих идей (вызывать после сохранения фактов). */
 export function refreshCalibration() {
