@@ -51,6 +51,29 @@ test('быстрая идея в «Сегодня» → черновик и ди
   await expect(page.getByText('Варианты хука (сравнение)')).toBeVisible();
 });
 
+test('воркспейсы изолированы: новый пуст, данные основного целы (Б5)', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: /Изучить демо-корпус/ }).click();
+  await expect(page.getByRole('heading', { name: 'Что публикуем сегодня' })).toBeVisible();
+  await page.waitForTimeout(700); // debounce-flush persist
+
+  // создать второй воркспейс из шапки → перезагрузка в него
+  await page.getByRole('combobox', { name: 'Воркспейс' }).selectOption('__new__');
+  await page.getByRole('textbox', { name: 'Имя воркспейса' }).fill('Клиент А');
+  await page.getByRole('button', { name: 'Создать' }).click();
+
+  // новый воркспейс пуст — онбординг с нуля (изоляция от основного)
+  await expect(page.getByRole('button', { name: /Изучить демо-корпус/ })).toBeVisible();
+
+  // вернуться в основной — его данные не тронуты
+  await page.evaluate(() => {
+    localStorage.setItem('lidb_active_ws', 'default');
+    location.reload();
+  });
+  await expect(page.getByRole('heading', { name: 'Что публикуем сегодня' })).toBeVisible();
+  await expect(page.getByRole('button', { name: /Изучить демо-корпус/ })).toHaveCount(0);
+});
+
 test('перезагрузка сохраняет состояние (IndexedDB persist)', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: /Изучить демо-корпус/ }).click();
