@@ -47,9 +47,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       provider: 'v8',
-      include: ['src/lib/**'],
-      // Q-5: гейт покрытия бизнес-логики; растим по мере добора тестов
-      thresholds: { lines: 60, functions: 60, statements: 60, branches: 50 },
+      include: ['src/lib/**', 'src/store/**'],
+      // Q-5/М35: гейт покрытия lib+store (факт: lib ~97%, store ~70%); растим по мере добора тестов
+      thresholds: { lines: 75, functions: 65, statements: 75, branches: 60 },
     },
   },
 });
