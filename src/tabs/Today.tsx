@@ -221,7 +221,7 @@ export default function Today() {
 
   const flags = useMemo(() => (idea ? validateIdea(idea, rules) : []), [idea, rules]);
   const hard = hasHardFlag(flags);
-  const draft = useMemo(() => (idea ? generateDraft(idea, rules) : null), [idea, rules]);
+  const draft = useMemo(() => (idea ? generateDraft(idea, rules, cl) : null), [idea, rules, cl]);
   const effCal = effectiveCalibration(calibration, calibrationCount);
   const sel = useMemo(() => selectMultipliers(posts), [posts]);
   const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);

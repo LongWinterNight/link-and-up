@@ -305,8 +305,9 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
 
 function DraftModal({ idea, onClose }: { idea: Idea; onClose: () => void }) {
   const t = useT();
+  const cl = useClusterLabel();
   const rules = useStore((s) => s.rules);
-  const { text, blocked } = generateDraft(idea, rules);
+  const { text, blocked } = generateDraft(idea, rules, cl);
   return (
     <Modal onClose={onClose} label={t('id.draft.aria')} width={720}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>

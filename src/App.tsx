@@ -21,7 +21,7 @@ import { isPostingDay, ownPostsThisWeek } from './lib/derive';
 import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from './lib/exports';
 import { PRODUCT_NAME } from './lib/constants';
 import { ensureLocale, intlLocale, type DictKey } from './i18n';
-import { useT } from './i18n/useT';
+import { useClusterLabel, useT } from './i18n/useT';
 import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 
 const TAB_IDS: TabId[] = ['today', 'overview', 'analytics', 'explorer', 'clusters', 'ideas', 'forecast'];
@@ -59,6 +59,7 @@ export default function App() {
   const askConfirm = useStore((s) => s.askConfirm);
   const restoreLastIdea = useStore((s) => s.restoreLastIdea);
   const t = useT();
+  const cl = useClusterLabel();
   const [exportOpen, setExportOpen] = useState(false);
   const exportRef = useRef<HTMLDivElement>(null);
   // SCALE-1: IndexedDB-гидратация асинхронна — до её конца не решаем «первый ли это запуск»
@@ -129,15 +130,15 @@ export default function App() {
       flash(t('toast.posts.exported') + posts.length);
     }
     if (kind === 'csv') {
-      download('linkedin_baza.csv', exportPostsCsv(posts, rules), 'text/csv;charset=utf-8');
+      download('linkedin_baza.csv', exportPostsCsv(posts, rules, cl), 'text/csv;charset=utf-8');
       flash(t('toast.csv.exported'));
     }
     if (kind === 'ideas') {
-      download('idei.csv', exportIdeasCsv(ideas, posts, rules), 'text/csv;charset=utf-8');
+      download('idei.csv', exportIdeasCsv(ideas, posts, rules, cl), 'text/csv;charset=utf-8');
       flash(t('toast.ideas.exported'));
     }
     if (kind === 'obsidian') {
-      download('link-and-up-ideas.md', exportObsidian(ideas, rules), 'text/markdown');
+      download('link-and-up-ideas.md', exportObsidian(ideas, rules, cl), 'text/markdown');
       flash(t('toast.md.exported'));
     }
   };

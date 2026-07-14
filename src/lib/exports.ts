@@ -36,7 +36,7 @@ export function csvCell(v: unknown): string {
   return /[",\n;]/.test(s) ? '"' + s + '"' : s;
 }
 
-export function exportPostsCsv(posts: Post[], rules?: Rule[]): string {
+export function exportPostsCsv(posts: Post[], rules?: Rule[], clusterName?: (id: string) => string): string {
   const head = [
     'Автор',
     'Заголовок',
@@ -63,7 +63,7 @@ export function exportPostsCsv(posts: Post[], rules?: Rule[]): string {
       redactHard(p.author, rules),
       redactHard(p.headline, rules),
       p.lang,
-      CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
+      clusterName ? clusterName(p.meta_cluster) : CLUSTER_LABEL[p.meta_cluster] || p.meta_cluster,
       p.tags.hook_type,
       p.tags.structure,
       p.tags.cta_type,
@@ -113,7 +113,12 @@ export function redactIdea(idea: Idea, rules?: Rule[]): RedactedIdea {
   return { title: idea.title, hook: idea.hook, redacted: false, note: '' };
 }
 
-export function exportIdeasCsv(ideas: Idea[], posts: Post[], rules?: Rule[]): string {
+export function exportIdeasCsv(
+  ideas: Idea[],
+  posts: Post[],
+  rules?: Rule[],
+  clusterName?: (id: string) => string,
+): string {
   const head = [
     'Заголовок',
     'Хук',
@@ -134,7 +139,7 @@ export function exportIdeasCsv(ideas: Idea[], posts: Post[], rules?: Rule[]): st
     return [
       r.title,
       r.hook,
-      CLUSTER_LABEL[i.cluster] || i.cluster,
+      clusterName ? clusterName(i.cluster) : CLUSTER_LABEL[i.cluster] || i.cluster,
       FORMULAS.find((f) => f.id === i.formula)?.title || i.formula,
       r.redacted ? '' : redactHard(i.source, rules),
       i.channel,
@@ -152,7 +157,7 @@ export function exportIdeasCsv(ideas: Idea[], posts: Post[], rules?: Rule[]): st
 }
 
 // ---------- Markdown (Obsidian и любой markdown-vault) ----------
-export function exportObsidian(ideas: Idea[], rules?: Rule[]): string {
+export function exportObsidian(ideas: Idea[], rules?: Rule[], clusterName?: (id: string) => string): string {
   let md = '# Формулы победителей\n\n';
   for (const f of FORMULAS) {
     md += '## ' + f.title + '\n' + f.body + '\n\nКластер: [[' + (CLUSTER_LABEL[f.cluster] || f.cluster) + ']]\n\n';
@@ -162,7 +167,7 @@ export function exportObsidian(ideas: Idea[], rules?: Rule[]): string {
     const r = redactIdea(i, rules);
     md += '## ' + (r.title || 'Без названия') + '\n';
     md += '- Хук: ' + (r.hook || '') + '\n';
-    md += '- Кластер: [[' + (CLUSTER_LABEL[i.cluster] || i.cluster) + ']]\n';
+    md += '- Кластер: [[' + (clusterName ? clusterName(i.cluster) : CLUSTER_LABEL[i.cluster] || i.cluster) + ']]\n';
     md += '- Формула: [[' + (FORMULAS.find((f) => f.id === i.formula)?.title || i.formula) + ']]\n';
     md += '- Источник: ' + (r.redacted ? '—' : redactHard(i.source, rules) || '—') + '\n';
     md += '- Канал: ' + i.channel + ' · Статус: ' + (STATUS_LABEL[i.status] || i.status);

@@ -100,7 +100,7 @@ export interface DraftResult {
   blocked: boolean;
 }
 
-export function generateDraft(idea: Idea, rules?: Rule[]): DraftResult {
+export function generateDraft(idea: Idea, rules?: Rule[], clusterName?: (id: string) => string): DraftResult {
   const formula = FORMULAS.find((f) => f.id === idea.formula);
   const bp = FORMULA_BLUEPRINT[idea.formula] || GENERIC;
   const flags = validateIdea(idea, rules);
@@ -112,7 +112,7 @@ export function generateDraft(idea: Idea, rules?: Rule[]): DraftResult {
   lines.push('> Каркас по формуле «' + (formula?.title || idea.formula) + '». Наполни реальными деталями.');
   lines.push(
     '> Кластер: ' +
-      (CLUSTER_LABEL[idea.cluster] || idea.cluster) +
+      (clusterName ? clusterName(idea.cluster) : CLUSTER_LABEL[idea.cluster] || idea.cluster) +
       ' · Источник: ' +
       (idea.source || '—') +
       ' · Канал: ' +
