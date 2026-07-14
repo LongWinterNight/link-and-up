@@ -577,7 +577,7 @@
  },
  {
   "query": "tavily:AI-агент продажи",
-  "author": "Nick Volkunovich (2)",
+  "author": "Nick Volkunovich",
   "headline": "9567 подписчиков",
   "age": "",
   "reactions": 0,
@@ -793,7 +793,7 @@
  },
  {
   "query": "tavily:выгорание",
-  "author": "Владислав Носковец (2)",
+  "author": "Владислав Носковец",
   "headline": "продакт, 24821",
   "age": "",
   "reactions": 0,
@@ -829,7 +829,7 @@
  },
  {
   "query": "tavily:выгорание",
-  "author": "Mike Torchinsky (2)",
+  "author": "Mike Torchinsky",
   "headline": "executive search, 67K",
   "age": "",
   "reactions": 0,
@@ -949,7 +949,7 @@
  },
  {
   "query": "tavily:зарплата/пробелы",
-  "author": "Anna Znamenskaya (2)",
+  "author": "Anna Znamenskaya",
   "headline": "экс-топ, Школа Карьеры",
   "age": "",
   "reactions": 0,
@@ -985,7 +985,7 @@
  },
  {
   "query": "tavily:зарплата/пробелы",
-  "author": "Arina Khromova (2)",
+  "author": "Arina Khromova",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1021,7 +1021,7 @@
  },
  {
   "query": "tavily:нетворкинг",
-  "author": "Valeria Filistovich (2)",
+  "author": "Valeria Filistovich",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1081,7 +1081,7 @@
  },
  {
   "query": "tavily:удалёнка/фриланс",
-  "author": "Anna Znamenskaya (3)",
+  "author": "Anna Znamenskaya",
   "headline": "Школа Карьеры",
   "age": "",
   "reactions": 0,
@@ -1093,7 +1093,7 @@
  },
  {
   "query": "tavily:удалёнка/фриланс",
-  "author": "Майя Литвина (2)",
+  "author": "Майя Литвина",
   "headline": "64905",
   "age": "",
   "reactions": 0,
@@ -1105,7 +1105,7 @@
  },
  {
   "query": "tavily:удалёнка/фриланс",
-  "author": "Майя Литвина (3)",
+  "author": "Майя Литвина",
   "headline": "64905",
   "age": "",
   "reactions": 0,
@@ -1177,7 +1177,7 @@
  },
  {
   "query": "tavily:ИИ в отраслях",
-  "author": "Medo Eldin (EN)",
+  "author": "Medo Eldin",
   "headline": "AEC/ConTech",
   "age": "",
   "reactions": 0,
@@ -1185,7 +1185,8 @@
   "reposts": 0,
   "text": "AI agents in AEC will not matter until they can act safely inside the tools we build with - Revit, Primavera, ERP. Most AI in construction is surface-level: summaries, chat, dashboards. The hard truth: construction is not a knowledge problem. It is an execution problem. Value is created when something changes in the model, schedule, cost system - correct, explainable, reversible. Сильная формула тезиса: не проблема знаний, а проблема исполнения.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:ИИ в отраслях",
@@ -1201,7 +1202,7 @@
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Aurimas Griciunas (EN)",
+  "author": "Aurimas Griciunas",
   "headline": "185840 подписчиков",
   "age": "",
   "reactions": 0,
@@ -1209,11 +1210,12 @@
   "reposts": 0,
   "text": "What are RAG Systems? Пошаговый разбор с нумерованной диаграммой: chunks - embedding - vector DB - retrieval. Образовательная инфографика-разбор = эталон карусельного формата. 72 коммента, вопросы про инструменты визуализации и chat history.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Suleiman Najim (EN)",
+  "author": "Suleiman Najim",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1221,11 +1223,12 @@
   "reposts": 0,
   "text": "2000+ n8n workflows and templates ready to import. Категории списком. Comment n8n and I will DM you + LIKE + repost. Классический лид-магнит: many clients paid 16K for these workflows. Механика работает и в EN.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Aarushi Jain (EN)",
+  "author": "Aarushi Jain",
   "headline": "джун в поиске",
   "age": "",
   "reactions": 0,
@@ -1233,11 +1236,12 @@
   "reposts": 0,
   "text": "I built one n8n automation that applies to jobs better than most humans. Скрейпит вакансии LinkedIn по RSS, сравнивает с CV, оценивает релевантность из 5, суммирует на английском и немецком, достаёт контакты, генерирует персональное письмо. Started as a favor for a friend. Формат: перечисление возможностей автоматизации + личная история происхождения.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Kenny Damian (EN)",
+  "author": "Kenny Damian",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1245,11 +1249,12 @@
   "reposts": 0,
   "text": "Claude can now build 90% of enterprise-level n8n workflows. I compiled 50+ pages of n8n docs so Claude can automate for you. Describe automation in plain English - Claude выдаёт ready-to-import JSON: триггеры, ветвления, error handling, документацию. Want my setup guide? Связка Claude+n8n = горячий формат.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Rakesh Gohel (EN)",
+  "author": "Rakesh Gohel",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1257,11 +1262,12 @@
   "reposts": 0,
   "text": "n8n is now the #1 no-code tool to build AI agents. Разбор октябрьского релиза: AI Workflow Builder из natural language, Data Tables, Python Task Runner. Формула: новость платформы - что нового списком - real-world use cases - why this matters. Ньюсджекинг-формат.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
-  "author": "Naman Sinha (EN)",
+  "author": "Naman Sinha",
   "headline": "AutomAI",
   "age": "",
   "reactions": 0,
@@ -1269,7 +1275,8 @@
   "reposts": 0,
   "text": "I created a stock analysis workflow in n8n and it is kinda mind-blowing. Messy backstory: months bookmarked tutorials, someday never came. Проблема: не знал, что построить первым. Критерии: реальная боль, учит core-фичам, полезно. When I design automation I think: сколько времени сэкономит, сколько revenue поймает, сколько фокуса вернёт. Outcomes over automation.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:n8n/RAG",
@@ -1285,7 +1292,7 @@
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Gregg Salkovitch (EN)",
+  "author": "Gregg Salkovitch",
   "headline": "рекрутер",
   "age": "",
   "reactions": 600,
@@ -1293,11 +1300,12 @@
   "reposts": 0,
   "text": "Got fired, laid off, or did not perform? Do not be ashamed. Own it. Almost all of us picked the wrong job. How you respond in an interview says everything: be confident, be concise, explain what happened, what you learned, why it made you better. You did nothing wrong - what you learned matters more than what went wrong. 600 реакций, 82 комм.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Amanda Rice (EN)",
+  "author": "Amanda Rice",
   "headline": "sales, 16 лет",
   "age": "",
   "reactions": 0,
@@ -1305,11 +1313,12 @@
   "reposts": 0,
   "text": "Getting laid off might be the best thing that ever happens to your career. It was for me. Коммент-история: 600+ заявок, 20+ многораундовых интервью, 2 оффера за 24 часа спустя 8 месяцев. I did not know how resilient I was until I secured a new position. Честные цифры воронки поиска = доверие.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Bryan Creely (EN)",
+  "author": "Bryan Creely",
   "headline": "career coach",
   "age": "",
   "reactions": 0,
@@ -1317,11 +1326,12 @@
   "reposts": 0,
   "text": "I have been laid off three times in my career. 15 lessons: your job title is not your identity; company loyalty is a myth; you were a budget line item; each time I came back twice as strong. Формат: нумерованный список уроков из личного опыта. Многократно тиражируемая структура.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Catherine Brin (EN)",
+  "author": "Catherine Brin",
   "headline": "30 лет стажа",
   "age": "",
   "reactions": 0,
@@ -1329,11 +1339,12 @@
   "reposts": 0,
   "text": "After 3 months of layoff - what I learned after 30 years in the workforce. Work is not who I am. Rest is not a reward, it is a requirement - I did not realize how burned out I was until I finally stopped. You find out who is in your corner. Рефлексия по итогам N месяцев - серийный формат (3 мес, 6 мес).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Jason Grimm (EN)",
+  "author": "Jason Grimm",
   "headline": "инженер-лидер",
   "age": "",
   "reactions": 0,
@@ -1341,11 +1352,12 @@
   "reposts": 0,
   "text": "I have been through layoffs from every angle: laid off, survived, and had to lay off others. Laid off at SwiftStack 30 days before my one-year stock vest, weeks before Nvidia acquisition, top performer, no warning. Layoffs do not follow logic or performance - sometimes they follow spreadsheets. If this hit home, share your story. Перспектива со всех сторон = широта доверия.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:EN layoffs",
-  "author": "Anne Schmidt (EN)",
+  "author": "Anne Schmidt",
   "headline": "tech",
   "age": "",
   "reactions": 0,
@@ -1353,7 +1365,8 @@
   "reposts": 0,
   "text": "Some things I learned in my job search 4 months since being laid off by tech: take every meeting - connections are breadcrumbs; your title does not define you (repeat that); company name does not matter if people are not a good fit; the right thing will present itself. Дневник-рефлексия, EN-версия формата Yeliashevich.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:ритейл",
@@ -1477,7 +1490,7 @@
  },
  {
   "query": "tavily:медицина+ИИ",
-  "author": "dev.by (2)",
+  "author": "dev.by",
   "headline": "медиа 91670",
   "age": "",
   "reactions": 0,
@@ -1633,7 +1646,7 @@
  },
  {
   "query": "tavily:личный бренд",
-  "author": "David Mink (EN)",
+  "author": "David Mink",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1641,7 +1654,8 @@
   "reposts": 0,
   "text": "LinkedIn experiment: постил каждый будний день сентября (с помощью ChatGPT). Результаты честно: подписчики +6.7%, показы +113.7%, вовлечение +119%, охват +54.8%. НО: a lot of it felt like filler - it works, but does not feel right. Эксперимент с цифрами + честная оговорка. Плюс инсайт из смежного поста: LinkedIn-контент теперь индексируется ChatGPT/Claude/Gemini - посты становятся evergreen-источником в AI-выдаче (GEO).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:личный бренд",
@@ -1717,7 +1731,7 @@
  },
  {
   "query": "tavily:стартапы/MVP",
-  "author": "Александр Стома (2)",
+  "author": "Александр Стома",
   "headline": "18208",
   "age": "",
   "reactions": 0,
@@ -1801,7 +1815,7 @@
  },
  {
   "query": "tavily:Claude Code структура",
-  "author": "Alistair Greenwood (EN)",
+  "author": "Alistair Greenwood",
   "headline": "—",
   "age": "",
   "reactions": 0,
@@ -1809,7 +1823,8 @@
   "reposts": 0,
   "text": "Your Claude Code project is a folder with prompts. A properly structured one is an autonomous engineering system. CLAUDE.md - the brain. mcp.json - shared via git. settings.json - permissions. rules/ - modular by topic. commands/ - build once run forever. skills/ - auto-triggered. agents/ - isolated context windows. hooks/ - event-driven, blocks unsafe operations. The difference between beginner and expert is not the prompts, it is the structure underneath. 152 комментария - технический разбор архитектуры собирает огромное вовлечение в EN AI-нише.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:Claude Code структура",
@@ -1873,7 +1888,7 @@
  },
  {
   "query": "tavily:кибербезопасность+AI",
-  "author": "Kira Kuzmenko (2)",
+  "author": "Kira Kuzmenko",
   "headline": "рекрутинг/курсы",
   "age": "",
   "reactions": 0,
@@ -1897,7 +1912,7 @@
  },
  {
   "query": "tavily:продакт+ИИ",
-  "author": "Melissa Perri (EN)",
+  "author": "Melissa Perri",
   "headline": "Board Member, PM Expert, Author",
   "age": "",
   "reactions": 0,
@@ -1905,11 +1920,12 @@
   "reposts": 0,
   "text": "AI is reshaping product management. It's both thrilling and a little terrifying. We're seeing PMs explore image generators, chat tools, data summarizers. Some compress weeks of work into hours. Others are stuck behind corporate red tape. That gap is growing fast. The truth: our job isn't just to use new tools, but to ask better questions — what's the impact of AI on our teams? What will AI change about how we learn, decide, lead? What risks are we trading for speed? Формат: рефлексия лидера ниши, вопросы вместо ответов, рамка 'gap растёт между теми кто внедрил и кто нет'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:продакт+ИИ",
-  "author": "Daniel Elizalde (EN)",
+  "author": "Daniel Elizalde",
   "headline": "PM leader",
   "age": "",
   "reactions": 0,
@@ -1917,7 +1933,8 @@
   "reposts": 0,
   "text": "We keep hearing about AI Product Managers. Топ-комментарий под постом собрал отдельное вовлечение: 'AI is a tool. A product manager is a product manager. Not an AI PM, not a manufacturing PM. These prefixes only serve to muddy the waters. Hiring managers that want an AI PM are cheating themselves and not seeing great candidates.' Дискуссия: нужен ли префикс 'AI' к профессии PM — рынок спорит о ценности ярлыка.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:дневник собеседований",
@@ -1981,7 +1998,7 @@
  },
  {
   "query": "tavily:строительство+BIM+ИИ",
-  "author": "Kristijan Vilibić (EN)",
+  "author": "Kristijan Vilibić",
   "headline": "BIM developer",
   "age": "",
   "reactions": 372,
@@ -1989,11 +2006,12 @@
   "reposts": 0,
   "text": "BIM automation tools are transforming workflows, even when investment is limited. Key benefits: 1. Speeds up repetitive tasks. 2. Improves accuracy and consistency across projects. 3. Frees up teams to focus on design and innovation. 372 реакции, 12 комментариев в нише constructiontech. Формат: короткий пронумерованный пост о выгодах автоматизации + видео-демо плагина (в комментах спрашивают 'какой плагин?'). Тема: автоматизация рутины проектирования в constructiontech.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:строительство+BIM+ИИ",
-  "author": "Irving Resendiz (EN)",
+  "author": "Irving Resendiz",
   "headline": "AI in architecture, IXA IA",
   "age": "",
   "reactions": 0,
@@ -2001,7 +2019,8 @@
   "reposts": 0,
   "text": "We asked our AI to build a building in Revit, and it did so autonomously, in minutes. We trained ATENEA to think like an architect — she doesn't just recognize commands, she learned workflows and step-by-step processes of a project. Modeled an entire building core from scratch, 100% autonomous, no human intervention. A job that takes hours of manual modeling done in minutes. New series 'Automation in Action': each post spotlights one everyday architectural task and how AI takes care of it. Формат: серия постов 'автоматизация в действии' по одной боли за раз + видео-демо автономного результата.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:переговоры о зарплате",
@@ -2017,7 +2036,7 @@
  },
  {
   "query": "tavily:аналитик данных+ИИ",
-  "author": "Nicolas Boucher (EN)",
+  "author": "Nicolas Boucher",
   "headline": "Influencer, AI Finance",
   "age": "",
   "reactions": 0,
@@ -2025,11 +2044,12 @@
   "reposts": 0,
   "text": "You have the data in Excel. AI turns it into a dashboard in minutes. Most finance teams still spend hours building dashboards manually. 271 комментарий у инфлюенсера AI-в-финансах. Формат: короткий контраст 'было часами → стало минутами' + бесплатный мастеркласс в ссылке + видео-демо. Эталон подачи AI-инструмента через экономию времени для не-ИТ аудитории (финансисты).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:аналитик данных+ИИ",
-  "author": "Jess Ramos (EN)",
+  "author": "Jess Ramos",
   "headline": "Influencer, Data Analytics",
   "age": "",
   "reactions": 0,
@@ -2037,7 +2057,8 @@
   "reposts": 0,
   "text": "Data analysts must go beyond dashboards to stay employable. Топ-комментарий развивает: 'It's not enough to be a dashboard monkey anymore. Need fundamental data engineering and database knowledge on top of reporting and SQL. Be in position to proactively fix things and anticipate problems. If all you can do is build drag-and-drop Tableau dashboards — you just got automated or outsourced for pennies.' Дискуссия: AI автоматизирует базовые дашборды, ценность аналитика теперь в понимании бизнеса и коммуникации.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:аналитик данных+ИИ",
@@ -2053,7 +2074,7 @@
  },
  {
   "query": "tavily:смена профессии 40+",
-  "author": "Russell Ayles (EN)",
+  "author": "Russell Ayles",
   "headline": "Influencer, retail recruitment",
   "age": "",
   "reactions": 0,
@@ -2061,11 +2082,12 @@
   "reposts": 0,
   "text": "When I was 46, the company I worked for was bought out. It was clear I had no future there. One guy told me: 'I'm sure you're worth what you're making. But I could hire 2 people half your age for the same amount.' I didn't bother pointing out they'd have half my experience. I just went freelance. The benefits stink. Income is erratic. I've lost clients by taking a vacation. But I'm 75 now and still working. Part time because I don't want more. People are still willing to pay for my experience. Формат: личная история эйджизма → фриланс → длинная дистанция (75 лет, всё ещё в деле). Честный, без прикрас ('benefits stink, income erratic').",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:смена профессии 40+",
-  "author": "Radha Vyas (EN)",
+  "author": "Radha Vyas",
   "headline": "Founder Flash Pack",
   "age": "",
   "reactions": 237,
@@ -2073,11 +2095,12 @@
   "reposts": 0,
   "text": "Everyone thinks career changes after 40 are risky. They're dead wrong. I just spoke to Erin — 48, former corporate lawyer. Walked away from a six-figure salary last year. Started a sustainable fashion brand. Revenue? $500K in 8 months. 'Best decision I ever made.' 1 in 3 women aged 45-54 are planning a career pivot. Why now: financial freedom to take risks, decades of transferable skills, clarity about what matters, longer lifespans. Data: midlife career changers earn MORE, stay employed LONGER, report higher FULFILLMENT. 237 реакций, 108 комментариев. Формат: провокационный тезис + конкретный кейс с цифрами ($500K/8мес) + статистика + рамка 'опыт это актив, не пассив'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:смена профессии 40+",
-  "author": "Matthew Knight (EN)",
+  "author": "Matthew Knight",
   "headline": "Founder, freelance advocate",
   "age": "",
   "reactions": 379,
@@ -2085,11 +2108,12 @@
   "reposts": 0,
   "text": "I see posts talking about freelancers going 'full-time', meaning going 'perm' or back into employment. Most freelancers are already full-time — they work long days, have fewer holidays, are more productive, and often juggle multiple clients at once. Making an unfair binary between 'full time' and freelancing perpetuates the idea that freelancers aren't committed, focused, or effective. This is our full time job. Not a hobby. Not a thing we do between looking for a real job. Language matters. 379 реакций, 62 комментария.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:самозванец",
-  "author": "Zack Stein (EN)",
+  "author": "Zack Stein",
   "headline": "Head of Expansion, digital health",
   "age": "",
   "reactions": 0,
@@ -2097,11 +2121,12 @@
   "reposts": 0,
   "text": "LinkedIn is flooded with imposter syndrome articles: 'You belong here', 'Your achievements are real', 'Trust your experience'. Well-intentioned, but there's a blind spot: overcompensating for these feelings and the thin line between building confidence and crossing into arrogance. When you're told 'fake it till you make it', it's hard to know when to stop faking. It can be scary how easy it is to go from doubting every decision to dismissing conversations, ignoring feedback, and speaking with absolute certainty about what you learned yesterday. Топ-комменты хвалят рамку 'confident uncertainty' — 'I don't know, but I'll find out'. Формат: контр-тезис к заезженной теме (не про то, как побороть, а про опасность перебороть).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:тимлид+ИИ",
-  "author": "Paul Prathap L. (EN)",
+  "author": "Paul Prathap L.",
   "headline": "leadership",
   "age": "",
   "reactions": 0,
@@ -2109,11 +2134,12 @@
   "reposts": 0,
   "text": "One of the greatest responsibilities of a leader is creating an environment where people can do their best work. That means providing support, removing obstacles, encouraging growth — and at the same time maintaining high standards and accountability. The most effective leaders don't lower the bar. They help people rise to meet it. Comfort without challenge is coddling. Challenge without comfort is intimidation. High-performing teams are built when leaders create both challenge and support. Формат: разбор чужой рамки (Liz Wiseman multipliers) + чёткая формула 'coddling vs intimidation' + вопрос в конце. Работает для рубрики про менеджмент/enablement.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпты ChatGPT список",
-  "author": "Austin Armstrong (EN)",
+  "author": "Austin Armstrong",
   "headline": "AI/LinkedIn growth",
   "age": "",
   "reactions": 0,
@@ -2121,11 +2147,12 @@
   "reposts": 0,
   "text": "Everyone thinks growing on LinkedIn is hard. It's not. These 5 ChatGPT prompts are helping me go viral daily. 20,000+ new followers in 60 days. Millions of impressions. No ads, no engagement pods. 1. Viral Hook Generator: 'Act as a senior LinkedIn ghostwriter for 7-figure founders. Take this idea: [X]. Write 15 scroll-stopping first lines under 10 words. Each must use curiosity, contrast, or a specific number.' 2. Audience Decoder (10 questions your reader Googles at night). 3. Story-to-Post Translator. 4. Comment Magnet (10 debate-sparking ideas). 5. 30-Day Content Engine. Формат: список готовых промптов с конкретным результатом (20к подписчиков/60 дней).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпты ChatGPT список",
-  "author": "Charlie Hills (EN)",
+  "author": "Charlie Hills",
   "headline": "LinkedIn copywriter",
   "age": "",
   "reactions": 0,
@@ -2133,11 +2160,12 @@
   "reposts": 0,
   "text": "This ChatGPT prompt wrote 1,000+ LinkedIn posts. After writing 1k+ posts for myself and clients, I discovered the perfect prompt structure. I call it the RIF Framework. RIF = Role + Instructions + Format. ROLE: define who ChatGPT becomes (an expert in your field, specific credentials). INSTRUCTIONS: step-by-step process, clear actions before output, no room for misinterpretation. FORMAT: exact structure, character limits per line, style rules to match your voice. Формат: авторский именованный фреймворк (RIF) + доказательство (1000 постов) + готовый шаблон. Именование метода = запоминаемость.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпты ChatGPT список",
-  "author": "Junaid Khalid (EN)",
+  "author": "Junaid Khalid",
   "headline": "AI/ChatGPT",
   "age": "",
   "reactions": 0,
@@ -2145,11 +2173,12 @@
   "reposts": 0,
   "text": "Did you know ChatGPT has secret codes? Use these prompt 'codes' to get better results than 99% of users. My 5 favorites: 1. ELI5 (Explain Like I'm 5): type ELI5: [topic] for a simple explanation. 2. TL;DR: paste long text after TLDR: to condense. 3. Jargonize: make writing sound professional for LinkedIn/pitch decks. 4. Humanize: make AI sound natural, type Humanize: before prompt. 5. (department templates copy-paste ready). Формат: список коротких мнемонических 'кодов' + крючок 'лучше 99% пользователей' + призыв 'Comment WOW and I'll DM you the link' (лид-магнит через комменты).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпты ChatGPT список",
-  "author": "Ruben Hassid (EN)",
+  "author": "Ruben Hassid",
   "headline": "AI Influencer",
   "age": "",
   "reactions": 0,
@@ -2157,7 +2186,8 @@
   "reposts": 0,
   "text": "5 steps to prompt ChatGPT for better results (save this post). 1. Assign the Role: 'Act as a LinkedIn ghostwriting and social media marketing expert.' 2. Share the Context: 'I run a social media agency to help startup founders grow their LinkedIn.' 3. Describe the Task: 'Write a post on challenges of hiring talent at a startup from a founder's perspective.' 4. Specify the Format: 'Start with a scroll-stopping hook and include actionable tips.' 5. Set the Style: 'Use a warm, casual tone, concise and easy to read.' Формат: пронумерованный пошаговый скелет промпта с примерами каждого шага + призыв сохранить. Эталон 'save-bait' поста.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:монетизация LinkedIn",
@@ -2173,7 +2203,7 @@
  },
  {
   "query": "tavily:сокращение релокация",
-  "author": "Steve Crider (EN)",
+  "author": "Steve Crider",
   "headline": "карьерный консультант",
   "age": "",
   "reactions": 106,
@@ -2181,11 +2211,12 @@
   "reposts": 0,
   "text": "Два месяца назад клиентка была готова сдаться: 'Я откликнулась на 60+ вакансий, ничего не работает. Может, я недостаточно хороша.' Но проблема была не в ней — в её резюме. Оно недооценивало её талант, достижения похоронены в буллетах, сопроводительное вежливое, но забываемое. Мы переписали всё: резюме позиционирует как топ-кандидата, сопроводительное цепляет эмоционально и доказывает ценность, профиль LinkedIn кричит уверенность. Три недели спустя: 'Я получила работу!' Не просто работу — удалённую, с релокационным пакетом и +$28,000 к зарплате. 106 реакций. Формат: клиентская история спасения 'был провал → система → результат с цифрой', классическая рамка карьерного консультанта.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:сокращение релокация",
-  "author": "Vincent Huber (EN)",
+  "author": "Vincent Huber",
   "headline": "рекрутинг construction/architecture",
   "age": "",
   "reactions": 0,
@@ -2193,11 +2224,12 @@
   "reposts": 0,
   "text": "Я восхищаюсь всеми, кто сейчас ищет работу с релокацией — вы герои. Но объективно: это нелегко. Не пугаю, а возвращаю к реальности — лучше видеть её, оставить иллюзии и построить реалистичный многошаговый план. Не надейся найти работу за неделю, если нет transferable skills для роли, достаточного языка или других требований для релокации. Лучше принять реальность раньше, составить план и работать над ним шаг за шагом последовательно. Вот тогда случается магия. Формат: отрезвляющий реализм вместо мотивационного шума + сочувствие ('вы герои') + призыв к системному плану. Контр-жанр к 'просто верь в себя'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:вайбкодинг провал",
-  "author": "Alex Lieberman via Jordan Crawford (EN)",
+  "author": "Alex Lieberman via Jordan Crawford",
   "headline": "founder Morning Brew",
   "age": "",
   "reactions": 0,
@@ -2205,7 +2237,8 @@
   "reposts": 0,
   "text": "Оригинал Alex Lieberman: 'Я построил 6 сложных AI-воркфлоу с N8N, чтобы прокачать бизнес. 24 часа спустя результат: 6 полностью сломанных воркфлоу, жёстко подорванное эго, 24 часа, которые не вернуть, ноль эффективности.' Разбор Jordan Crawford: когда вайбкодишь, первые попытки — это просто разведка случайного способа модели решить задачу, контекста не хватает. Ожидай, что первые попытки провалятся. Трюк, который никто не делает: после 5 часов спроси модель, что она знает о косяках кодовой базы, что не так и почему, забери этот вывод, обнули контекст и начни второй заход — он будет чище. Формат: честный публичный провал с самоиронией ('подорванное эго') + разбор ошибки экспертом. Эталон build-in-public провала.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:декрет+карьера",
@@ -2221,7 +2254,7 @@
  },
  {
   "query": "tavily:стартап discovery",
-  "author": "iResonate founder (EN)",
+  "author": "iResonate founder",
   "headline": "founder, build in public",
   "age": "",
   "reactions": 0,
@@ -2229,11 +2262,12 @@
   "reposts": 0,
   "text": "Я решал задачу создания контента. Они застряли в избегании контента. Проблема была не в инструментах, а в доверии и формировании привычки. Новый питч: 'Мы делаем так, чтобы появляться было легче для фаундеров, которые не хотят звучать фальшиво или наигранно.' Разговор с 10 людьми дал больше, чем любой опрос или метрика — помог слушать, а не продавать; соединяться, а не убеждать. Если всё ещё формируешь оффер, начни здесь: забронируй 10 честных звонков, задавай открытые вопросы, не продавай — просто слушай. Твой следующий питч спрятан в их словах. Формат: инсайт customer discovery через личный сдвиг понимания + конкретный совет (10 звонков).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:стартап discovery",
-  "author": "Xaver Lehmann (EN)",
+  "author": "Xaver Lehmann",
   "headline": "founder $60M business, Newsletter The Honest Founder",
   "age": "",
   "reactions": 0,
@@ -2241,11 +2275,12 @@
   "reposts": 0,
   "text": "Newsletter 'The Honest Founder': 'Научу, как я построил бизнес на $60M и что бы сделал иначе. Еженедельно — сырые, сильные и честные истории.' Заголовки выпусков: 'А что если этого достаточно?', 'Я оставил эту возможность без ответа на недели', 'Нас ограбили', 'Я почти убил идею после пяти разговоров', 'Никто не пришёл', 'Мне не хотелось работать на этой неделе'. Формат: контент-серия/рассылка из честных провалов и сомнений фаундера вместо глянца успеха. Заголовки-крючки построены на уязвимости и антигерое.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:стартап discovery",
-  "author": "Alejandro Cremades (EN)",
+  "author": "Alejandro Cremades",
   "headline": "CoFounder Panthera, 2x автор",
   "age": "",
   "reactions": 0,
@@ -2253,11 +2288,12 @@
   "reposts": 0,
   "text": "Инвесторы решают за минуты, не за недели! Если твой дек не покрывает эти 7 вещей — инвесторы проигнорируют. Фаундеры тратят недели на фичи продукта, но комкают питч-дек. 1. Сильное вступление — стартап, продукт, видение, контакты, контекст за секунды. 2. Чётко определи проблему и решение — уникальность и масштабируемость. 3. Рыночная возможность — TAM, SAM, SOM. 4. Бизнес-модель и трекшн — докажи, что можешь исполнять: метрики, вехи, рост. 5. Команда и способность исполнять. Формат: пронумерованный чек-лист с крючком 'инвесторы решают за минуты' + P.S. с лид-магнитом (PDF в обмен на действие). Эталон структуры экспертного списка.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:SMM+нейросети",
-  "author": "Marcos Angelides (EN)",
+  "author": "Marcos Angelides",
   "headline": "marketing/AI",
   "age": "",
   "reactions": 0,
@@ -2265,11 +2301,12 @@
   "reposts": 0,
   "text": "No influencers. No editors. No ad agencies. Just one system powered by Speel. For a software company Prosp we: created a lifelike AI influencer, gave a simple product script, generated 50+ short-form demo videos, auto-posted across TikTok/Reels/YouTube, tested 100+ hooks/tones/CTAs. Result: 3 videos hit 250K+ views organically, 5x cheaper CAC than paid ads, $97,772 in tracked revenue. All from content that took minutes to produce. Формат: кейс с конкретными цифрами (CAC, revenue) + список 'что построили' + оффер открыть воркфлоу. Эталон AI-UGC кейса с трекингом денег.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:SMM+нейросети",
-  "author": "Neil Patel (EN)",
+  "author": "Neil Patel",
   "headline": "Influencer, digital marketing",
   "age": "",
   "reactions": 0,
@@ -2277,11 +2314,12 @@
   "reposts": 0,
   "text": "How are marketers using AI to create content? Топ-комментарии: 'AI is a powerful tool, but the magic happens when it works alongside human creativity, not instead of it. The best content comes from a blend of AI for efficiency and humans for empathy.' Обсуждение: где граница между AI-эффективностью и человеческой эмпатией в контенте. Формат: открытый вопрос от инфлюенсера, собирающий экспертные мнения в комментах. Тема 'AI дополняет, а не заменяет' — стабильный генератор дискуссии.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:копирайтинг+ИИ",
-  "author": "Alicja Smin (EN)",
+  "author": "Alicja Smin",
   "headline": "ex-LinkedIn employee",
   "age": "",
   "reactions": 0,
@@ -2289,11 +2327,12 @@
   "reposts": 0,
   "text": "Nobody knows how the LinkedIn algorithm works. As an ex-LinkedIn employee, let me tell you: nobody knows. LinkedIn is very vague in public statements. We can guess, test and learn, analyse thousands of posts and draw conclusions. But in all this chaos of chasing that one magic hack, we lose sight of what matters most: crafting genuinely good content. Take an honest look at your posts. Do they: 1. Have a scroll-stopping hook? 2. Address your ICP clearly? 3. Highlight pain points? 4. Trigger emotions? 5. Follow a storytelling arc? 6. Showcase personality? 7. Eye-catching visual? 8. Deliver a ton of value? 'Win the first two hours and your post keeps rolling. Lose them, and it's buried.' Формат: авторитет инсайдера ('ex-LinkedIn') + развенчание хаков + сохраняемый чек-лист. МЕТА-инсайт: гнаться не за хаком, а за качеством контента.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:SEO+GEO",
-  "author": "WRITER (EN)",
+  "author": "WRITER",
   "headline": "AI company, 80k подписчиков",
   "age": "",
   "reactions": 42,
@@ -2301,11 +2340,12 @@
   "reposts": 0,
   "text": "Where did all the traffic go? SEO isn't working like it used to. Search engine traffic is down — projected to drop 25% by 2026. Instead, people are turning to AI for answers. And many brands are nowhere to be found. Still, some companies gain customers, market share, revenue. How? Generative engine optimization (GEO): their products get mentioned in ChatGPT responses and AI Overviews. 42 реакции. Формат: тревожный вопрос-крючок + пугающая цифра (−25%) + решение GEO. Тема перестройки SEO под AI-выдачу — горячая.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:SEO+GEO",
-  "author": "Usman Akram (EN)",
+  "author": "Usman Akram",
   "headline": "SEO/PR SaaS",
   "age": "",
   "reactions": 0,
@@ -2313,7 +2353,8 @@
   "reposts": 0,
   "text": "SEO isn't dead but it's no longer enough. Enter GEO. Unlike SEO, you can't hack your way into AI answers. The only way is through trust. Don't just optimize your website — optimize your media footprint. Don't just publish branded content — secure third-party validation in the press. Don't just chase clicks — focus on credibility, authority, recency. If SEO is about being seen by Google, GEO is about being cited by AI. Test it: ask an LLM 'who are the leaders in your space?' If you're not showing up, change your strategy. Формат: тезис-переворот + триада 'не just X, а Y' + практический тест-призыв (спроси LLM про себя). Рамка 'в AI-выдачу нельзя хакнуть, только через доверие'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:B2B продажи+ИИ",
@@ -2329,7 +2370,7 @@
  },
  {
   "query": "tavily:AI-эхо-камера LinkedIn",
-  "author": "Marshall Wong (EN)",
+  "author": "Marshall Wong",
   "headline": "business/networking",
   "age": "",
   "reactions": 0,
@@ -2337,7 +2378,8 @@
   "reposts": 0,
   "text": "Превращается ли LinkedIn в ИИ-эхо-камеру? Буду честен: я часто использую ИИ-инструменты — для мозгового штурма, чистки текста, преодоления творческого кризиса. Быстро, полезно. Но кто-нибудь ещё волнуется, что мы теряем что-то важное? ИИ помогает писать отшлифованные посты. Потом другие люди (или их ИИ) резюмируют их или оставляют общий комментарий. Мы теперь просто разговариваем с алгоритмами? Это тот самый 'мёртвый интернет' в LinkedIn? Предложения: быть настоящее (рассказывать о процессе и сомнениях, а не только идеальном итоге; упоминать, когда ИИ помогал); более глубокие комментарии вместо 'Отличный пост!'; ИИ как помощник, а не босс. Формат: уязвимое сомнение вслух + самокритика ('я сам так делаю') + вопрос сообществу. Мета-тема о подлинности в эпоху AI-контента.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:джуны рынок IT",
@@ -2353,7 +2395,7 @@
  },
  {
   "query": "tavily:навыки будущего+ИИ",
-  "author": "Ansh Mehra (EN)",
+  "author": "Ansh Mehra",
   "headline": "AI/career",
   "age": "",
   "reactions": 5,
@@ -2361,7 +2403,8 @@
   "reposts": 0,
   "text": "Will AI eat jobs by 2026? The real question: how do you future-proof your career? With AI + automation revamping the workplace, this is how you stay relevant + competitive. Make sure you have a people component to your role — AI can't replace human qualities: creativity, empathy, ethical judgment, adaptability. These jobs are NOT going away: creative professionals (original thought, ideas not yet thought of — AI takes what's out there and gives it back), health care (people interaction). Формат: провокационный вопрос-заголовок + рамка 'добавь человеческий компонент' + перечень устойчивых профессий. Тема future-proofing даёт стабильное вовлечение.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:навыки будущего+ИИ",
@@ -2389,7 +2432,7 @@
  },
  {
   "query": "tavily:AI-агент n8n",
-  "author": "Nate Herkelman (EN)",
+  "author": "Nate Herkelman",
   "headline": "Co-Founder TrueHorizon AI",
   "age": "",
   "reactions": 0,
@@ -2397,11 +2440,12 @@
   "reposts": 0,
   "text": "I built an AI agent that builds n8n workflows for me in seconds, no code. You just talk to the developer agent in plain English, and it replies with a link to a brand-new workflow that already lives in your own n8n environment. What blew me away is how complete the outputs are — variables pass through the entire workflow, user messages and system prompts already built in, structured output parsers, fully configured HTTP request nodes, all without me lifting a finger. Although I want to be clear: this isn't perfect. But what they do incredibly well: sticky notes throughout the flow giving full context of the logic, what's missing. Формат: 'я построил X' + честная оговорка ('не идеально') + конкретика что впечатлило. Мета-уровень: агент строит агентов — горячая EN AI-тема.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-агент n8n",
-  "author": "Cole R. (EN)",
+  "author": "Cole R.",
   "headline": "AI automation",
   "age": "",
   "reactions": 0,
@@ -2409,11 +2453,12 @@
   "reposts": 0,
   "text": "Я однажды построил блестящего AI-агента для клиента. Умный, эффективный, технически безупречный. И он был готов провалиться. Проблема была не в логике — в передаче (handoff). Агент завершал сложную задачу, и потом... ничего. Результат падал в пустоту, а человеческая команда металась, не понимая, что делать дальше. Мы так зациклились на 'автономной' части, что забыли: 'агент' должен работать НА кого-то. Фикс: мы перестали строить endpoints и начали строить рукопожатия. Теперь каждый мой агентный воркфлоу имеет финальный обязательный шаг — The Human Report: автосообщение в Slack/email: 'Задача X завершена. Вот итог. Вот 3 ключевые точки данных.' Формат: cautionary tale ('было почти провалено') + именованный принцип (Human Report). Урок: автономность без передачи человеку бесполезна.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-агент n8n",
-  "author": "Bryan Dennstedt / AI with Bry (EN)",
+  "author": "Bryan Dennstedt / AI with Bry",
   "headline": "automation/no-code",
   "age": "",
   "reactions": 0,
@@ -2421,11 +2466,12 @@
   "reposts": 0,
   "text": "Before you start building in n8n, here are the 5 lessons I wish I knew earlier: 1. Take the training — short YouTube courses save days of frustration. 2. Start with templates — faster than building from scratch. 3. The 'easy' stuff is tricky — scraping & RSS will test you. 4. Think in JSON — mindset shift makes n8n smoother. 5. Don't fall for hype — AI auto-builders are buggy. Use AI as a helper. Bonus: sticky notes everywhere, they'll save your brain. What's YOUR top lesson from using n8n? Формат: пронумерованный список 'уроки, которые хотел бы знать раньше' + вопрос в конце. Классический сохраняемый формат для инструмента.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:финансы+ИИ дашборд",
-  "author": "Nicolas Boucher (EN)",
+  "author": "Nicolas Boucher",
   "headline": "1.27M подписчиков, AI Finance",
   "age": "",
   "reactions": 0,
@@ -2433,7 +2479,8 @@
   "reposts": 0,
   "text": "Which one is better — a boring table or a dashboard generated by AI? Here's a prompt for Claude that turns a boring table into a dynamic dashboard: 'I am an FP&A manager for a manufacturing company. I need to present cost analysis by department for the month. Create a dashboard: analysis by department, by category, and a waterfall chart. Output an HTML dashboard with modern design, like the best dashboard designer and HTML programmer.' 393 комментария. Другие посты автора: '51 способ улучшить закрытие месяца с помощью AI (#11 лучший)', 'Как я создаю P&L дашборды с автообновлением через Claude (за 5 шагов)'. Формат: контраст 'скучное vs динамичное' + готовый промпт целиком + видео-демо. Эталон подачи AI-инструмента для финансистов (не-ИТ).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:финансы+ИИ дашборд",
@@ -2473,7 +2520,7 @@
  },
  {
   "query": "tavily:дизайнер+ИИ",
-  "author": "Zander Whitehurst (EN)",
+  "author": "Zander Whitehurst",
   "headline": "Founder Memorisely, 352k подписчиков",
   "age": "",
   "reactions": 0,
@@ -2481,11 +2528,12 @@
   "reposts": 0,
   "text": "AI isn't replacing designers, it's exposing them. Топ-комментарии развивают: 'С ростом AI я чувствую себя увереннее как UX-дизайнер. Вижу много vibe-coding UI, V0-дизайнов — впечатляет, но всё ещё делает базовые ошибки, создаёт очень generic-дизайны, забывая что у каждого продукта уникальные потребности пользователей'; 'Дизайн — это прикладное мышление. Не понимаешь проблему — сделай ресёрч. Мало идей — сгенерь больше. Слишком много — используй фреймворк.' Формат: короткий провокационный тезис-крючок ('обнажает, а не заменяет') собирает экспертную дискуссию про ценность мышления над инструментом.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:дизайнер+ИИ",
-  "author": "Zander Whitehurst (EN)",
+  "author": "Zander Whitehurst",
   "headline": "Founder Memorisely",
   "age": "",
   "reactions": 1279,
@@ -2493,11 +2541,12 @@
   "reposts": 0,
   "text": "Stop designing with placeholder content. Give this AI Figma shortcut a whirl to enhance your workflow. 1279 реакций, 33 комментария. Топ-комментарий уточняет: 'иногда Figma даёт нерелевантный placeholder — используй feature rewrite this и скажи AI точно, какой контент нужен'. Формат: короткий практический лайфхак ('дай этому шорткату шанс') + видео-демо + мягкий оффер (буткемп в конце). Эталон высокововлекающего how-to для инструмента: минимум текста, максимум практической пользы в видео.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:дизайнер+ИИ",
-  "author": "David Kossnick (EN)",
+  "author": "David Kossnick",
   "headline": "Head of AI Products, Figma",
   "age": "",
   "reactions": 0,
@@ -2505,11 +2554,12 @@
   "reposts": 0,
   "text": "Как Figma интегрирует AI. В Figma мы верим, что AI — это одновременно сдвиг платформы и ключевая возможность. Он встроен по всему продукту: от редактирования текста и генерации изображений до prompt-to-app инструментов вроде Figma Make, позволяя любому (не только инженерам) собирать интерактивные прототипы без трения. AI ускоряет воркфлоу, снижает стоимость проверки новых идей, превращает творческие узкие места в стартовые площадки. Designers are shipping code. HR teams are building apps. Meetings become live co-creation sessions. Мы строим будущее, где каждый может быть создателем, а AI — co-pilot, не замена. Формат: видение от инсайдера продукта + мощная триада ('дизайнеры пишут код, HR строит приложения, встречи = co-creation').",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:solopreneur AI",
-  "author": "Jason Branin (EN)",
+  "author": "Jason Branin",
   "headline": "AI/automation",
   "age": "",
   "reactions": 0,
@@ -2517,11 +2567,12 @@
   "reposts": 0,
   "text": "The Future of Work is a Team of One. AI is turning solopreneurs into full-stack businesses. No cofounders, no employees — just one person running product, marketing, customer service, and ops with an army of AI tools behind the scenes. From ChatGPT and Notion AI to Webflow, Zapier, and Midjourney, today's solo founders can build, launch, and scale like never before. Entire product lines. Six-figure revenues. Zero overhead. This isn't the gig economy. It's the rise of the AI-augmented solopreneur — redefining startups, freelancing, and the very idea of scale. The workforce of one isn't the future. It's already here. Формат: манифест новой категории ('workforce of one') + контраст со старым миром + примеры инструментов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:solopreneur AI",
-  "author": "AI Evolution (EN)",
+  "author": "AI Evolution",
   "headline": "AI/productivity",
   "age": "",
   "reactions": 0,
@@ -2529,7 +2580,8 @@
   "reposts": 0,
   "text": "Running a solo business can be difficult. AI helps you move faster without burning out. This all-in-one AI stack handles every challenge solopreneurs face: 1. Strategy & Planning: ChatGPT, Notion AI, Trello. 2. Writing & Editing: Grammarly, Wordtune, Jasper. 3. Design & Branding: Canva AI, Looka, Kittl. 4. Website & App Building: Durable, 10Web, Glide (no code). 5. Marketing & Scheduling: automate content across platforms. Топ-комменты: 'скоро увидим one-person unicorns', 'следующий анлок — voice automation'. Формат: пронумерованный стек по функциям бизнеса + название инструментов под каждую. Сохраняемый справочник 'AI survival kit соло-предпринимателя'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:HR+ИИ найм",
@@ -2545,7 +2597,7 @@
  },
  {
   "query": "tavily:индихакер MRR",
-  "author": "Hashin Panakkaparambil (EN)",
+  "author": "Hashin Panakkaparambil",
   "headline": "indie hacker/SaaS",
   "age": "",
   "reactions": 0,
@@ -2553,11 +2605,12 @@
   "reposts": 0,
   "text": "Most '$0 to $10K MRR in 30 days' stories are fiction. So I pulled the published founder numbers from MicroConf, Freemius, and Indie Hackers and wrote the honest version. About 70% of micro SaaS never pass $1,000 MRR. The median profitable one sits near $4,200. So $10K MRR is not a unicorn, but it does put you in the top 20% of everyone who tries. The real timeline is 9 to 18 months for a full-time solo founder. Faster than that almost always means a pre-existing audience, not a better product. And the whole business fits in one line: 200 customers at $50/month is $10K MRR. Формат: развенчание мифа реальными данными (median $4200, 9-18 мес) + отрезвляющая честность. Эталон 'честная версия против хайпа' — работает против инфоцыганского шума.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:индихакер MRR",
-  "author": "Ethan Halfhide (EN)",
+  "author": "Ethan Halfhide",
   "headline": "indie hacker/build in public",
   "age": "",
   "reactions": 0,
@@ -2565,11 +2618,12 @@
   "reposts": 0,
   "text": "Selling is harder than building. Nobody warns you about that part. You spend weekends automating a system, it runs clean, revenue comes in. Then someone asks 'what would it take to sell this?' — and suddenly you're doing math you weren't prepared for. The honest version: a niche content site doing $500/month net doesn't sell for life-changing money — at 20-30x monthly net, that's $10K-15K. A micro-SaaS at $2K MRR is different — 2-3x ARR puts you around $48K-72K. The gap isn't the idea, it's the business model underneath: one is traffic, one is recurring revenue. Buyers pay a premium for predictability and proof it runs without you. Build like someone's going to buy it. The exit is just the report card. Формат: контринтуитивный тезис + конкретная exit-математика + принцип ('build like someone's going to buy it'). Честный build-in-public про деньги.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:индихакер MRR",
-  "author": "Rob Hoffman (EN)",
+  "author": "Rob Hoffman",
   "headline": "CEO, bootstrapped SaaS",
   "age": "",
   "reactions": 0,
@@ -2577,11 +2631,12 @@
   "reposts": 0,
   "text": "Our bootstrapped SaaS crossed $19,055 MRR in 30 days with a 3-man team, 2 social accounts, zero ads and no cold outreach. Here's the entire playbook: 1. Build your waitlist before the product — we built for 6 weeks pre-launch, convinced 3,500 people to sign up, offered 50% off for one week only, payable from day 1 with no free trial. 2. Product placement > product promotion — we publish helpful posts about AI SEO with viral potential and casually mention our SaaS organically (bypassing people's aversion to being sold to). 3. Great co-founders make or break a project: you need to build, sell, and operate. Формат: конкретный результат в заголовке ($19k/30дн, зеро рекламы) + пронумерованный playbook с механикой. 'Product placement > promotion' = ключевой контентный принцип.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:индихакер MRR",
-  "author": "Vic Levitin (EN)",
+  "author": "Vic Levitin",
   "headline": "founder CrazyLister/Diptera.ai",
   "age": "",
   "reactions": 0,
@@ -2589,11 +2644,12 @@
   "reposts": 0,
   "text": "Why I'm bullish on Micro-SaaS. $2M ARR is life-changing for founders, but for most VCs it doesn't move the needle. CrazyLister gave me freedom — pilot's license, a deep-tech venture, relocating my family to Thailand on nine hours' notice. The rise of indie hackers, solopreneurs, digital nomads reflects people seeking greater control over their time. Examples I applaud: Marie Martens & Filip Minev bootstrapped Tally (form builder) to $100k MRR with team of 3; Alex Turnbull bootstrapped GrooveHQ to $500k MRR; Sarah Hum & Andrew Rasmussen bootstrapped Canny to $1M ARR. Micro-SaaS isn't just a business model but a platform for a balanced, financially independent life. Формат: личная рамка 'свобода важнее масштаба' + список вдохновляющих кейсов с цифрами. Тема контроля над временем откликается.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:поддержка+ИИ чатбот",
-  "author": "Ryan Wang (EN)",
+  "author": "Ryan Wang",
   "headline": "customer support/AI",
   "age": "",
   "reactions": 0,
@@ -2601,11 +2657,12 @@
   "reposts": 0,
   "text": "'Our chatbot deflects 80% of support tickets!' — компании празднуют это как достижение. Но абсурдность в том, что 'deflection' = барьеры между клиентом и помощью. 137 комментариев. Топ-коммент: 'Я люблю AI, но чатботы по линейному сценарию в поддержке сводят с ума. Смотрю на тебя, DoorDash, Uber Eats. Я просто спамлю Human, пока не дойду до человека. 99% этих автодиалогов не помогают с edge-кейсами — если бы это была простая проблема из FAQ, я бы уже загуглил.' Формат: контрарианский разбор индустриальной метрики (deflection = плохо, а не хорошо) + сарказм. Высокое вовлечение (137 комм) на разоблачении общепринятого KPI.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:поддержка+ИИ чатбот",
-  "author": "Kevin French (EN)",
+  "author": "Kevin French",
   "headline": "Customer Support leader",
   "age": "",
   "reactions": 0,
@@ -2613,11 +2670,12 @@
   "reposts": 0,
   "text": "Разговор об AI в поддержке зациклен на ticket deflection. Думаю, это неправильная отправная точка. Самый большой эффект от AI не в том, чтобы заставить тикеты исчезнуть через containment — а в том, чтобы уменьшить саму НУЖДУ в этих тикетах. Поддержка сидит на богатейшем операционном датасете: каждый тикет говорит, где клиенты запутались, где онбординг провалился, где UX создал трение, где документация сломалась, где решения продукта создали повторяющуюся боль. AI помогает вскрыть эти паттерны быстрее и в масштабе. Это меняет вопрос с 'как держать клиентов подальше от поддержки?' на 'как сделать так, чтобы поддержка вообще не понадобилась?'. Формат: контр-тезис к общепринятому подходу + рамка 'данные поддержки = золото для продукта'. Урок: чинить причину, не симптом.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:поддержка+ИИ чатбот",
-  "author": "Amanda Crookston (EN)",
+  "author": "Amanda Crookston",
   "headline": "CX/Customer Success",
   "age": "",
   "reactions": 0,
@@ -2625,11 +2683,12 @@
   "reposts": 0,
   "text": "Кейс: как AI Ripley прорывает барьер доверия в клиентской поддержке. Результаты: 24x7 поддержка без ожидания; 70-90% запросов обрабатывает AI, снижая тикеты на 40%+; значительная экономия на штате; выше CSAT и NPS; рост продаж через быстрое вовлечение и снижение брошенных корзин. Takeaway: AI-автоматизация не заменяет людей — она их усиливает. Обрабатывая повторяющиеся запросы, освобождает команду для сложных высокоценных разговоров. Формат: кейс с чек-листом результатов (галочки-метрики) + мораль 'усиливает, а не заменяет'. Стандартная, но рабочая структура кейса внедрения с цифрами.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:недвижимость+ИИ",
-  "author": "Simon Whale (EN)",
+  "author": "Simon Whale",
   "headline": "PropTech, недвижимость",
   "age": "",
   "reactions": 0,
@@ -2637,11 +2696,12 @@
   "reposts": 0,
   "text": "Секретное оружие ИИ: революция автоматизации для агентов по недвижимости. Есть большое заблуждение о затратах на ИИ — реклама 'демократизирующей' технологии верна лишь отчасти: большая разница между $20 на ChatGPT и решениями корпоративного уровня, которые приносят самые большие изменения. Топ-коммент: 'настоящая история не про заголовки ChatGPT, а про то, что происходит тихо за кулисами. Крупнейшие победы — когда автоматизация работает рука об руку с людьми, забирая рутинный админ, чтобы агенты фокусировались на человеческой стороне работы. AI не как гиммик, а как инструмент эффективности. Будущее агентства — AI-powered humans.' Формат: разбор мифа о доступности + рамка 'тихая автоматизация за кулисами важнее громких заголовков'. Перенос отраслевой рамки на любую вертикаль.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:контекст-инжиниринг",
-  "author": "Aishwarya Srinivasan (EN)",
+  "author": "Aishwarya Srinivasan",
   "headline": "AI/DS Influencer",
   "age": "",
   "reactions": 0,
@@ -2649,11 +2709,12 @@
   "reposts": 0,
   "text": "The end of prompt engineering is here. Context engineering is the new game. Context is not just your prompt — it's every single token the model sees during inference. Treat it as a finite resource. LLMs lose accuracy as the context window fills up — this is 'context rot': the transformer creates n² pairwise relationships, so more tokens stretch attention thin. Four Pillars of Context Engineering: Write (persist info outside context — scratchpads, logs, long-term memory), Select (pull in only relevant — retrieval, memory recall, tool specs), Compress (summarize to save tokens — auto-trimming like Claude), Isolate (prevent interference — multi-agent sub-contexts, sandboxed processes). Lifecycle: Acquire → Process → Store → Retrieve → Update. It's an entire system, not a one-shot prompt. Формат: сдвиг парадигмы + именованная проблема (context rot) + структура из 4 столпов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:контекст-инжиниринг",
-  "author": "James N. Rembert (EN)",
+  "author": "James N. Rembert",
   "headline": "AI/context engineering",
   "age": "",
   "reactions": 0,
@@ -2661,11 +2722,12 @@
   "reposts": 0,
   "text": "Anthropic's 10 Context Engineering Rules you need to know. As AI models become more powerful, context engineering is the new secret weapon beyond simple prompt writing. 1. Treat your context window like gold — every token counts, less clutter better results, prioritize only high-impact data. 2. Think beyond prompt engineering — manage the full context: system prompts, tools, message history, runtime data. 3. System prompts should be crisp & structured — use clear markdown or XML, skip vagueness, high-signal guidance. Формат: 'X правил от Anthropic' — авторитетный источник + пронумерованный сохраняемый список.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:контекст-инжиниринг",
-  "author": "Nyior Clement (EN)",
+  "author": "Nyior Clement",
   "headline": "AI developer",
   "age": "",
   "reactions": 0,
@@ -2673,11 +2735,12 @@
   "reposts": 0,
   "text": "Most people use Claude like an intern who forgets everything overnight. You spend 20 minutes explaining your brand voice, formatting rules, workflow. Claude nails it. Next day? You're explaining it all over again. Claude Skills fix this. Skills don't just sit in your context window eating tokens — they load in stages: metadata always there (Claude knows the Skill exists), instructions load when triggered (the actual workflow), resources pull from disk as needed (scripts, templates, docs). This means hundreds of Skills available without blowing your token budget. I use them for: repetitive workflows I'm sick of explaining, complex processes needing code + instructions, team workflows where everyone needs the same output. Формат: болезненная аналогия ('Claude как интерн, забывающий за ночь') + техническое решение (staged loading).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпт-инжиниринг код",
-  "author": "Aaron Shakib (EN)",
+  "author": "Aaron Shakib",
   "headline": "prompt engineer",
   "age": "",
   "reactions": 0,
@@ -2685,11 +2748,12 @@
   "reposts": 0,
   "text": "Most LLMs are yes-men. They agree with everything, execute blindly, then screw it up — and YOU catch their mistakes. After 2 days with Claude Code Sonnet 4.5, I finally found an AI that pushes back. It questions before it codes — asks clarifying questions, presents options A/B/C, forces you to think, not just delegate. It maps your next move — after a task it suggests what comes next, sees patterns you might miss. First AI that feels like a senior developer, not a junior who says 'yes' and breaks production. Lessons: AI writes better prompts than I do (let models optimize each other); system prompts are the foundation (90% of bugs come from weak system prompts); secure from day one (prompt injection is real, treat prompts like APIs). Формат: контраст 'yes-men vs пушбэк' + личный опыт с конкретной моделью + уроки.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпт-инжиниринг код",
-  "author": "Andrew Giffen (EN)",
+  "author": "Andrew Giffen",
   "headline": "Claude Code/AI dev",
   "age": "",
   "reactions": 0,
@@ -2697,11 +2761,12 @@
   "reposts": 0,
   "text": "Everyone's talking about CLAUDE.md. Most do it wrong. Optimizing Claude Code with a 10-minute setup: 1. Lazy loading for AI knowledge — don't load everything upfront, load what you need when you need it. 2. Add directory structure to your CLAUDE.md ('in src/auth/middleware.ts line 47...' → agent reads 1 file). 3. Skills in Antigravity / subagents in Claude Code — architectural fix: delegate research with 'use subagents to investigate X', they explore in separate context keeping main conversation clean. 4. Disable MCP servers you're not using — every enabled MCP adds tool definitions to your context whether used or not; 8 MCPs connected while writing a React component = 7 dead weight eating tokens silently. Формат: 'все делают X неправильно' + пронумерованный практический сетап.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:промпт-инжиниринг код",
-  "author": "Benyamin Holley (EN)",
+  "author": "Benyamin Holley",
   "headline": "AI/systems",
   "age": "",
   "reactions": 0,
@@ -2709,7 +2774,8 @@
   "reposts": 0,
   "text": "System prompts are the most underutilized part of AI. I built a system prompt from all my learning — not just voice or tone, but how I actually see systems and the world, why I need complete context before synthesizing, when I get trapped optimizing something I should delegate. Understanding me alone isn't enough — I instructed Claude to challenge me, flag when ego drives decisions instead of principle, ask 'What would this look like if you removed yourself from the outcome?' Most people just want AI that cosigns their BS. Not me. Топ-коммент: 'где хранишь system prompt и как гарантируешь, что он применяется faithfully, а не дрейфует из контекста?' Формат: личная философия + провокация ('AI, который челленджит, не подмахивает') + практический артефакт (system prompt как расширение мышления).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:B2B LinkedIn фаундер",
@@ -2725,7 +2791,7 @@
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Eran Stiller (EN)",
+  "author": "Eran Stiller",
   "headline": "software architect",
   "age": "",
   "reactions": 0,
@@ -2733,11 +2799,12 @@
   "reposts": 0,
   "text": "'AI isn't ready for serious engineering work.' People are building compilers with it. Linus Torvalds is using AI to write code. Railway's CEO is rebuilding deployment infrastructure with it. But your CRUD app with 47 endpoints? Too sophisticated. Got it. I hear this constantly: 'My codebase is too complex.' 'Our domain is specialized.' The smartest engineers I know are shipping 10x faster — not because they're geniuses, but because they stopped hunting for reasons it won't work. One engineer's sprint velocity increased 35%, pre-merge defects dropped by half, freed time went toward architecture instead of regex trial-and-error. It's about treating AI as a capable collaborator that drafts at machine speed while humans review for logic, edge cases, security. The role transformed from 'coder' to 'conductor'. The Trust Gap: we're shipping code at a velocity that exceeds our biological capacity to peer-review it. Формат: сарказм над скептиками + авторитеты (Linus) + конкретные цифры (+35%/−50%) + рамка 'coder → conductor'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Saurabh Agrawal (EN)",
+  "author": "Saurabh Agrawal",
   "headline": "engineering leader",
   "age": "",
   "reactions": 0,
@@ -2745,11 +2812,12 @@
   "reposts": 0,
   "text": "Через свой опыт с AI-инструментами (Copilot, ChatGPT) + наблюдая за контракторами я обнаружил тревожный паттерн. МЕСЯЦЫ 1-3: velocity +40%, фичи быстрее, команда выглядит рок-звёздами. МЕСЯЦЫ 4-6: velocity −30% от базы, время фикса багов ×3, рефакторинг требуется для новых фич, онбординг замедлился. МЕСЯЦЫ 6+: velocity 50% от исходной базы, команда больше дебажит, чем строит. Я не анти-AI — я анти-'притворяться, что нет цены'. Положительный ROI: boilerplate, генерация тестов, документация, ревью. Отрицательный ROI: core бизнес-логика, сложные алгоритмы, mission-critical. Вопрос лидерам: мы измеряем настоящую продуктивность или просто velocity? Отслеживаем ли накопление тех-долга? Понимаем ли 6-месячную цену сегодняшнего использования AI? Может ли команда объяснить код, который шипит? Формат: временной график деградации с цифрами + разделение ROI + вопросы лидерам. Отрезвляющий data-driven контраст хайпу.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Clint Parker (EN)",
+  "author": "Clint Parker",
   "headline": "app security/SDD",
   "age": "",
   "reactions": 0,
@@ -2757,11 +2825,12 @@
   "reposts": 0,
   "text": "Just caught myself in a fascinating contradiction. 'I developed this feature' vs 'My AI agent developed this feature' — ever notice yourself switching? Using AI to code doesn't make you any less of a developer. When you use Git, you don't say 'Git committed my code.' When you use an IDE with autocomplete, you don't say 'VS Code wrote my function.' The tool assisted, but YOU made the decisions. AI-assisted development is the same, just amplified. You're still: defining requirements, making architectural decisions, reviewing and validating outputs, taking responsibility for what ships. The code that goes to production? That's on you. The bugs? Yours to fix. Separately: I'm bullish on Spec-Driven Development (#SDD) — investing upfront in precise structured specs, then letting AI agents handle implementation. GitHub Spec-Kit shows how precise specs reduce hallucinations. Формат: разрешение внутреннего конфликта через аналогию (Git/IDE) + тезис 'ответственность = ты'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Nick Capito (EN)",
+  "author": "Nick Capito",
   "headline": "software engineer",
   "age": "",
   "reactions": 0,
@@ -2769,11 +2838,12 @@
   "reposts": 0,
   "text": "Vibe coding is not fake work. It's a cheat code for speed. It replaces engineering, not engineers. Most code is disposable — glue code, UI shells, tiny tools, one-off scripts. You write it, you forget it, never want to read it twice. That's where vibe coding wins. Use it to go faster on work you already understand — not to dodge learning, not to skip the hard stuff. The playbook: 1. Pick safe zones (prototypes, scripts, throwaway tools — if it's not going to production, vibe code it). 2. Keep ownership (generate code before adding a package, don't let AI bloat your stack — you own the code, not the other way around). 3. Guardrails (if it touches money, validate). Feed Claude detailed logs from terminal/console — don't just say 'it doesn't work', specific errors = faster fixes. Формат: чёткое разграничение (заменяет инженерию, не инженеров) + плейбук с зонами безопасности.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Bryant Avey (EN)",
+  "author": "Bryant Avey",
   "headline": "AI/engineering",
   "age": "",
   "reactions": 0,
@@ -2781,11 +2851,12 @@
   "reposts": 0,
   "text": "MIT introduces 'Vibe Coding' — a paradigm where developers ship code if the output looks correct, often without reviewing the code itself. This AI-driven shift means validating agent outputs, not traditional coding. Success hinges on context engineering, feedback loops, and robust infrastructure — not just better AI models. Developers struggle without proper scaffolding, treating AI as a tool instead of an agent needing memory and governance. Key takeaways: prioritize context engineering over prompt engineering, pure automation is unrealistic, infrastructure is foundational. This reveals a skills gap in agent governance and an accountability crisis for AI-generated code. The work that elevates engineering is human-AI collaboration upstream/downstream of code: architecture and system design, constraint analysis, problem decomposition, code review as system validation. Формат: MIT-авторитет + перечень 'что важнее моделей' (контекст, инфра, governance) + рамка 'человек делает архитектуру, AI итерирует'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Débora Petry (EN)",
+  "author": "Débora Petry",
   "headline": "AI builder/BMAD",
   "age": "",
   "reactions": 0,
@@ -2793,11 +2864,12 @@
   "reposts": 0,
   "text": "AI makes software development principles more practical. Agile told us to welcome changing requirements. Lean Startup told us Build-Measure-Learn. XP gave us YAGNI. None of these were hard because we didn't believe in them — they were hard because the cost was real. Changing direction meant throwing away weeks of work. Give AI a role, then teammates. BMAD splits AI development into specialized agents: Analyst, PM, UX, Architect, PO, Scrum Master, Dev, QA — each with its own persona, checklist, artifact. Two ideas do the heavy lifting: Agentic Planning (PRDs and architecture docs are collaborative artifacts, not one-shot replies) and Context-Engineered Development (Scrum Master agent shreds docs into 'story files' — each embeds the PRD slice, architecture slice, file paths, acceptance criteria; the Dev agent never re-derives the plan, it just executes). Honest question: if your AI coding workflow had to survive a 6-month project, would it? What's your answer to context drift? Формат: связь с классикой (Agile/Lean/XP) + именованная система (BMAD, subagents по ролям) + вопрос про context drift.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:spec-driven development",
-  "author": "Arjun Basu (EN)",
+  "author": "Arjun Basu",
   "headline": "Lead Engineer",
   "age": "",
   "reactions": 0,
@@ -2805,7 +2877,8 @@
   "reposts": 0,
   "text": "We did not 'start coding.' We designed the system. As Lead Engineer, I used AI deliberately to pressure-test architecture, validate trade-offs, accelerate domain understanding, generate reusable building blocks. AI reduced research time. It did not make decisions. You can have the best AI tools in the world — if your teams lack discipline, depth, and execution culture, you'll still spend months building systems that never go live. AI amplifies competence. It also amplifies confusion. Speed is not about cutting corners — it's about clarity. Product understood the business model and urgency. Engineering understood system boundaries and risk. No ambiguity. No ego. No misalignment. Tools don't ship systems. Teams do. Формат: тезис 'проектировали, не кодили' + афоризмы ('AI усиливает компетентность И путаницу', 'скорость = ясность').",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:Obsidian+Claude второй мозг",
@@ -2821,7 +2894,7 @@
  },
  {
   "query": "tavily:build in public AI-агент",
-  "author": "Artem Novitckii (EN)",
+  "author": "Artem Novitckii",
   "headline": "Co-founder Altari, 10923 подписчика",
   "age": "",
   "reactions": 393,
@@ -2829,11 +2902,12 @@
   "reposts": 0,
   "text": "41% of applications land in the first 48 hours of a posting. I built an AI tool that sends the best LinkedIn roles to your Google Sheet the moment they're found. So you go from finding to applying in minutes. What it does: searches by keyword + location + seniority; captures essentials fast (Title, Company, Location, Work Type, Salary, Date Posted, Easy Apply, People Applied, Job URL); de-duplicates; drops into a ready-to-filter Sheet (sort by freshness or low competition). I'm opening early access — comment 'JOBS' and I'll send the Sheet + setup. 393 реакции, 1764 комментария (!). Формат: конкретная статистика-крючок (41%/48ч) + AI-инструмент решает боль + лид-магнит через комментарий 'JOBS'. РЕКОРД вовлечения базы — build-in-public AI-агент под боль поиска работы.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:build in public AI-агент",
-  "author": "Artem Novitckii (EN)",
+  "author": "Artem Novitckii",
   "headline": "Co-founder Altari",
   "age": "",
   "reactions": 0,
@@ -2841,11 +2915,12 @@
   "reposts": 0,
   "text": "Day 2 of 7 (Part II): Building an AI Agent Every Day in Public. 4,000 downloaded the first version of Artemis. It pulled leads. I wanted it to write DMs, so I built the upgrade. Artemis Pro — AI Agent that turns LinkedIn comment sections into a scored, contactable sales funnel. What it does: scrapes commenters from any LinkedIn post, enriches with emails/role/company/location/experience, assigns custom ICP scores + separate Lead Score, generates personalised DMs from profile context. Timing kills the pipeline — wait a day and momentum stalls. Формат: серия 'building an AI agent every day in public' (день N из 7) + конкретный продукт + метрика адопшена (4000 скачали v1).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-пузырь",
-  "author": "Geoff Livingston (EN)",
+  "author": "Geoff Livingston",
   "headline": "marketing/AI",
   "age": "",
   "reactions": 0,
@@ -2853,11 +2928,12 @@
   "reposts": 0,
   "text": "I am sorry, AI leaders. What's happening is remarkable. Tone it down, though. The overhype is just too much. Just focus on what your tools can actually do and how they help. Топ-коммент развивает: 'Ты прав, что хайп смешон. Но мы сражаемся не в той битве. Вопрос не в том, достигнет ли AI AGI — а в том, что уже происходит с людьми, использующими его плохо прямо сейчас. Я 3 года работаю с AI ежедневно. Не для продуктивности — для глубины. Построил 9 приложений с нулём кода, написал фреймворк геополитического анализа, который ловит паттерны за месяцы до заголовков. Ничего из этого не случилось потому что инструменты магические. Это случилось, потому что я показывался иначе. Инструмент — не переменная. Человек — переменная.' Формат: призыв к сдержанности + ключевой тезис 'the human is the variable, not the tool'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-пузырь",
-  "author": "Ben Dudley (EN)",
+  "author": "Ben Dudley",
   "headline": "AI transformation consultant",
   "age": "",
   "reactions": 0,
@@ -2865,11 +2941,12 @@
   "reposts": 0,
   "text": "Моя мама прислала статью: 'Насколько плох был бы AI-пузырь?' Суть: большинство компаний с AI не видят реальной отдачи. MIT: 95% бизнесов не видят прироста прибыли от AI. McKinsey: 71% пользователей GenAI не увидели влияния на итог. Исследование: AI-инструменты кодинга могут замедлять разработчиков на 20%. Так AI это хайп? И да, и нет. Эти исследования направленно правы: AI не волшебная палочка, большинство инструментов ещё рано, многие пилоты изолированы и плохо согласованы с реальными нуждами. Но они упускают большое: MIT использовал узкое окно ROI (6 мес после пилота), опросил всего 52 руководителя. McKinsey: 'чтобы масштабировать эффект в агентную эру, нужно сместиться от use cases к бизнес-процессам, от изолированных AI-команд к кросс-функциональным трансформационным отрядам'. Я строю поэтапный roadmap AI-трансформации. Формат: разбор пугающих цифр + балансная оговорка + рамка 'проблема во внедрении/процессах, не в модели'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-пузырь",
-  "author": "Christopher Rudolf (EN)",
+  "author": "Christopher Rudolf",
   "headline": "AI/philosophy",
   "age": "",
   "reactions": 0,
@@ -2877,11 +2954,12 @@
   "reposts": 0,
   "text": "Everyone is an individual AI expert on LinkedIn. Про MIT-исследование, которое стало вирусным: оно использовало гипер-узкое окно ROI (6 мес после пилота) и опросило всего 52 руководителя. Признали рост индивидуальной продуктивности, но не спросили очевидное: если люди делают больше, почему это не складывается в рост компании? Mike Kaput: 'MIT-исследование стало вирусным не потому что было правильным, а потому что подходило под удобный нарратив. Те, кто верит, что AI переоценённый пузырь, увидели заголовок как доказательство.' Мы забываем, что такое технология: это не независимая сила со своими целями — это артефакт, чьё назначение исходит от людей. Аристотель: у естественных существ есть внутренние цели, у артефактов (как AI) только цели, назначенные создателями. Молоток не решает забивать гвозди. Реальный вопрос: можем ли мы закрыть разрыв между хайпом и результатами — с человеческим суждением, эмпатией, ответственностью в центре. Формат: критика вирусного исследования по методологии + философская рамка (артефакт vs сила). Глубокий разбор — редкий формат.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-продукты",
-  "author": "Lenny Rachitsky (EN)",
+  "author": "Lenny Rachitsky",
   "headline": "Influencer, product",
   "age": "",
   "reactions": 0,
@@ -2889,7 +2967,8 @@
   "reposts": 0,
   "text": "You can't build AI products like other products. AI works by turning things (text, images, audio) into numbers — vectors. Similar things get similar numbers: 'King' is close to 'queen', 'dog' is close to 'puppy'. Once something is a number, you can apply math to it. Then it hit me: what else could I turn into numbers? A marketing campaign with creative assets, performance data, audience signals? A job candidate with skills, experience, interview notes? Investment opportunities? Insurance claims? Turn those into vectors and similarity becomes a math problem — find patterns, spot anomalies, rank results. AI products are different: behavior is non-deterministic and agency needs to be earned. Start with high-control, low-agency features, build eval systems that work, scale without breaking user trust. Формат: озарение про векторы, объяснённое просто (king/queen) + продуктовая рамка (агентность зарабатывается). Инфлюенсер-продакт объясняет фундамент AI-продуктов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:малый бизнес+ИИ провал",
@@ -2905,7 +2984,7 @@
  },
  {
   "query": "tavily:AI-пузырь",
-  "author": "Martin Hodges (EN)",
+  "author": "Martin Hodges",
   "headline": "AI strategy",
   "age": "",
   "reactions": 0,
@@ -2913,11 +2992,12 @@
   "reposts": 0,
   "text": "Everyone's talking about the AI bubble. Daniel Miessler tackles the claim 'AI is a bubble' and argues it's a misleading comparison. AI may be overheated or overhyped, but calling it a bubble conflates hype with collapse. Real bubbles (like .com) pop — hype and excessive expectations vanish, even though underlying infrastructure (like the internet) survives. A bubble isn't just hype or overinflation — it's a collective, demonstrably false belief that eventually collapses (.com: not the internet, but the idea that merely being online guaranteed riches). AI doesn't qualify: the belief that AI will transform business feels more like science fiction than a bubble. Which claim feels most like a bubble to you: that AI delivers overnight fortunes if slapped onto your product, or that AI reshapes the economy? Формат: разграничение понятий (хайп ≠ пузырь) + исторический параллель (.com/интернет) + вопрос-выбор. Balloon deflates, not bursts. Нюансированный разбор термина.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:женщины в AI",
-  "author": "Dinah Davis (EN)",
+  "author": "Dinah Davis",
   "headline": "Founder Code Like A Girl, ex-VP R&D",
   "age": "",
   "reactions": 0,
@@ -2925,11 +3005,12 @@
   "reposts": 0,
   "text": "This is the most open I've ever been. On paper my career reads like a highlight reel: cryptography master's, years at BlackBerry, scaling Arctic Wolf's dev team from 15 to 300. By every external measure I was crushing it. What the résumé doesn't show is the cost — two decades of proving I belonged in rooms that weren't built for me, until my body finally sent the bill. This is the version that never made the résumé: on burnout, boundaries, imposter syndrome, and what success really costs the women who never stop proving themselves. Топ-коммент: 'We build something for everyone else right in the middle of barely holding ourselves together.' Формат: контраст 'глянцевое резюме vs скрытая цена' + радикальная честность ('версия, которая не попала в резюме').",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:женщины в AI",
-  "author": "Susan Gatura (EN)",
+  "author": "Susan Gatura",
   "headline": "Women in Tech leader",
   "age": "",
   "reactions": 0,
@@ -2937,11 +3018,12 @@
   "reposts": 0,
   "text": "Let's stop asking women in tech about imposter syndrome. Контрарианский тезис: постоянные вопросы про синдром самозванца сами по себе перекладывают проблему на женщин, вместо того чтобы менять среду, которая его порождает. Формат: короткий провокационный переворот заезженной темы ('давайте перестанем спрашивать про X'). Работает как хук — берёт популярную тему и разворачивает её на 180°. Приём переноса: любую заезженную тему AI/карьеры можно так перевернуть.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:челлендж постинга",
-  "author": "Daphne Tideman (EN)",
+  "author": "Daphne Tideman",
   "headline": "growth/experimentation",
   "age": "",
   "reactions": 45,
@@ -2949,11 +3031,12 @@
   "reposts": 0,
   "text": "Most people don't struggle with LinkedIn because they lack ideas. They struggle because hitting 'post' feels exposing. In November, 20 women made a small but scary commitment: post 2x a week for 5 weeks. No reposts. No templates. Just showing up and sharing their experience. 15 of them actually did it — and that's what I'm most proud of. When we asked what they were proud of, almost none of the answers were about likes or reach. They talked about: posting before it felt 'ready', continuing when engagement was low, building confidence by doing not waiting, overcoming imposter syndrome, finding their voice through consistency, connecting with people they'd never have met. 45 реакций, 22 комментария. Формат: рамка 'проблема не идеи, а страх обнажиться' + результат челленджа (15 из 20 дошли) + список нематериальных побед.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:ATS промпты резюме",
-  "author": "Jeff Fakhrurrazi (EN)",
+  "author": "Jeff Fakhrurrazi",
   "headline": "career/recruiting",
   "age": "",
   "reactions": 0,
@@ -2961,7 +3044,8 @@
   "reposts": 0,
   "text": "How to optimize your resume with ChatGPT — 5 copy-paste prompts. 1. Tailor to job: 'Act as a Resume Writer. Rewrite [role/bullets]. Prioritize relevance, keywords, impact.' 2. Rewrite bullets with results: 'Act as a Resume Conversion Specialist. Rewrite these bullets to focus on quantifiable achievements and action verbs aligned with the job's priorities.' 3. Insert ATS keywords: 'Act as an ATS Optimization Expert. Scan this job description and list top 10 keywords I should integrate to pass applicant tracking systems.' 4. Update summary: 'Act as a Professional Profile Copywriter. Rewrite my summary to match the tone, language, priorities of this job.' Плюс: over 75% résumés are filtered by ATS before a human sees them; internal referrals and bias often override résumé quality; ghosting is often systemic, unrelated to résumé strength. Формат: готовые промпты по шагам + отрезвляющая статистика (75% отсев ATS). Практическая польза + честность про системность отказов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:юрист+ИИ агенты",
@@ -2977,7 +3061,7 @@
  },
  {
   "query": "tavily:AI 2026 тренды",
-  "author": "Kevin Rank / Jeff Su (EN)",
+  "author": "Kevin Rank / Jeff Su",
   "headline": "AI predictions",
   "age": "",
   "reactions": 0,
@@ -2985,11 +3069,12 @@
   "reposts": 0,
   "text": "6 things most people still get wrong about AI in 2026: ❌ The best model wins → ✅ The best integration wins (performance gaps shrinking so fast it barely matters). ❌ 2026 is the year of AI agents → ✅ 2026 is the year of AI workflows (only 10% of orgs have actually scaled true agents). ❌ Technical skills are your moat → ✅ Domain expertise is your moat (75% of enterprise users now do tasks they literally couldn't do before). ❌ Better prompts = better results → ✅ Better context = better results (models still know nothing about your actual files). ❌ Chatbots will stay ad-free → ✅ Ads are coming. ❌ Only white-collar jobs at risk → ✅ Blue-collar disruption is coming too. Формат: ❌/✅ пары мифов и правды — сохраняемый контрарианский список.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI 2026 тренды",
-  "author": "Rakesh Gohel (EN)",
+  "author": "Rakesh Gohel",
   "headline": "Author 'Agentic AI', 172 комм.",
   "age": "",
   "reactions": 0,
@@ -2997,11 +3082,12 @@
   "reposts": 0,
   "text": "The era of experimental AI agents ends in 2026. Shift from simple generative tools to agentic AI — autonomous systems capable of executing complex multi-step workflows. AI expected to add $4.4 trillion to the global economy annually. The next decade focuses on reliability, safety, efficiency, reducing inference costs and energy. The real question now isn't IF, it's how fast and how well you operationalize agentic AI. Shift from automation to orchestration. 172 комментария. Формат: заявление о конце эпохи ('experimental ends in 2026') + крупная цифра ($4.4T) + рамка automation→orchestration. Авторитет автора книги про агентов + высокое вовлечение.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI 2026 тренды",
-  "author": "AI For Leaders (EN)",
+  "author": "AI For Leaders",
   "headline": "AI/enterprise",
   "age": "",
   "reactions": 0,
@@ -3009,11 +3095,12 @@
   "reposts": 0,
   "text": "6 AI Agent Trends Dominating 2026. 4. Agentic Commerce — agents no longer just searching, they're buying; 38% of US consumers already used GenAI for online shopping, 52% plan to (Salesforce); Morgan Stanley predicts AI agents drive 10-20% of all US e-commerce by 2030. 5. Coding Agents → Vibe Coding at Scale — Claude Code, Cursor, and Devin moved from 'assistant' to 'autonomous developer'; code managers now orchestrate entire CI/CD pipelines. The shift from 'build fast' to 'build safe + fast' — guardrails against tool failures and scope drift in real time (compliance, regulated industries). Формат: пронумерованный список трендов с цифрами прогнозов (Salesforce, Morgan Stanley) + конкретные инструменты (Claude Code/Cursor/Devin).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI 2026 тренды",
-  "author": "Mark Russinovich (EN)",
+  "author": "Mark Russinovich",
   "headline": "CTO Microsoft Azure",
   "age": "",
   "reactions": 435,
@@ -3021,11 +3108,12 @@
   "reposts": 0,
   "text": "We just published a post of AI trends to watch in 2026, including agent guardrails, AI in healthcare, AI infrastructure optimization, and more. 435 реакций, 15 комментариев. Топ-коммент: 'The idea of AI agents needing the same security model as people is going to hit some orgs harder than they expect.' Другой: 'These trends reflect exactly what we're seeing across enterprise — AI moving from experimentation to operational impact. Agentic workflows and domain-specific models will define the next wave.' Формат: авторитет топ-инженера (CTO Azure) + анонс списка трендов + видео. Инсайт: 'AI-агентам нужна та же модель безопасности, что и людям' — свежая рамка.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-агенты делегирование",
-  "author": "Brit Morin (EN)",
+  "author": "Brit Morin",
   "headline": "Founder Offline/Brit+Co, 252 комм.",
   "age": "",
   "reactions": 0,
@@ -3033,7 +3121,8 @@
   "reposts": 0,
   "text": "The most underrated power move of 2026 is learning how to use + what to delegate to AI agents. Agents are software that actually does things while you sleep. My morning no longer starts with me catching up — it starts with a digest my agent already built for me. We also have several in our company Slack that have been gamechangers for our team. Here's a short video on what to use for your agent and what tasks to hand to them. Drop in the comments what you're handing off to agents (or what you would if you could). I'm genuinely curious. 252 комментария. Формат: тезис 'power move = знать что делегировать' + личная зарисовка (утро начинается с готового дайджеста) + прямой вопрос-CTA в комменты. Высокое вовлечение через простой вопрос.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-агенты solo",
@@ -3061,7 +3150,7 @@
  },
  {
   "query": "tavily:рекрутеры реальность",
-  "author": "J.T. O'Donnell (EN)",
+  "author": "J.T. O'Donnell",
   "headline": "CEO Work It Daily",
   "age": "",
   "reactions": 0,
@@ -3069,11 +3158,12 @@
   "reposts": 0,
   "text": "Here's why you are getting ghosted by recruiters. Not every recruiter is having a bad year, but not every one is having a great one either. LinkedIn can make everyone else's market look incredible — huge deals, massive growth, record months. Yet most of my conversations with recruiters are about navigating: longer hiring processes, candidate dropouts, counteroffers, budget freezes, increased competition, processes falling apart at the very end. The strongest recruiters aren't pretending the market is easy — they're adapting. Sometimes resilience deserves more credit than revenue. Топ-коммент: как ты будешь рекрутить меня на позицию, которую я уже занимала? Внимание к деталям имеет значение. Формат: развенчание глянца ленты + честный список проблем рынка + рамка стойкость важнее выручки.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:build in public день 1",
-  "author": "Ashwini Kumar (EN)",
+  "author": "Ashwini Kumar",
   "headline": "no-code builder",
   "age": "",
   "reactions": 0,
@@ -3081,11 +3171,12 @@
   "reposts": 0,
   "text": "Day 1 of building in public with AI. For years I had ideas but felt blocked by technical limitations. AI changed that. Today I built with Bolt.new: AI Readiness Check — checks your AI readiness for your role. All UI generated with AI, minimal code. Different roles get different questions and learning paths. Honestly it took a lot of trial and error (and tokens), but the lesson: never give up — AI makes building possible even if you're not a backend dev yet. I'll share a new AI project every day. Stay tuned for Day 2. Формат: День 1 из серии + конкретный продукт + честность про trial-and-error + обещание серии.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:стартап валидация",
-  "author": "Andrew Gazdecki (EN)",
+  "author": "Andrew Gazdecki",
   "headline": "Founder Acquire.com",
   "age": "",
   "reactions": 0,
@@ -3093,11 +3184,12 @@
   "reposts": 0,
   "text": "Your SaaS will fail. Not because your product isn't good enough. Because you're building it for people who don't exist yet. From 200+ launches: most think Build then Find customers then Grow. That's backwards. Companies that hit 10K users in months flipped it: audience archaeology — 60 days in Reddit/Discord/Slack where future customers already gather. Not selling, listening. They documented the exact words people used, which solutions failed, what outcome would make them pay TODAY. Built in public: here's what I'm hearing, does this resonate? By launch day 500+ people felt like co-creators. Validated willingness to pay BEFORE building. Pattern: 2 mo research, 1 mo public validation, 3 mo MVP, launch to 300+ pre-qualified. Truth: if you can't get 100 people excited BEFORE you build, they won't care after. Формат: провокация + переворот последовательности + таймлайн. Валидация до постройки.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-стартап уроки",
-  "author": "Santosh Sharan (EN)",
+  "author": "Santosh Sharan",
   "headline": "Founder Zeer AI",
   "age": "",
   "reactions": 0,
@@ -3105,11 +3197,12 @@
   "reposts": 0,
   "text": "Building an AI startup is nothing like building a SaaS. Топ-коммент: основатели получают первое демо и думают, что почти закончили — а это когда начинается сложное. Разрыв между крутым демо и реально работает с настоящими пользователями огромен. AI-инструменты помогают двигаться быстро, но нужны люди, которые умеют строить то, что не сломается, когда 100+ человек начнут использовать. Большинство AI-прототипов разваливаются при реальной нагрузке. Разница в том, чтобы строить правильно с первого дня, а не переделывать всё позже, когда получишь трекшн. Ещё инсайт: AI-стартапам нужны рвы (moats), а не быстрая выручка. Формат: тезис-разграничение AI не равно SaaS + дискуссия про demo-vs-production gap.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-native SaaS",
-  "author": "Scott Leese (EN)",
+  "author": "Scott Leese",
   "headline": "sales leader/advisor",
   "age": "",
   "reactions": 0,
@@ -3117,7 +3210,8 @@
   "reposts": 0,
   "text": "Everyone's asking how to make their SaaS AI-native in 90 days. Your onboarding configures itself with no human needed — that's what you demo, that's what goes viral. Change the story: new site, new deck, new messaging. You're not a tool — you're a copilot, a decision engine, a self-improving operator. If you keep selling like it's 2021, you'll lose to someone who doesn't. 90-day path: Audit workflows + prototype, then Beta test iterate fast, then Public launch + new GTM. This is a total identity shift, not a feature launch. Most companies haven't done it — they're coasting or scared. Imagine how scary it will be when their users switch to someone who thinks faster, builds smarter. Формат: 90-дневный план + сдвиг нарратива (ты не инструмент, ты copilot) + угроза конкуренции.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:релокация IT",
@@ -3133,7 +3227,7 @@
  },
  {
   "query": "tavily:анализ вирусных постов",
-  "author": "Maja Voje (EN)",
+  "author": "Maja Voje",
   "headline": "GTM strategist, 1150 комм.",
   "age": "",
   "reactions": 0,
@@ -3141,11 +3235,12 @@
   "reposts": 0,
   "text": "After analyzing 400+ viral LinkedIn posts, one thing became clear: great creators don't post more, they post smarter. I spent 4 weeks training my AI agents to decode what makes certain profiles dominate the feed. Then handpicked 10 top creators and gathered data on visuals, timing, rhythm, comment design. Result: an AI-generated LinkedIn Moodboard — competitive-intelligence map of how top creators earn attention, trust, business. Findings: 62.7% of viral posts use single-image visuals with strong narrative hooks; engagement grows +56 interactions per extra weekly post; posts at 04:00 UTC Thursdays consistently outperform. 1150 комментариев. Формат: анализ данных через AI-агентов (мета: агенты анализируют посты) + конкретные проценты + лид-магнит (moodboard). Рекорд вовлечения.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:анализ вирусных постов",
-  "author": "Deven Bhooshan (EN)",
+  "author": "Deven Bhooshan",
   "headline": "content creator",
   "age": "",
   "reactions": 0,
@@ -3153,11 +3248,12 @@
   "reposts": 0,
   "text": "87% of Viral Posts Share These 5 Characteristics. I analyzed 100 LinkedIn posts that generated 100,000+ impressions each. 1. Pattern-Breaking Openings — non-viral: I'm excited to announce; viral: I was wrong about LinkedIn / Most people think X but actually Y (challenge expectations in first line = 3.2x higher completion). 2. White Space Mastery — 1-2 line paragraphs, strategic breaks (2.7x more dwell time). 3. Emotional Triggers — vulnerability, contrarian takes vs generic professional advice. 4-5. (specificity, CTA). Формат: пронумерованный разбор с before/after примерами и множителями (3.2x, 2.7x).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:анализ вирусных постов",
-  "author": "Samanyou Garg (EN)",
+  "author": "Samanyou Garg",
   "headline": "AI/creator, 173 комм.",
   "age": "",
   "reactions": 0,
@@ -3165,7 +3261,8 @@
   "reposts": 0,
   "text": "I analyzed 13,532 viral LinkedIn posts. Here are 5 shocking patterns: 1. The golden posting window is NOT 9am. 2. 78% used this exact character count. 3. A 3-2-1 weekly posting rhythm boosted reach by 204%. 4. The 5-minute rule for comments skyrocketed engagement. 5. AI-crafted hooks got 2.8x more clicks than human-written ones. Want the full breakdown? Comment LinkedIn. 173 комментария. Формат: огромная выборка (13532 поста) как авторитет + пронумерованные контринтуитивные находки + лид-магнит через комментарий. Инсайт #5 (AI-хуки > человеческих) особенно релевантен.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:консультант AI-трансформация",
@@ -3181,7 +3278,7 @@
  },
  {
   "query": "tavily:анализ вирусных постов",
-  "author": "Ridhi Mohta (EN)",
+  "author": "Ridhi Mohta",
   "headline": "content/marketing",
   "age": "",
   "reactions": 0,
@@ -3189,11 +3286,12 @@
   "reposts": 0,
   "text": "I analyzed 100 viral LinkedIn posts. Here's what I learned about reactions. The first 30-60 mins after posting is crucial for reach. Reaction TYPE matters, not just count: Insightful tells the system this is valuable; Celebrate tells it milestone-worthy; Funny tells it this creator is relatable. Likes are safe but not always strong signals — a Like means nice post, but Insightful means this helped me think differently. Guess which LinkedIn pushes more? Comments = top-tier signal. To improve reach: nail your first 3 lines, engage with others 30 mins before your post goes live, post when your audience is active. Формат: разбор механики реакций (тип > количество) + практические тактики первого часа.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:анализ вирусных постов",
-  "author": "MJ Jaindl (EN)",
+  "author": "MJ Jaindl",
   "headline": "LinkedIn creator, 40k подписчиков",
   "age": "",
   "reactions": 0,
@@ -3201,7 +3299,8 @@
   "reposts": 0,
   "text": "I analyzed my 450 LinkedIn posts. The winners followed an 8-part framework: 1. Hook (scroll-stopping first line). 2. Rehook (second line builds curiosity). 3. Context (set the scene). 4-5. Build/tension. 6. Body (tell the story, step-by-step, white space helps). 7. Power Ending (pattern interrupts, reiterate a point). 8. CTA (ask for engagement, 'Which part resonated?', make it easy to respond). The old way: spray and pray. The new way: structure that scales. I've used this 100s of times — my engagement went from dead to 1M+ monthly views, 40k+ followers, consistent viral posts. Save this framework. Формат: авторский именованный фреймворк (8 частей) из анализа СВОИХ постов + доказательство роста. Практичный сохраняемый шаблон структуры поста.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:анализ вирусных постов",
@@ -3217,7 +3316,7 @@
  },
  {
   "query": "tavily:AI-кейс данные",
-  "author": "Navin Mirania (EN)",
+  "author": "Navin Mirania",
   "headline": "AI Transformation Consultant",
   "age": "",
   "reactions": 0,
@@ -3225,7 +3324,8 @@
   "reposts": 0,
   "text": "AI Use Case: как AI помог растущему бизнесу оспорить дорогостоящие допущения. Слепые зоны, которые вскрыл AI: спрос-сигналы вводили в заблуждение; лидерство считало, что отток из-за цены — AI нашёл, что главный драйвер оттока это трение онбординга (новые клиенты мучились при настройке), они решали не ту проблему; операционная эффективность выросла на 22%, но удовлетворённость клиентов упала на 14% (внутренняя оптимизация вредила внешнему опыту). Результаты за 120 дней: −34% времени на поиск корневой причины, +41% раннее обнаружение сдвигов трендов, +28% точность решений, −37% ошибок на основе допущений; бизнес: −17% отток, +21% adoption фич. Топ-коммент: лучшие решения приходят от оспаривания допущений, а не их защиты. Формат: кейс через слепые зоны + метрики до/после (галочки) + рамка 'AI оспаривает предвзятость'. Эталон data-driven кейса.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:консультант AI-трансформация",
@@ -3241,7 +3341,7 @@
  },
  {
   "query": "tavily:Claude Code 6 месяцев",
-  "author": "Jordan Hubbard (EN)",
+  "author": "Jordan Hubbard",
   "headline": "engineer (ex-Apple/FreeBSD)",
   "age": "",
   "reactions": 0,
@@ -3249,11 +3349,12 @@
   "reposts": 0,
   "text": "After 6 months of using AI coding tools (Cursor and Claude) almost every day — not just for toy apps but things I've deployed — I can say: 1. It's not just hype. If you can't generate a competent full-stack application with AI coding tools, you're almost certainly using them incorrectly. 2. Coding LLMs work with small context sizes vs the challenge of keeping tens of thousands of lines working commit to commit. You MUST have the AI write tests for everything it generates. You MUST tag every working checkpoint so the AI can compare working with non-working. 3. When you tell an AI to 'plan', you're working a different part of the model. Формат: авторитет (ветеран-инженер) + баланс (не хайп, НО дисциплина обязательна) + конкретные правила (тесты, чекпоинты).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:Claude Code честно",
-  "author": "Michael Antczak (EN)",
+  "author": "Michael Antczak",
   "headline": "engineer",
   "age": "",
   "reactions": 0,
@@ -3261,7 +3362,8 @@
   "reposts": 0,
   "text": "My honest take on Anthropic Claude Code after weeks of daily use. What actually works: it feels like working with a proper developer — no explaining basic concepts, responds like a solid teammate. It learns from mistakes — maintains a memory file and tries not to repeat errors. Respects your workflows — tell it 'always create a new branch for each ticket' and it does consistently. Plays nicely with other tools — seamless with CodeRabbit (Claude pushes to GitHub, CodeRabbit reviews, provides prompts for Claude to fix). Auto-compact saves your sanity when conversations get too long. The real test: as I wrote this post, Claude Code was simultaneously working on user auth database migrations on another ticket — genuinely productive parallel work. Bottom line: it doesn't feel like a tool you're fighting with — it feels like a capable colleague who happens to work at AI speed. Формат: 'честный тейк' + чек-лист что работает (галочки) + живая демонстрация (пишу пост, а он параллельно работает).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:Claude Cursor брутальная правда",
@@ -3277,7 +3379,7 @@
  },
  {
   "query": "tavily:Cursor productivity myth",
-  "author": "Will Luton (EN)",
+  "author": "Will Luton",
   "headline": "game dev/founder",
   "age": "",
   "reactions": 0,
@@ -3285,11 +3387,12 @@
   "reposts": 0,
   "text": "After 6 months using Cursor with Unity, I'm ditching it and returning to a non-AI workflow. I've concluded AI coding is a productivity myth right now — not because it can't be useful, but because there's a mismatch between use case and product. I quickly stopped vibe coding — it's great for quick-and-dirty prototypes, but you need to unpick it: it creates days of tech debt in minutes. As projects get bigger it hallucinates variables and methods. Топ-ответ в комментах (контраргумент): 'У меня прямо противоположный опыт — чем больше devю с Claude, тем эффективнее. 100% AI-разработчик полгода при 10+ годах опыта. Но есть кривая обучения: нужно документировать и проектировать в AI-friendly формате почти ежедневно, держать высокое покрытие тестами.' Другой: 'Claude Code вастно превосходит Cursor, сидит в терминале, видит весь проект, много галлюцинаций = код где-то слишком сложен, рефактор помогает.' Формат: контрарианский 'бросаю Cursor' + живой спор в комментах (обе стороны). Показывает: инструмент требует дисциплины.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI-native repo",
-  "author": "Cole Medin (EN)",
+  "author": "Cole Medin",
   "headline": "AI coding creator",
   "age": "",
   "reactions": 0,
@@ -3297,11 +3400,12 @@
   "reposts": 0,
   "text": "I've spent more than a year honing my AI-generated coding skills. What I use daily to create/maintain production SaaS: if these markdown files don't exist in your repo, AI can't act like the super-clever intern it is. Turn your repository into a machine-readable knowledge system both humans and AI understand — The 8-Document AI-Native Repository (README as entry point, etc.). The pattern now: coding agents aren't just writing code — they're coordinating, delegating, running in parallel, communicating across devices. That's orchestration. Native worktree support, agent teams, /batch — things you had to hack together yourself six months ago. Tools connect through MCP (Model Context Protocol) — agents access docs, repos, APIs; the AI isn't guessing, it's pulling real context. This feels less like chatting with AI, more like running a small engineering team. Формат: система (8 документов) + рамка orchestration + MCP-объяснение.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:Cursor 2 года назад",
-  "author": "Shashank Phatkure (EN)",
+  "author": "Shashank Phatkure",
   "headline": "software engineer",
   "age": "",
   "reactions": 0,
@@ -3309,11 +3413,12 @@
   "reposts": 0,
   "text": "After 2 years of using Cursor, I've decided to take a step back. Cursor helps you ship faster, no debate. But speed without direction is just moving quickly towards the wrong problem. Over time I noticed: spending more time fixing AI hallucinations than solving real issues; relying so much that my critical-thinking muscles felt weaker; in complex codebases one wrong AI suggestion spirals into hours wasted. I don't think Cursor is bad — it's great for boilerplate when you already know the fields and layout. What I've learned: 1. Give Context, not just Prompts — a simple rules.md defining coding standards keeps the LLM aligned with your architecture. 2. Keep Docs Fresh — Context-7 MCP ensures the model references latest documentation. 3. Plan Before You Code — Plan Mode to outline complex tasks before execution. Формат: честный 'шаг назад' + предупреждение про атрофию мышления + практические правила (rules.md, Context7 MCP, Plan Mode).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI пишет 90% кода",
-  "author": "Steven Rouk (EN)",
+  "author": "Steven Rouk",
   "headline": "engineer/data",
   "age": "",
   "reactions": 0,
@@ -3321,7 +3426,8 @@
   "reposts": 0,
   "text": "These days AI probably writes 90%+ (maybe 95%+) of the new code I write. Since I started using Claude Sonnet 4 in Cursor, quality increased substantially. Sonnet 3.7 would go off the rails, introduce weird bugs, create code where not needed. Sonnet 4's code has been excellent — good attention to detail, following instructions, thinking through edge cases, only changing what's needed. Side projects and one-off tasks are way faster and more feasible now. НО в комментах автор сам приводит контр-данные: METR-исследование — 'когда разработчикам разрешают AI-инструменты, они тратят на 19% БОЛЬШЕ времени на задачи, вопреки ожиданиям. Разрыв восприятия и реальности: ожидали ускорение на 24%, после замедления всё равно верили в ускорение на 20%.' Формат: восторженный личный опыт (90% кода) + честное включение противоречащих данных (METR). Показывает разрыв восприятие/реальность — тонкий инсайт.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:замена сотрудников AI",
@@ -3337,7 +3443,7 @@
  },
  {
   "query": "tavily:AI без потери голоса",
-  "author": "Mildred Talabi (EN)",
+  "author": "Mildred Talabi",
   "headline": "LinkedIn/PR consultant",
   "age": "",
   "reactions": 0,
@@ -3345,11 +3451,12 @@
   "reposts": 0,
   "text": "Есть два типа AI-постов в вашей ленте: критикующие людей за использование ИИ (заметно по чрезмерным тире и переполированному тону) и восторженные (ИИ — лучшее после нарезанного хлеба). Я где-то посередине. Люблю ИИ, но мне не нравится, что он быстро заменяет аутентичные голоса, делающие LinkedIn человечным. Слишком многие передают свой голос, мысли и истории инструментам, которые должны поддерживать, а не заменять. Делай: используй ИИ, чтобы понять аудиторию (боли, тренды, вопросы), полируй контент (доработать хук, убрать лишнее, переформатировать). Не делай: не полагайся на ИИ, чтобы он определил твою аудиторию — понимание приходит из реальных разговоров и опыта; не отдавай ему свой голос. Топ-коммент: 'данные показывают — люди вовлекаются в личный, человечный, честный контент, а не в переполированный идеальный'. Формат: сбалансированная позиция (do/don't) + рамка 'AI поддерживает, не заменяет голос'.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:100 отказов оффер",
-  "author": "Amith Narayan, PhD (EN)",
+  "author": "Amith Narayan, PhD",
   "headline": "STEM career coach",
   "age": "",
   "reactions": 0,
@@ -3357,11 +3464,12 @@
   "reposts": 0,
   "text": "It took me 100 rejections to learn this. Most candidates treat interviews like a test. Hiring teams treat interviews like risk reduction. They're not only asking 'Can you do the job?' — they're asking 'Can we trust your judgment when things get messy?' Unless you learn to show that, experience alone won't save you. What changed everything: I stopped trying to 'answer correctly' and started communicating like someone who owns outcomes. I began to: lead with the problem first, not the solution; explain trade-offs instead of listing steps; show how I think when requirements are unclear; tie my work to consequences (speed, cost, reliability, risk, revenue); ask better clarifying questions instead of rushing to impress. Then something shifted → $150K offer. Топ-коммент: 'сильные инженеры считают, что отказ = пробел в навыках, а часто это пробел в подаче (framing gap)'. Формат: цифра боли (100 отказов) + переворот рамки (интервью = снижение риска, не тест) + список сдвигов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:отказы оффер Microsoft",
-  "author": "Garima Sidana (EN)",
+  "author": "Garima Sidana",
   "headline": "engineer",
   "age": "",
   "reactions": 0,
@@ -3369,11 +3477,12 @@
   "reposts": 0,
   "text": "From 30+ rejections to Microsoft: how resilience and learning helped me land my dream job. Microsoft looks for clarity in thought, structured problem-solving, ability to explain your reasoning step by step. Solving 100+ problems means nothing without understanding patterns, intuition, and logic. It took me years to build these skills as I had no feedback or progress tracking — so if you're starting out, don't make the same mistake. Consistency is key: don't aim to solve 100 problems in a week, aim to learn deeply from every problem. Each question teaches a pattern, a logic, a mindset that takes you one step closer. Preparation builds confidence, and confidence builds opportunity. Формат: дневник 'от 30+ отказов к мечте' + акцент на паттерны/глубину над количеством + мотивация через личный путь. RU-переносимый формат дневника отказов.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI для откликов",
-  "author": "Jeff Fitzgerald (EN)",
+  "author": "Jeff Fitzgerald",
   "headline": "job seeker/career",
   "age": "",
   "reactions": 0,
@@ -3381,11 +3490,12 @@
   "reposts": 0,
   "text": "I used AI to apply for 100+ jobs without burning out. Two months into my job hunt I was exhausted — same applications, same copy-paste answers, very few replies. Out of frustration I came across AI tools that automate parts of the job search. A few weeks later I was applying to significantly more roles with less effort and actually getting callbacks. What made the difference: 1. Let AI handle the busywork, not the decisions — used AI to autofill and apply in the background, freeing time for interview prep and research. More volume, less burnout. 2. Prepare for interviews with intent, not randomness — used AI to generate role- and company-specific questions and practice. Формат: боль (выгорание от откликов) + решение (AI на рутину, не на решения) + пронумерованный метод. Тема: автоматизация поиска работы (боль → решение → метод).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI не враг рекрутинг",
-  "author": "Sharran Srivatsaa (EN)",
+  "author": "Sharran Srivatsaa",
   "headline": "CEO Real, 5x President",
   "age": "",
   "reactions": 0,
@@ -3393,11 +3503,12 @@
   "reposts": 0,
   "text": "You might be getting rejected from jobs without a human ever seeing your resume. AI isn't the enemy. Bad recruiting is. Since April I've spoken with over 100 job seekers, most stuck in the noise — strong resumes overlooked, talented people ghosted. Why? Because the person screening the resume often doesn't know what they're looking at. It's not just a candidate issue, it's a recruiter capability issue. True story: a strong QA candidate got passed on. I asked why. The recruiter admitted she didn't really get QA and made assumptions. After some education she submitted the resume — the candidate got the interview. Формат: провокация (тебя отклоняют без человека) + переворот вины (проблема в компетенции рекрутера, не кандидата) + конкретная история.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:AI резюме отказ рекрутер",
-  "author": "Erin Turnmeyer (EN)",
+  "author": "Erin Turnmeyer",
   "headline": "recruiter/TA",
   "age": "",
   "reactions": 0,
@@ -3405,11 +3516,12 @@
   "reposts": 0,
   "text": "How AI can hurt your job search: a recruiter's perspective. Once I see a resume that is near verbatim the job posting, I can't distinguish between your real accomplishments and generated content. To be clear — this is not a 'gotcha' on one bullet's wording, it's 2/3rds copy-paste of the job description changed to accomplishment wording, the same wording hundreds of times. And I can't ask the company to take that risk with a hire, so the candidate goes in the 'no' pile. What should you do? Instead of 'tailor my resume to this job description', try 'What skills from my experience align with this role?' Then YOU decide how to authentically describe your work. Топ-коммент: 'многие рекрутеры тихо признаются, что останавливаются на резюме 100 или 150'. Формат: инсайдерский взгляд рекрутера + конкретное правило (не копируй вакансию, спроси про совпадения) + честность про объём (стоп на 100-150). Практичный анти-паттерн.",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:поиск работы страх отказа",
-  "author": "Davis Booth (EN)",
+  "author": "Davis Booth",
   "headline": "engineering mentor",
   "age": "",
   "reactions": 0,
@@ -3417,7 +3529,8 @@
   "reposts": 0,
   "text": "Engineering students job hunt the same way. While people worry about AI taking engineering jobs, the reality right now is there are still thousands of roles going unfilled. Teams aren't hiring in panic — they're hiring people who show up, think clearly, and adapt. The biggest career mistakes don't come from rejection. They come from fear-driven decisions after rejection. Пример из поста: кандидат честно сказал на скрининге 'AI мог бы справиться с этими вопросами; если хотите того, кто использует AI, чтобы работать умнее и быстрее — это я; иначе эти вопросы лучше оставить самому AI'. Через 2 дня: обратная связь с предложением ретейка. Вывод: умная компания, огромный потенциал, но не тот фит для этой роли. Формат: рамка 'ошибки не от отказа, а от страха после него' + смелый честный пример (челлендж формата собеса).",
   "url": "",
-  "collected_at": "2026-07-09"
+  "collected_at": "2026-07-09",
+  "lang": "EN"
  },
  {
   "query": "tavily:продавать результат клиента",

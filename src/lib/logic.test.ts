@@ -39,6 +39,16 @@ describe('parseFollowers', () => {
   });
 });
 
+describe('detectLang: поле lang приоритетнее эвристик', () => {
+  it('lang из данных сбора уважается; без него работает пометка и текст', () => {
+    expect(detectLang({ author: 'Иван', text: 'Getting laid off... Русская аннотация дальше.', lang: 'EN' })).toBe(
+      'EN',
+    );
+    expect(detectLang({ author: 'Ann', text: 'Pure english text about hiring and growth' })).toBe('EN');
+    expect(detectLang({ author: 'Иван', text: 'Чисто русский текст про найм' })).toBe('RU');
+  });
+});
+
 describe('clusterOf', () => {
   it('маршрутизирует по ключевым словам', () => {
     expect(clusterOf('tavily:claude code spec driven')).toBe('spec');

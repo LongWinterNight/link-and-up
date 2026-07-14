@@ -109,6 +109,8 @@ export function tagPost(p: RawPost): Tags {
  * RU-пост, начинающийся со ссылки или латинского бренда, больше не считается EN.
  */
 export function detectLang(p: RawPost): Lang {
+  // провенанс: язык, зафиксированный при сборе, приоритетнее любых эвристик
+  if (p.lang === 'EN' || p.lang === 'RU') return p.lang;
   if (/\(EN\)/i.test(p.author || '')) return 'EN';
   const stripped = (p.text || '').replace(/https?:\/\/\S+|www\.\S+/gi, ' ');
   const letters = (stripped.match(/\p{L}/gu) || []).slice(0, 80).join('');

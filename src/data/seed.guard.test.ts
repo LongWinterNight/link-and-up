@@ -39,6 +39,13 @@ describe('демо-корпус (seed_posts.json)', () => {
     expect(withUrl.map((p) => p.url)).toEqual([]);
   });
 
+  it('имена авторов чистые: без суффиксов сборщика «(EN)»/«(N)»; язык оригинала — в поле lang', () => {
+    const suffixed = seedPosts.filter((p) => /\((?:EN|\d+)\)\s*$/.test(p.author || ''));
+    expect(suffixed.map((p) => p.author)).toEqual([]);
+    // 113 EN-оригиналов зафиксированы полем lang при чистке пометок из имён
+    expect(seedPosts.filter((p) => p.lang === 'EN')).toHaveLength(113);
+  });
+
   it('enrichAll обрабатывает корпус без исключений и без личных аннотаций', () => {
     const posts = enrichAll(seedPosts);
     expect(posts).toHaveLength(289);

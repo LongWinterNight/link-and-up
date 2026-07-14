@@ -40,6 +40,8 @@ export interface Tags {
 
 /** Сырая запись поста — как приходит из датасета/импорта. */
 export interface RawPost {
+  /** Язык оригинала, зафиксированный при сборе (иначе — эвристика по тексту). */
+  lang?: Lang;
   query?: string;
   author?: string;
   headline?: string;
