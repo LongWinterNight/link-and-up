@@ -25,3 +25,6 @@ design_handoff_content_dashboard/
 # Playwright (Б9)
 test-results/
 playwright-report/
+
+# артефакты визуального прохода (локальное ревью)
+visual-pass/
