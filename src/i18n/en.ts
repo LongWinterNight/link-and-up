@@ -655,4 +655,8 @@ export const en: Record<DictKey, string> = {
   'fcstr.bt.ok.a': 'Leave-one-out over ',
   'fcstr.bt.ok.b':
     ' posts with metrics. \u201cWithin 2\u00d7\u201d \u2014 the share of forecasts of the same order as the fact.',
+  // --- honest scatter note: only posts with both metrics known ---
+  'an.scatter.both.a': 'Showing posts where both metrics are known: ',
+  'an.scatter.both.b': ' of ',
+  'an.scatter.both.c': ' with metrics; for the rest, reactions were not captured by the source (0 = unknown).',
 };

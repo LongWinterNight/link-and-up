@@ -158,7 +158,7 @@ export default function PostModal() {
           <Pill kind="lang">{post.lang}</Pill>
           {post.has_metrics ? (
             <Pill kind="metric">
-              ♥ {nf(post.reactions)} · 💬 {nf(post.comments)}
+              ♥ {post.reactions > 0 ? nf(post.reactions) : '—'} · 💬 {post.comments > 0 ? nf(post.comments) : '—'}
               {post.rate != null ? ` · ER ${(post.rate * 100).toFixed(2)}%` : ''}
             </Pill>
           ) : (

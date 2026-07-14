@@ -86,7 +86,7 @@ function PostCard({ post, onOpen }: { post: Post; onOpen: () => void }) {
         <Pill kind="lang">{post.lang}</Pill>
         {post.has_metrics ? (
           <Pill kind="metric">
-            ♥ {nf(post.reactions)} · 💬 {nf(post.comments)}
+            ♥ {post.reactions > 0 ? nf(post.reactions) : '—'} · 💬 {post.comments > 0 ? nf(post.comments) : '—'}
           </Pill>
         ) : (
           <Pill kind="nometric">{t('ex.noMetrics')}</Pill>
@@ -211,10 +211,10 @@ function TableView({ list, openPost }: { list: Post[]; openPost: (id: string) =>
                     <div style={cell}>{cl(p.meta_cluster)}</div>
                     <div style={cell}>{p.lang}</div>
                     <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
-                      {p.has_metrics ? nf(p.reactions) : '—'}
+                      {p.reactions > 0 ? nf(p.reactions) : '—'}
                     </div>
                     <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
-                      {p.has_metrics ? nf(p.comments) : '—'}
+                      {p.comments > 0 ? nf(p.comments) : '—'}
                     </div>
                     <div style={{ ...cell, justifyContent: 'flex-end' }} className="num">
                       {p.rate != null ? (p.rate * 100).toFixed(2) + '%' : '—'}

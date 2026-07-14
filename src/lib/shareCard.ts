@@ -15,7 +15,9 @@ const WATERMARK = PRODUCT_NAME + ' · link-and-up.vercel.app';
 /** Автогенерируемый alt-текст карточки (Accessibility: изображение недоступно скринридеру). */
 export function buildAltText(post: Post, clusterLabel: string): string {
   const metrics = post.has_metrics
-    ? nf(post.reactions) + ' реакций, ' + nf(post.comments) + ' комментариев'
+    ? (post.reactions > 0 ? nf(post.reactions) + ' реакций' : 'реакции неизвестны') +
+      ', ' +
+      (post.comments > 0 ? nf(post.comments) + ' комментариев' : 'комментарии неизвестны')
     : 'метрики неизвестны';
   return (
     'Карточка разбора поста LinkedIn. Автор: ' +
@@ -122,7 +124,9 @@ export async function drawShareCard(post: Post, clusterLabel: string): Promise<B
   // метрики
   ctx.fillStyle = '#e8ecf4';
   ctx.font = '700 40px system-ui, sans-serif';
-  const metrics = post.has_metrics ? '♥ ' + nf(post.reactions) + '   💬 ' + nf(post.comments) : 'метрики неизвестны';
+  const metrics = post.has_metrics
+    ? '♥ ' + (post.reactions > 0 ? nf(post.reactions) : '—') + '   💬 ' + (post.comments > 0 ? nf(post.comments) : '—')
+    : 'метрики неизвестны';
   ctx.fillText(metrics, 64, 556);
   if (post.rate != null) {
     ctx.fillStyle = '#8b93a7';

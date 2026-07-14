@@ -45,10 +45,12 @@ export default function Analytics() {
   const byStruct = useMemo(() => effectivenessBy(posts, 'structure'), [posts]);
   const byCta = useMemo(() => effectivenessBy(posts, 'cta_type'), [posts]);
   const emotionDist = useMemo(() => distributionBy(posts, 'emotion'), [posts]);
+  // 0 = неизвестно (не ноль): пост с несобранными реакциями рисовался колонной у левой грани
+  // и лгал про корреляцию — в scatter попадают только посты, где известны ОБЕ метрики.
   const scatterAll = useMemo(
     () =>
       posts
-        .filter((p) => p.has_metrics)
+        .filter((p) => p.reactions > 0 && p.comments > 0)
         .map((p) => ({ x: p.reactions, y: p.comments, label: p.author, onClick: () => openPost(p.id) })),
     [posts, openPost],
   );
@@ -65,6 +67,12 @@ export default function Analytics() {
   const sampleNote = (shown: number) =>
     scatterAll.length > shown
       ? t('an.scatter.sample.a') + shown + t('an.scatter.sample.b') + scatterAll.length + t('an.scatter.sample.c')
+      : '';
+
+  const metricCount = useMemo(() => posts.filter((p) => p.has_metrics).length, [posts]);
+  const bothNote =
+    metricCount > scatterAll.length
+      ? t('an.scatter.both.a') + scatterAll.length + t('an.scatter.both.b') + metricCount + t('an.scatter.both.c')
       : '';
 
   const topInsight = byHook[0];
@@ -152,6 +160,7 @@ export default function Analytics() {
               {sampleNote(scatter.length) && (
                 <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{sampleNote(scatter.length)}</div>
               )}
+              {bothNote && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 4 }}>{bothNote}</div>}
             </>
           ) : (
             <EmptyState>{t('an.scatter.none')}</EmptyState>
@@ -197,6 +206,7 @@ export default function Analytics() {
           <div style={{ fontSize: 12, color: 'var(--text-3)', marginTop: 8 }}>
             {t('an.scatter.lognote')}
             {sampleNote(scatterZoomPts.length) && ' ' + sampleNote(scatterZoomPts.length)}
+            {bothNote && ' ' + bothNote}
           </div>
         </Modal>
       )}
