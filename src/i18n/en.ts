@@ -17,7 +17,7 @@ export const en: Record<DictKey, string> = {
   'app.demo.badge': 'demo corpus',
   'app.demo.badge.title': 'Demo corpus of public posts. Import your own — the badge disappears.',
   'app.reset': 'Reset',
-  'app.reset.confirm': 'Reset to the demo corpus (289 posts)? Ideas and facts will be lost.',
+  'app.reset.confirm': 'Reset to the demo corpus? Ideas and facts will be lost.',
   'app.theme.dark': '☾ Dark',
   'app.theme.light': '☀ Light',
   'app.theme.aria': 'Toggle theme',

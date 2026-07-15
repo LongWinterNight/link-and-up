@@ -128,7 +128,8 @@ export function sanitizeUrl(u?: string): string {
 
 /** Обогатить сырой пост: метрики, подписчики, язык, ER, кластер, теги. */
 export function enrich(p: RawPost): Post {
-  const followers = parseFollowers(p.headline);
+  // провенанс: подписчики, зафиксированные при сборе, приоритетнее парсинга headline
+  const followers = typeof p.followers === 'number' ? p.followers : parseFollowers(p.headline);
   const reactions = Number(p.reactions) || 0;
   const comments = Number(p.comments) || 0;
   // 0 = МЕТРИКА НЕИЗВЕСТНА (не ноль): has_metrics отражает наличие данных

@@ -42,6 +42,10 @@ export interface Tags {
 export interface RawPost {
   /** Язык оригинала, зафиксированный при сборе (иначе — эвристика по тексту). */
   lang?: Lang;
+  /** Подписчики автора, если явно видны в источнике при сборе (иначе — парсинг headline). */
+  followers?: number | null;
+  /** Дата верификации пермалинка/метрик переходом на источник (провенанс). */
+  verified_at?: string;
   query?: string;
   author?: string;
   headline?: string;

@@ -222,7 +222,7 @@ describe('store: reset возвращает демо-корпус', () => {
   it('reset наполняет posts и ставит isDemo=true (FE-2: сид грузится динамическим чанком)', async () => {
     useStore.setState({ posts: [], isDemo: false });
     await S().reset();
-    expect(S().posts.length).toBe(289);
+    expect(S().posts.length).toBe(480);
     expect(S().isDemo).toBe(true);
   });
 });
