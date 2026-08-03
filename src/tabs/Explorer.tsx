@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, memo } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useStore } from '@/store';
 import { filterPosts } from '@/lib/derive';
@@ -305,7 +305,7 @@ function Presets() {
   );
 }
 
-export default function Explorer() {
+export default memo(function Explorer() {
   const t = useT();
   const lbl = useLbl();
   const cl = useClusterLabel();
@@ -533,4 +533,4 @@ export default function Explorer() {
       )}
     </div>
   );
-}
+});

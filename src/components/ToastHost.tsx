@@ -1,7 +1,8 @@
+import { memo } from 'react';
 import { useStore } from '@/store';
 import { useT } from '@/i18n/useT';
 
-export default function ToastHost() {
+export default memo(function ToastHost() {
   const t = useT();
   const toast = useStore((s) => s.toast);
   const lastDeletedIdea = useStore((s) => s.lastDeletedIdea);
@@ -49,4 +50,4 @@ export default function ToastHost() {
       )}
     </div>
   );
-}
+});

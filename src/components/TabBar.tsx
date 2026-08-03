@@ -1,10 +1,11 @@
+import { memo } from 'react';
 import { useStore, type TabId } from '@/store';
 import { useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
 
 const TAB_IDS: TabId[] = ['today', 'overview', 'analytics', 'explorer', 'clusters', 'ideas', 'forecast'];
 
-export default function TabBar() {
+export default memo(function TabBar() {
   const t = useT();
   const tab = useStore((s) => s.tab);
   const setTab = useStore((s) => s.setTab);
@@ -65,4 +66,4 @@ export default function TabBar() {
       </div>
     </div>
   );
-}
+});

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import { useStore } from '@/store';
 import { download } from '@/lib/download';
 import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from '@/lib/exports';
@@ -6,7 +6,7 @@ import { useClusterLabel, useExportLabels, useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
 import { hdrBtn } from './ui';
 
-export default function ExportMenu() {
+export default memo(function ExportMenu() {
   const t = useT();
   const cl = useClusterLabel();
   const exportLabels = useExportLabels();
@@ -120,4 +120,4 @@ export default function ExportMenu() {
       )}
     </div>
   );
-}
+});

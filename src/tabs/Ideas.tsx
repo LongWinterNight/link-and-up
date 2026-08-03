@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, memo } from 'react';
 import { useStore } from '@/store';
 import { CHANNELS, FORMULAS, STATUS } from '@/lib/constants';
 import { validateIdea, hasHardFlag } from '@/lib/guardrails';
@@ -571,7 +571,7 @@ function Calendar() {
   );
 }
 
-export default function Ideas() {
+export default memo(function Ideas() {
   const t = useT();
   const ideas = useStore((s) => s.ideas);
   const readOnly = useStore((s) => s.readOnly);
@@ -636,4 +636,4 @@ export default function Ideas() {
       {drafting && <DraftModal idea={drafting} onClose={() => setDrafting(null)} />}
     </div>
   );
-}
+});

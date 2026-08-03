@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useStore } from '@/store';
 import { buildPostSearchUrl } from '@/lib/links';
 import { nf } from '@/lib/stats';
@@ -38,7 +38,7 @@ const tagSel: React.CSSProperties = {
   fontSize: 12.5,
 };
 
-export default function PostModal() {
+export default memo(function PostModal() {
   const t = useT();
   const lbl = useLbl();
   const cl = useClusterLabel();
@@ -291,4 +291,4 @@ export default function PostModal() {
       {shareOpen && <ShareCardModal post={post} onClose={() => setShareOpen(false)} />}
     </Modal>
   );
-}
+});
