@@ -2,8 +2,55 @@ import type { Idea, Post, Rule } from '@/types';
 import { CLUSTER_LABEL, FORMULAS, SCHEMA_VERSION, STATUS_LABEL } from './constants';
 import { validateContent, hasHardFlag, redactHard } from './guardrails';
 
+export interface ExportLabels {
+  col: {
+    author: string;
+    headline: string;
+    lang: string;
+    cluster: string;
+    hook: string;
+    structure: string;
+    cta: string;
+    emotion: string;
+    flags: string;
+    reactions: string;
+    comments: string;
+    reposts: string;
+    followers: string;
+    er: string;
+    metrics: string;
+    own: string;
+    date: string;
+    url: string;
+    angle: string;
+    yes: string;
+    no: string;
+  };
+  idea: {
+    title: string;
+    hook: string;
+    cluster: string;
+    formula: string;
+    source: string;
+    channel: string;
+    status: string;
+    date: string;
+    ref: string;
+    forecast: string;
+    actual: string;
+    redaction: string;
+  };
+  audit: {
+    time: string;
+    event: string;
+  };
+  redacted: {
+    title: string;
+    hook: string;
+  };
+}
+
 // ---------- JSON ----------
-/** SEC-3: hard-термины маскируются и в текстах постов, не только в идеях. */
 export function exportPostsJson(posts: Post[], rules?: Rule[]): string {
   const out = posts.map((p) => ({
     query: p.query,
@@ -29,35 +76,63 @@ export function exportPostsJson(posts: Post[], rules?: Rule[]): string {
 // ---------- CSV ----------
 export function csvCell(v: unknown): string {
   let s = v == null ? '' : String(v);
-  // CSV/Excel formula injection: ячейку, начинающуюся с = + - @ Tab CR, префиксуем '
-  // (импортированный текст управляется пользователем и мог бы выполниться формулой в Excel/Sheets).
   if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   s = s.replace(/"/g, '""');
   return /[",\n;]/.test(s) ? '"' + s + '"' : s;
 }
 
-export function exportPostsCsv(posts: Post[], rules?: Rule[], clusterName?: (id: string) => string): string {
-  const head = [
-    'Автор',
-    'Заголовок',
-    'Язык',
-    'Кластер',
-    'Хук',
-    'Структура',
-    'CTA',
-    'Эмоция',
-    'Приёмы',
-    'Реакции',
-    'Комментарии',
-    'Репосты',
-    'Подписчики',
-    'ER,%',
-    'Есть метрики',
-    'Свой',
-    'Дата сбора',
-    'URL',
-    'Угол',
-  ];
+export function exportPostsCsv(
+  posts: Post[],
+  rules?: Rule[],
+  clusterName?: (id: string) => string,
+  labels?: ExportLabels,
+): string {
+  const c = labels?.col;
+  const head = c
+    ? [
+        c.author,
+        c.headline,
+        c.lang,
+        c.cluster,
+        c.hook,
+        c.structure,
+        c.cta,
+        c.emotion,
+        c.flags,
+        c.reactions,
+        c.comments,
+        c.reposts,
+        c.followers,
+        c.er,
+        c.metrics,
+        c.own,
+        c.date,
+        c.url,
+        c.angle,
+      ]
+    : [
+        'Автор',
+        'Заголовок',
+        'Язык',
+        'Кластер',
+        'Хук',
+        'Структура',
+        'CTA',
+        'Эмоция',
+        'Приёмы',
+        'Реакции',
+        'Комментарии',
+        'Репосты',
+        'Подписчики',
+        'ER,%',
+        'Есть метрики',
+        'Свой',
+        'Дата сбора',
+        'URL',
+        'Угол',
+      ];
+  const yes = c?.yes || 'да';
+  const no = c?.no || 'нет';
   const rows = posts.map((p) =>
     [
       redactHard(p.author, rules),
@@ -74,8 +149,8 @@ export function exportPostsCsv(posts: Post[], rules?: Rule[], clusterName?: (id:
       p.reposts,
       p.followers == null ? '' : p.followers,
       p.rate == null ? '' : (p.rate * 100).toFixed(3),
-      p.has_metrics ? 'да' : 'нет',
-      p.is_own ? 'да' : 'нет',
+      p.has_metrics ? yes : no,
+      p.is_own ? yes : no,
       p.collected_at,
       p.url,
       p.query,
@@ -94,14 +169,13 @@ interface RedactedIdea {
   note: string;
 }
 
-/** Идея с блокирующими (hard) нарушениями гардрейлов не выгружается наружу. SEC-3: source тоже проверяется. */
-export function redactIdea(idea: Idea, rules?: Rule[]): RedactedIdea {
+export function redactIdea(idea: Idea, rules?: Rule[], labels?: ExportLabels): RedactedIdea {
   const flags = validateContent((idea.title || '') + ' ' + (idea.hook || '') + ' ' + (idea.source || ''), rules);
   if (hasHardFlag(flags)) {
     return {
-      title: '[скрыто: блокирующие гардрейлы]',
+      title: labels?.redacted.title || '[скрыто: блокирующие гардрейлы]',
       hook:
-        'Идея содержит блокирующие нарушения гардрейлов и не выгружается. Исправьте: ' +
+        (labels?.redacted.hook || 'Идея содержит блокирующие нарушения гардрейлов и не выгружается. Исправьте: ') +
         flags
           .filter((f) => f.severity === 'hard')
           .map((f) => f.message)
@@ -118,36 +192,53 @@ export function exportIdeasCsv(
   posts: Post[],
   rules?: Rule[],
   clusterName?: (id: string) => string,
+  labels?: ExportLabels,
 ): string {
-  const head = [
-    'Заголовок',
-    'Хук',
-    'Кластер',
-    'Формула',
-    'Источник',
-    'Канал',
-    'Статус',
-    'Плановая дата',
-    'Референс',
-    'Прогноз',
-    'Факт-комменты',
-    'Редакция',
-  ];
-  const rows = ideas.map((i) => {
-    const r = redactIdea(i, rules);
-    const rp = i.refPostId ? posts.find((p) => p.id === i.refPostId) : null;
+  const i = labels?.idea;
+  const head = i
+    ? [
+        i.title,
+        i.hook,
+        i.cluster,
+        i.formula,
+        i.source,
+        i.channel,
+        i.status,
+        i.date,
+        i.ref,
+        i.forecast,
+        i.actual,
+        i.redaction,
+      ]
+    : [
+        'Заголовок',
+        'Хук',
+        'Кластер',
+        'Формула',
+        'Источник',
+        'Канал',
+        'Статус',
+        'Плановая дата',
+        'Референс',
+        'Прогноз',
+        'Факт-комменты',
+        'Редакция',
+      ];
+  const rows = ideas.map((idea) => {
+    const r = redactIdea(idea, rules, labels);
+    const rp = idea.refPostId ? posts.find((p) => p.id === idea.refPostId) : null;
     return [
       r.title,
       r.hook,
-      clusterName ? clusterName(i.cluster) : CLUSTER_LABEL[i.cluster] || i.cluster,
-      FORMULAS.find((f) => f.id === i.formula)?.title || i.formula,
-      r.redacted ? '' : redactHard(i.source, rules),
-      i.channel,
-      STATUS_LABEL[i.status] || i.status,
-      i.date,
+      clusterName ? clusterName(idea.cluster) : CLUSTER_LABEL[idea.cluster] || idea.cluster,
+      FORMULAS.find((f) => f.id === idea.formula)?.title || idea.formula,
+      r.redacted ? '' : redactHard(idea.source, rules),
+      idea.channel,
+      STATUS_LABEL[idea.status] || idea.status,
+      idea.date,
       rp?.author || '',
-      i.predicted || '',
-      i.actual ? i.actual.comments : '',
+      idea.predicted || '',
+      idea.actual ? idea.actual.comments : '',
       r.note,
     ]
       .map(csvCell)
@@ -178,9 +269,8 @@ export function exportObsidian(ideas: Idea[], rules?: Rule[], clusterName?: (id:
 }
 
 // ---------- OBS-1: журнал действий ----------
-/** Локальный audit-log в CSV. Честная маркировка «локальный» — серверный аудит появится с командным режимом. */
-export function exportAuditCsv(log: { t: string; msg: string }[]): string {
-  const head = ['Время (ISO)', 'Событие'];
+export function exportAuditCsv(log: { t: string; msg: string }[], labels?: ExportLabels): string {
+  const head = labels ? [labels.audit.time, labels.audit.event] : ['Время (ISO)', 'Событие'];
   const rows = log.map((e) => [e.t, e.msg].map(csvCell).join(','));
   return '﻿' + head.join(',') + '\n' + rows.join('\n');
 }

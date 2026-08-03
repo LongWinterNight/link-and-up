@@ -1,5 +1,7 @@
 import { useStore } from '@/store';
 import type { BacktestLabels, ForecastLabels } from '@/lib/forecast';
+import type { DraftLabels } from '@/lib/draft';
+import type { ExportLabels } from '@/lib/exports';
 import { clusterLabel, lbl, tr, type DictKey } from './index';
 
 /** Хук перевода: ре-рендерится при смене locale и после догрузки словаря (i18nVersion). */
@@ -68,6 +70,79 @@ export function useForecastLabels(): { fl: ForecastLabels; bl: BacktestLabels } 
     bl: {
       low: (n) => t('fcstr.bt.low.a') + n + t('fcstr.bt.low.b'),
       ok: (n) => t('fcstr.bt.ok.a') + n + t('fcstr.bt.ok.b'),
+    },
+  };
+}
+
+/** FE-3c: локализованные метки для lib/draft (строки живут в словаре, lib остаётся чистым). */
+export function useDraftLabels(): { labels: DraftLabels; locale: string } {
+  const t = useT();
+  const locale = useStore((s) => s.locale);
+  return {
+    locale,
+    labels: {
+      header: t('draft.header'),
+      noTitle: t('draft.noTitle'),
+      formulaNote: (f) => t('draft.formulaNote') + f + t('draft.formulaNoteEnd'),
+      cluster: t('draft.cluster'),
+      source: t('draft.source'),
+      channel: t('draft.channel'),
+      guardrailsNote: t('draft.guardrailsNote'),
+      blocked: t('draft.blocked'),
+      warnings: t('draft.warnings'),
+      hardTag: t('draft.hardTag'),
+    },
+  };
+}
+
+/** FE-3c: локализованные метки для lib/exports. */
+export function useExportLabels(): ExportLabels {
+  const t = useT();
+  return {
+    col: {
+      author: t('export.col.author'),
+      headline: t('export.col.headline'),
+      lang: t('export.col.lang'),
+      cluster: t('export.col.cluster'),
+      hook: t('export.col.hook'),
+      structure: t('export.col.structure'),
+      cta: t('export.col.cta'),
+      emotion: t('export.col.emotion'),
+      flags: t('export.col.flags'),
+      reactions: t('export.col.reactions'),
+      comments: t('export.col.comments'),
+      reposts: t('export.col.reposts'),
+      followers: t('export.col.followers'),
+      er: t('export.col.er'),
+      metrics: t('export.col.metrics'),
+      own: t('export.col.own'),
+      date: t('export.col.date'),
+      url: t('export.col.url'),
+      angle: t('export.col.angle'),
+      yes: t('export.col.yes'),
+      no: t('export.col.no'),
+    },
+    idea: {
+      title: t('export.idea.title'),
+      hook: t('export.idea.hook'),
+      cluster: t('export.idea.cluster'),
+      formula: t('export.idea.formula'),
+      source: t('export.idea.source'),
+      channel: t('export.idea.channel'),
+      status: t('export.idea.status'),
+      date: t('export.idea.date'),
+      ref: t('export.idea.ref'),
+      forecast: t('export.idea.forecast'),
+      actual: t('export.idea.actual'),
+      redaction: t('export.idea.redaction'),
+    },
+    audit: {
+      time: t('export.audit.time'),
+      event: t('export.audit.event'),
+    },
+    redacted: {
+      title: t('export.redacted.title'),
+      hook: t('export.redacted.hook'),
     },
   };
 }

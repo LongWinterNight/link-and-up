@@ -1,6 +1,16 @@
 import type { Post, RawPost } from '@/types';
 import { enrich } from './enrich';
 
+export interface DedupLabels {
+  notObject: (idx: number) => string;
+  noAuthorNoText: (idx: number) => string;
+  emptyText: (idx: number, author: string) => string;
+  emptyAuthor: (idx: number) => string;
+  notNumber: (idx: number, field: string, value: string) => string;
+  nearDup: (idx: number, author: string) => string;
+  capped: (max: number, received: number) => string;
+}
+
 export function normText(s?: string): string {
   return (s || '')
     .toLowerCase()
@@ -34,7 +44,7 @@ export function diceSim(a: string, b: string): number {
   const bg = (s: string) => {
     const m = new Map<string, number>();
     for (let i = 0; i < s.length - 1; i++) {
-      const g = s.substr(i, 2);
+      const g = s.substring(i, i + 2);
       m.set(g, (m.get(g) || 0) + 1);
     }
     return m;
@@ -69,7 +79,7 @@ function fnv1a(s: string): number {
 export function minhashSig(s: string): Uint32Array {
   const sig = new Uint32Array(MINHASH_K).fill(0xffffffff);
   for (let i = 0; i < s.length - 1; i++) {
-    const h = fnv1a(s.substr(i, 2));
+    const h = fnv1a(s.substring(i, i + 2));
     for (let k = 0; k < MINHASH_K; k++) {
       const v = (h ^ SEEDS[k]) >>> 0;
       if (v < sig[k]) sig[k] = v;
@@ -90,23 +100,29 @@ export interface RecordValidation {
 }
 
 /** Проверить одну сырую запись импорта. */
-export function validateRecord(raw: unknown, idx: number): RecordValidation {
+export function validateRecord(raw: unknown, idx: number, labels?: DedupLabels): RecordValidation {
   const errs: string[] = [];
   if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
-    return { ok: false, errs: ['запись #' + (idx + 1) + ': не объект'] };
+    return { ok: false, errs: [labels?.notObject(idx) || 'запись #' + (idx + 1) + ': не объект'] };
   }
   const r = raw as RawPost;
   const hasAuthor = typeof r.author === 'string' && r.author.trim().length > 0;
   const hasText = typeof r.text === 'string' && r.text.trim().length > 0;
-  if (!hasAuthor && !hasText) errs.push('запись #' + (idx + 1) + ': нет ни author, ни text');
+  if (!hasAuthor && !hasText)
+    errs.push(labels?.noAuthorNoText(idx) || 'запись #' + (idx + 1) + ': нет ни author, ни text');
   else {
-    if (!hasText) errs.push('запись #' + (idx + 1) + ' (' + (r.author || '?') + '): пустой text');
-    if (!hasAuthor) errs.push('запись #' + (idx + 1) + ': пустой author');
+    if (!hasText)
+      errs.push(
+        labels?.emptyText(idx, r.author || '?') || 'запись #' + (idx + 1) + ' (' + (r.author || '?') + '): пустой text',
+      );
+    if (!hasAuthor) errs.push(labels?.emptyAuthor(idx) || 'запись #' + (idx + 1) + ': пустой author');
   }
   for (const f of ['reactions', 'comments', 'reposts'] as const) {
     const v = r[f];
     if (v != null && v !== '' && isNaN(Number(v)))
-      errs.push('запись #' + (idx + 1) + ': поле ' + f + ' не число (' + v + ')');
+      errs.push(
+        labels?.notNumber(idx, f, String(v)) || 'запись #' + (idx + 1) + ': поле ' + f + ' не число (' + v + ')',
+      );
   }
   return { ok: errs.length === 0, errs };
 }
@@ -128,7 +144,7 @@ export const MAX_IMPORT_RECORDS = 5000;
 export const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 
 /** Внутреннее состояние прогона импорта: общее для синхронного и чанкованного вариантов. */
-function createIngestRun(existing: Post[], incoming: unknown[]) {
+function createIngestRun(existing: Post[], incoming: unknown[], labels?: DedupLabels) {
   const keys = new Set(existing.map((p) => dedupKey(p)));
   // SCALE-10: бакет хранит тело + minhash-сигнатуру для LSH-префильтра
   type Entry = { body: string; sig: Uint32Array };
@@ -148,16 +164,17 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
   if (incoming.length > MAX_IMPORT_RECORDS) {
     capped = incoming.slice(0, MAX_IMPORT_RECORDS);
     st.reasons.push(
-      'импорт ограничен ' +
-        MAX_IMPORT_RECORDS +
-        ' записями за раз (получено ' +
-        incoming.length +
-        ') — остальные загрузите следующим файлом',
+      labels?.capped(MAX_IMPORT_RECORDS, incoming.length) ||
+        'импорт ограничен ' +
+          MAX_IMPORT_RECORDS +
+          ' записями за раз (получено ' +
+          incoming.length +
+          ') — остальные загрузите следующим файлом',
     );
   }
 
   const processOne = (raw: unknown, idx: number) => {
-    const v = validateRecord(raw, idx);
+    const v = validateRecord(raw, idx, labels);
     if (!v.ok) {
       st.rejected++;
       st.reasons.push(...v.errs);
@@ -172,9 +189,6 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
     const na = normAuthor(rp.author);
     const nb = normText(rp.text).slice(0, 160);
     const nbSig = minhashSig(nb);
-    // SCALE-5: префильтр по длине — при разнице >35% Dice заведомо < 0.82, diceSim не считаем.
-    // SCALE-10: затем LSH-префильтр по minhash — Dice остаётся только для похожих кандидатов.
-    // Критично для одноавторных бакетов (импорт собственного корпуса: все посты одного автора).
     if (
       (buckets.get(na) || []).some((e) => {
         const min = Math.min(e.body.length, nb.length);
@@ -186,7 +200,10 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
     ) {
       st.nearDupes++;
       st.dupes++;
-      st.reasons.push('запись #' + (idx + 1) + ' (' + (rp.author || '?') + '): near-dup — будет пропущено');
+      st.reasons.push(
+        labels?.nearDup(idx, rp.author || '?') ||
+          'запись #' + (idx + 1) + ' (' + (rp.author || '?') + '): near-dup — будет пропущено',
+      );
       return;
     }
     keys.add(k);
@@ -203,8 +220,8 @@ function createIngestRun(existing: Post[], incoming: unknown[]) {
  * near-dup: тот же нормализованный автор + Dice ≥ 0.82 по первым 160 символам.
  * SEC-4: скан near-dup бакетизован по автору; входной массив капится MAX_IMPORT_RECORDS.
  */
-export function analyzeIngest(existing: Post[], incoming: unknown[]): IngestReport {
-  const run = createIngestRun(existing, incoming);
+export function analyzeIngest(existing: Post[], incoming: unknown[], labels?: DedupLabels): IngestReport {
+  const run = createIngestRun(existing, incoming, labels);
   run.capped.forEach(run.processOne);
   const { added, dupes, rejected, nearDupes, reasons, valid } = run.st;
 
@@ -234,9 +251,10 @@ export async function analyzeIngestChunked(
   existing: Post[],
   incoming: unknown[],
   opts?: { chunkSize?: number; onProgress?: (p: IngestProgress) => void; signal?: { cancelled: boolean } },
+  labels?: DedupLabels,
 ): Promise<IngestReport> {
   const { chunkSize = 500, onProgress, signal } = opts || {};
-  const run = createIngestRun(existing, incoming);
+  const run = createIngestRun(existing, incoming, labels);
   const total = run.capped.length;
   for (let i = 0; i < total; i += chunkSize) {
     if (signal?.cancelled) break;

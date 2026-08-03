@@ -1,5 +1,5 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
-import { useStore, type TabId } from './store';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { useStore } from './store';
 // FE-2: вкладки — ленивые чанки; на первом экране нужен только «Сегодня»
 const Today = lazy(() => import('./tabs/Today'));
 const Overview = lazy(() => import('./tabs/Overview'));
@@ -15,16 +15,15 @@ import ImportModal from './components/ImportModal';
 import SettingsModal from './components/SettingsModal';
 import OnboardingModal from './components/OnboardingModal';
 import PrintReport from './components/PrintReport';
-import { download } from './lib/download';
+import ExportMenu from './components/ExportMenu';
+import TabBar from './components/TabBar';
+import ToastHost from './components/ToastHost';
+import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
 import { setNumberLocale } from './lib/stats';
 import { isPostingDay, ownPostsThisWeek } from './lib/derive';
-import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from './lib/exports';
 import { PRODUCT_NAME } from './lib/constants';
-import { ensureLocale, intlLocale, type DictKey } from './i18n';
-import { useClusterLabel, useT } from './i18n/useT';
-import WorkspaceSwitcher from '@/components/WorkspaceSwitcher';
-
-const TAB_IDS: TabId[] = ['today', 'overview', 'analytics', 'explorer', 'clusters', 'ideas', 'forecast'];
+import { ensureLocale, intlLocale } from './i18n';
+import { useT } from './i18n/useT';
 
 const hdrBtn: React.CSSProperties = {
   background: 'var(--surface-2)',
@@ -42,60 +41,19 @@ export default function App() {
   const locale = useStore((s) => s.locale);
   const setLocale = useStore((s) => s.setLocale);
   const tab = useStore((s) => s.tab);
-  const setTab = useStore((s) => s.setTab);
-  const toast = useStore((s) => s.toast);
   const readOnly = useStore((s) => s.readOnly);
   const setReadOnly = useStore((s) => s.setReadOnly);
   const setImportOpen = useStore((s) => s.setImportOpen);
   const reset = useStore((s) => s.reset);
   const posts = useStore((s) => s.posts);
-  const ideas = useStore((s) => s.ideas);
   const isDemo = useStore((s) => s.isDemo);
-  const rules = useStore((s) => s.rules);
-  const flash = useStore((s) => s.flash);
   const setSettingsOpen = useStore((s) => s.setSettingsOpen);
   const cadenceGoal = useStore((s) => s.cadenceGoal);
-  const lastDeletedIdea = useStore((s) => s.lastDeletedIdea);
   const askConfirm = useStore((s) => s.askConfirm);
-  const restoreLastIdea = useStore((s) => s.restoreLastIdea);
   const t = useT();
-  const cl = useClusterLabel();
-  const [exportOpen, setExportOpen] = useState(false);
-  const exportRef = useRef<HTMLDivElement>(null);
   // SCALE-1: IndexedDB-гидратация асинхронна — до её конца не решаем «первый ли это запуск»
   const [hydrated, setHydrated] = useState(useStore.persist.hasHydrated());
   useEffect(() => useStore.persist.onFinishHydration(() => setHydrated(true)), []);
-
-  // FE-4: меню «Экспорт» — Escape, стрелки, клик-вне, автофокус первого пункта
-  useEffect(() => {
-    if (!exportOpen) return;
-    const items = () => [...(exportRef.current?.querySelectorAll<HTMLElement>('[role="menuitem"]') || [])];
-    requestAnimationFrame(() => items()[0]?.focus());
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        setExportOpen(false);
-        exportRef.current?.querySelector<HTMLElement>('button[aria-haspopup]')?.focus();
-        return;
-      }
-      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
-        e.preventDefault();
-        const f = items();
-        if (!f.length) return;
-        const idx = f.indexOf(document.activeElement as HTMLElement);
-        const next = e.key === 'ArrowDown' ? (idx + 1) % f.length : (idx - 1 + f.length) % f.length;
-        f[next].focus();
-      }
-    };
-    const onDown = (e: PointerEvent) => {
-      if (exportRef.current && !exportRef.current.contains(e.target as Node)) setExportOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('pointerdown', onDown);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('pointerdown', onDown);
-    };
-  }, [exportOpen]);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -122,26 +80,6 @@ export default function App() {
     document.title = isPostingDay() && n < cadenceGoal ? `(${n}/${cadenceGoal}) ${base}` : base;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [posts, cadenceGoal, locale]);
-
-  const doExport = (kind: 'json' | 'csv' | 'ideas' | 'obsidian') => {
-    setExportOpen(false);
-    if (kind === 'json') {
-      download('linkedin_baza.json', exportPostsJson(posts, rules));
-      flash(t('toast.posts.exported') + posts.length);
-    }
-    if (kind === 'csv') {
-      download('linkedin_baza.csv', exportPostsCsv(posts, rules, cl), 'text/csv;charset=utf-8');
-      flash(t('toast.csv.exported'));
-    }
-    if (kind === 'ideas') {
-      download('idei.csv', exportIdeasCsv(ideas, posts, rules, cl), 'text/csv;charset=utf-8');
-      flash(t('toast.ideas.exported'));
-    }
-    if (kind === 'obsidian') {
-      download('link-and-up-ideas.md', exportObsidian(ideas, rules, cl), 'text/markdown');
-      flash(t('toast.md.exported'));
-    }
-  };
 
   // до конца гидратации не показываем UI: иначе вернувшийся пользователь на миг увидит онбординг
   if (!hydrated) return <div style={{ minHeight: '100%' }} />;
@@ -205,63 +143,7 @@ export default function App() {
               {t('app.load')}
             </button>
           )}
-          <div ref={exportRef} style={{ position: 'relative' }}>
-            <button
-              type="button"
-              style={hdrBtn}
-              onClick={() => setExportOpen((v) => !v)}
-              aria-expanded={exportOpen}
-              aria-haspopup="menu"
-            >
-              {t('app.export')}
-            </button>
-            {exportOpen && (
-              <div
-                role="menu"
-                style={{
-                  position: 'absolute',
-                  right: 0,
-                  top: '110%',
-                  background: 'var(--surface-1)',
-                  border: '1px solid var(--border-strong)',
-                  borderRadius: 8,
-                  boxShadow: 'var(--shadow-modal)',
-                  minWidth: 200,
-                  zIndex: 30,
-                  overflow: 'hidden',
-                }}
-              >
-                {(
-                  [
-                    ['json', 'app.export.json'],
-                    ['csv', 'app.export.csv'],
-                    ['ideas', 'app.export.ideas'],
-                    ['obsidian', 'app.export.obsidian'],
-                  ] as [string, DictKey][]
-                ).map(([k, key]) => (
-                  <button
-                    key={k}
-                    role="menuitem"
-                    type="button"
-                    onClick={() => doExport(k as 'json')}
-                    style={{
-                      display: 'block',
-                      width: '100%',
-                      textAlign: 'left',
-                      background: 'none',
-                      border: 'none',
-                      padding: '9px 12px',
-                      cursor: 'pointer',
-                      color: 'var(--text-1)',
-                      fontSize: 13,
-                    }}
-                  >
-                    {t(key)}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          <ExportMenu />
           <button type="button" style={hdrBtn} onClick={() => window.print()}>
             {t('app.report')}
           </button>
@@ -299,61 +181,7 @@ export default function App() {
         </div>
       </header>
 
-      <div
-        className="no-print"
-        style={{ borderBottom: '1px solid var(--border)', padding: '0 20px', background: 'var(--surface-0)' }}
-      >
-        <div
-          role="tablist"
-          aria-label={t('app.tabs.aria')}
-          style={{ display: 'flex', gap: 4, overflowX: 'auto' }}
-          // FE-4: WAI-ARIA tabs — стрелки листают разделы, roving tabindex
-          onKeyDown={(e) => {
-            if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft' && e.key !== 'Home' && e.key !== 'End') return;
-            e.preventDefault();
-            const idx = TAB_IDS.indexOf(tab);
-            const next =
-              e.key === 'ArrowRight'
-                ? (idx + 1) % TAB_IDS.length
-                : e.key === 'ArrowLeft'
-                  ? (idx - 1 + TAB_IDS.length) % TAB_IDS.length
-                  : e.key === 'Home'
-                    ? 0
-                    : TAB_IDS.length - 1;
-            setTab(TAB_IDS[next]);
-            e.currentTarget.querySelectorAll<HTMLElement>('[role="tab"]')[next]?.focus();
-          }}
-        >
-          {TAB_IDS.map((id) => {
-            const active = tab === id;
-            return (
-              <button
-                key={id}
-                id={'tab-' + id}
-                role="tab"
-                aria-selected={active}
-                aria-controls="tabpanel"
-                tabIndex={active ? 0 : -1}
-                onClick={() => setTab(id)}
-                style={{
-                  background: active ? 'var(--surface-3)' : 'transparent',
-                  border: `1px solid ${active ? 'var(--border-strong)' : 'transparent'}`,
-                  borderBottom: active ? '1px solid var(--surface-3)' : '1px solid transparent',
-                  color: active ? 'var(--text-1)' : 'var(--text-2)',
-                  borderRadius: '8px 8px 0 0',
-                  padding: '9px 16px',
-                  cursor: 'pointer',
-                  fontSize: 13.5,
-                  fontWeight: active ? 600 : 400,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {t(('tab.' + id) as DictKey)}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      <TabBar />
 
       <main
         id="tabpanel"
@@ -384,47 +212,7 @@ export default function App() {
       <ConfirmHost />
       <PrintReport />
 
-      {toast && (
-        <div
-          className="no-print"
-          aria-live="polite"
-          style={{
-            position: 'fixed',
-            bottom: 20,
-            left: '50%',
-            transform: 'translateX(-50%)',
-            background: 'var(--surface-3)',
-            border: '1px solid var(--border-strong)',
-            borderRadius: 10,
-            padding: '10px 16px',
-            fontSize: 13,
-            boxShadow: 'var(--shadow-modal)',
-            zIndex: 60,
-            display: 'flex',
-            gap: 12,
-            alignItems: 'center',
-          }}
-        >
-          {toast}
-          {/* М12: undo удаления идеи, пока тост на экране */}
-          {lastDeletedIdea && (
-            <button
-              type="button"
-              onClick={restoreLastIdea}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-accent)',
-                cursor: 'pointer',
-                fontSize: 13,
-                fontWeight: 600,
-              }}
-            >
-              {t('toast.undo')}
-            </button>
-          )}
-        </div>
-      )}
+      <ToastHost />
     </div>
   );
 }

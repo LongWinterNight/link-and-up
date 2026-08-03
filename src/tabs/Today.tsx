@@ -16,7 +16,7 @@ import { Btn, EmptyState, Input, Panel, Pill, Select } from '@/components/ui';
 import { FORMULAS } from '@/lib/constants';
 import type { ClusterId } from '@/types';
 import EmptyCorpus from '@/components/EmptyCorpus';
-import { useClusterLabel, useT } from '@/i18n/useT';
+import { useClusterLabel, useDraftLabels, useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
 
 /** Б7 (P-2, D3-полный режим): ранжирование вариантов хука между собой. */
@@ -157,6 +157,7 @@ export default function Today() {
   const clusterDefs = useStore((s) => s.clusters);
   const t = useT();
   const cl = useClusterLabel();
+  const { labels: draftLabels, locale: draftLocale } = useDraftLabels();
 
   const saveIdea = useStore((s) => s.saveIdea);
   const candidates = useMemo(() => ideas.filter((i) => i.status !== 'published'), [ideas]);
@@ -221,7 +222,10 @@ export default function Today() {
 
   const flags = useMemo(() => (idea ? validateIdea(idea, rules) : []), [idea, rules]);
   const hard = hasHardFlag(flags);
-  const draft = useMemo(() => (idea ? generateDraft(idea, rules, cl) : null), [idea, rules, cl]);
+  const draft = useMemo(
+    () => (idea ? generateDraft(idea, rules, cl, draftLabels, draftLocale) : null),
+    [idea, rules, cl, draftLabels, draftLocale],
+  );
   const effCal = effectiveCalibration(calibration, calibrationCount);
   const sel = useMemo(() => selectMultipliers(posts), [posts]);
   const fc = useMemo(() => forecast(idea, posts, effCal, sel.multipliers), [idea, posts, effCal, sel]);

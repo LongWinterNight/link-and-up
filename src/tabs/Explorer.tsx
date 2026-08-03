@@ -425,6 +425,60 @@ export default function Explorer() {
             ['date', t('ex.sort.date')],
           ]}
         />
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
+          {t('ex.f.minC')}
+          <input
+            type="number"
+            min={0}
+            value={filters.minC}
+            onChange={(e) => setFilters({ minC: e.target.value })}
+            aria-label={t('ex.f.minC')}
+            style={{ ...selStyle, width: 80 }}
+          />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
+          {t('ex.f.maxC')}
+          <input
+            type="number"
+            min={0}
+            value={filters.maxC}
+            onChange={(e) => setFilters({ maxC: e.target.value })}
+            aria-label={t('ex.f.maxC')}
+            style={{ ...selStyle, width: 80 }}
+          />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
+          {t('ex.f.minER')}
+          <input
+            type="number"
+            min={0}
+            step={0.01}
+            value={filters.minER}
+            onChange={(e) => setFilters({ minER: e.target.value })}
+            aria-label={t('ex.f.minER')}
+            style={{ ...selStyle, width: 80 }}
+          />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
+          {t('ex.f.dateFrom')}
+          <input
+            type="date"
+            value={filters.dateFrom}
+            onChange={(e) => setFilters({ dateFrom: e.target.value })}
+            aria-label={t('ex.f.dateFrom')}
+            style={{ ...selStyle, width: 140 }}
+          />
+        </label>
+        <label style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11, color: 'var(--text-3)' }}>
+          {t('ex.f.dateTo')}
+          <input
+            type="date"
+            value={filters.dateTo}
+            onChange={(e) => setFilters({ dateTo: e.target.value })}
+            aria-label={t('ex.f.dateTo')}
+            style={{ ...selStyle, width: 140 }}
+          />
+        </label>
         <button type="button" onClick={resetFilters} style={{ ...selStyle, cursor: 'pointer', alignSelf: 'flex-end' }}>
           {t('ex.reset')}
         </button>

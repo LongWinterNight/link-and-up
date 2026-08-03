@@ -38,7 +38,7 @@ describe('демо-корпус (seed_posts.json)', () => {
     const bad = seedPosts.filter((p) => {
       const url = (p.url || '').trim();
       if (!url) return false;
-      const isPermalink = /linkedin\.com\/posts\/.+activity-\d{19}-[\w-]+/i.test(url);
+      const isPermalink = /linkedin\.com\/(?:posts|videos)\/.+activity-\d{19}-[\w-]+/i.test(url);
       return !isPermalink || !(p as { verified_at?: string }).verified_at;
     });
     expect(bad.map((p) => p.author)).toEqual([]);

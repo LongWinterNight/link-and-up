@@ -7,7 +7,7 @@ import { download } from '@/lib/download';
 import type { ClusterId, Idea, IdeaStatus } from '@/types';
 import { Btn, EmptyState, Panel, Pill } from '@/components/ui';
 import { Modal } from '@/components/Modal';
-import { useClusterLabel, useLbl, useT } from '@/i18n/useT';
+import { useClusterLabel, useDraftLabels, useLbl, useT } from '@/i18n/useT';
 import { intlLocale, type DictKey } from '@/i18n';
 
 const inp: React.CSSProperties = {
@@ -307,7 +307,8 @@ function DraftModal({ idea, onClose }: { idea: Idea; onClose: () => void }) {
   const t = useT();
   const cl = useClusterLabel();
   const rules = useStore((s) => s.rules);
-  const { text, blocked } = generateDraft(idea, rules, cl);
+  const { labels: draftLabels, locale: draftLocale } = useDraftLabels();
+  const { text, blocked } = generateDraft(idea, rules, cl, draftLabels, draftLocale);
   return (
     <Modal onClose={onClose} label={t('id.draft.aria')} width={720}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>

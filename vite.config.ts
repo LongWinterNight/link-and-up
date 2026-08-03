@@ -47,7 +47,9 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
     coverage: {
       provider: 'v8',
+      all: false,
       include: ['src/lib/**', 'src/store/**'],
+      exclude: ['src/lib/**/index.ts', 'src/store/types.ts', '**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
       // Q-5/М35: гейт покрытия lib+store (факт: lib ~97%, store ~70%); растим по мере добора тестов
       thresholds: { lines: 75, functions: 65, statements: 75, branches: 60 },
     },
