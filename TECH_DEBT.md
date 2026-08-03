@@ -121,10 +121,10 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ## Фаза 3: Тестовое покрытие → блокирует уверенность в качестве
 
-> Текущее покрытие: 92.98% lines / 86.16% branches / 85.80% functions.
-> Слабые места: shareCard (42%), persistCore (0 тестов), exports branches (73%).
+> Текущее покрытие: 95.29% lines / 86.60% branches / 87.09% functions.
+> Слабые места: persistCore (0 тестов), exports branches (73%), guardrails branches (78%).
 
-### 3.1 drawShareCard — mock-canvas тест (M)
+### 3.1 drawShareCard — mock-canvas тест (M) ✅
 
 **Файл:** `src/lib/shareCard.test.ts`
 
