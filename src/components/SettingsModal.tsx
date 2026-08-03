@@ -189,28 +189,14 @@ export default function SettingsModal() {
   };
 
   return (
-    <Modal onClose={() => setOpen(false)} label={t('se.title')} width={720} zIndex={55}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700 }}>{t('se.title')}</h2>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          aria-label={t('an.modal.close')}
-          style={{
-            background: 'var(--surface-2)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            width: 32,
-            height: 32,
-            cursor: 'pointer',
-            color: 'var(--text-1)',
-            fontSize: 18,
-          }}
-        >
-          ×
-        </button>
-      </div>
-
+    <Modal
+      onClose={() => setOpen(false)}
+      label={t('se.title')}
+      title={t('se.title')}
+      closeLabel={t('an.modal.close')}
+      width={720}
+      zIndex={55}
+    >
       {/* Общие */}
       <div
         style={{

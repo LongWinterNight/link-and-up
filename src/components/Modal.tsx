@@ -2,6 +2,18 @@ import { useEffect, useRef, type ReactNode } from 'react';
 
 const FOCUSABLE = 'button,a[href],input,select,textarea,[tabindex]:not([tabindex="-1"])';
 
+const CLOSE_BTN_STYLE: React.CSSProperties = {
+  background: 'var(--surface-2)',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+  width: 32,
+  height: 32,
+  cursor: 'pointer',
+  color: 'var(--text-1)',
+  fontSize: 18,
+  flexShrink: 0,
+};
+
 /**
  * Единый примитив модалки: оверлей + role="dialog" + focus-trap + Escape + автофокус +
  * возврат фокуса на триггер. Заменяет дублированные обёртки (WCAG 2.4.3 / no focus leak).
@@ -10,6 +22,9 @@ export function Modal({
   onClose,
   label,
   labelledBy,
+  title,
+  titleNode,
+  closeLabel,
   children,
   width = 720,
   closeOnOverlay = true,
@@ -18,6 +33,9 @@ export function Modal({
   onClose: () => void;
   label?: string;
   labelledBy?: string;
+  title?: string;
+  titleNode?: ReactNode;
+  closeLabel?: string;
   children: ReactNode;
   width?: number;
   closeOnOverlay?: boolean;
@@ -25,6 +43,7 @@ export function Modal({
 }) {
   const dialogRef = useRef<HTMLDivElement>(null);
   const lastFocus = useRef<Element | null>(null);
+  const showHeader = title || titleNode;
 
   useEffect(() => {
     lastFocus.current = document.activeElement;
@@ -93,6 +112,22 @@ export function Modal({
           padding: 20,
         }}
       >
+        {showHeader && (
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: titleNode ? 'flex-start' : 'center',
+              gap: titleNode ? 12 : undefined,
+              marginBottom: 12,
+            }}
+          >
+            {titleNode ? titleNode : <h2 style={{ fontSize: 16, fontWeight: 700 }}>{title}</h2>}
+            <button type="button" onClick={onClose} aria-label={closeLabel} style={CLOSE_BTN_STYLE}>
+              ×
+            </button>
+          </div>
+        )}
         {children}
       </div>
     </div>

@@ -38,28 +38,14 @@ export default function ShareCardModal({ post, onClose }: { post: Post; onClose:
   };
 
   return (
-    <Modal onClose={onClose} label={t('sc.title')} width={720} zIndex={60}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-        <h2 style={{ fontSize: 16, fontWeight: 700 }}>{t('sc.title')}</h2>
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={t('an.modal.close')}
-          style={{
-            background: 'var(--surface-2)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            width: 32,
-            height: 32,
-            cursor: 'pointer',
-            color: 'var(--text-1)',
-            fontSize: 18,
-          }}
-        >
-          ×
-        </button>
-      </div>
-
+    <Modal
+      onClose={onClose}
+      label={t('sc.title')}
+      title={t('sc.title')}
+      closeLabel={t('an.modal.close')}
+      width={720}
+      zIndex={60}
+    >
       {/* явный consent до генерации */}
       <div style={{ fontSize: 12.5, color: 'var(--text-2)', lineHeight: 1.55, marginBottom: 12 }}>
         {t('sc.consent')}

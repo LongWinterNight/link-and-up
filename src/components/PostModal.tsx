@@ -58,40 +58,19 @@ export default function PostModal() {
   const fmt = post.tags.formatText;
 
   return (
-    <Modal onClose={close} label={t('pm.aria') + post.author} width={720} zIndex={50}>
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          gap: 12,
-          alignItems: 'flex-start',
-          marginBottom: 12,
-        }}
-      >
+    <Modal
+      onClose={close}
+      label={t('pm.aria') + post.author}
+      titleNode={
         <div>
           <h2 style={{ fontSize: 16, fontWeight: 700 }}>{post.author}</h2>
           {post.headline && <div style={{ fontSize: 12.5, color: 'var(--text-3)', marginTop: 2 }}>{post.headline}</div>}
         </div>
-        <button
-          type="button"
-          onClick={close}
-          aria-label={t('an.modal.close')}
-          style={{
-            background: 'var(--surface-2)',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            width: 32,
-            height: 32,
-            cursor: 'pointer',
-            color: 'var(--text-1)',
-            fontSize: 18,
-            flexShrink: 0,
-          }}
-        >
-          ×
-        </button>
-      </div>
-
+      }
+      closeLabel={t('an.modal.close')}
+      width={720}
+      zIndex={50}
+    >
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
         <Pill kind="cluster">{cl(post.meta_cluster)}</Pill>
         <Pill kind="lang">{post.lang}</Pill>
