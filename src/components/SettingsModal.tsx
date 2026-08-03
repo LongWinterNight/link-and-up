@@ -3,7 +3,7 @@ import { toPersistedSlice, useStore } from '@/store';
 import { exportStateJson, parseBackup } from '@/lib/backup';
 import { validatePattern } from '@/lib/guardrails';
 import { NICHE_PACKS, NICHES } from '@/lib/nichePacks';
-import { useT } from '@/i18n/useT';
+import { useT, useGuardrailsLabels, useBackupLabels } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
 import { exportAuditCsv } from '@/lib/exports';
 import { download } from '@/lib/download';
@@ -108,6 +108,8 @@ export default function SettingsModal() {
   const flash = useStore((s) => s.flash);
   const askConfirm = useStore((s) => s.askConfirm);
   const t = useT();
+  const guardLabels = useGuardrailsLabels();
+  const backupLabels = useBackupLabels();
 
   const onRestoreFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -115,7 +117,7 @@ export default function SettingsModal() {
     const rd = new FileReader();
     rd.onload = () => {
       try {
-        const backup = parseBackup(String(rd.result));
+        const backup = parseBackup(String(rd.result), backupLabels);
         const cur = useStore.getState();
         void askConfirm(
           t('se.data.confirm.a') +
@@ -165,7 +167,7 @@ export default function SettingsModal() {
       return;
     }
     // SEC-2: длина, компиляция, вложенные квантификаторы, тайминг-проба
-    const err = validatePattern(nPattern);
+    const err = validatePattern(nPattern, guardLabels);
     if (err) {
       setPatternErr(err);
       return;

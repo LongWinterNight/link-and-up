@@ -1,5 +1,17 @@
 import type { GuardrailFlag, Idea, Rule } from '@/types';
 
+export interface GuardrailsLabels {
+  /** Локализованные label/message для встроенных правил по id. */
+  ruleLabels: Record<string, { label: string; message: string }>;
+  patEmpty: string;
+  patTooLong: (max: number) => string;
+  patBadRegex: (msg: string) => string;
+  patNestedQuant: string;
+  patSlow: string;
+  redactedA: string;
+  redactedB: string;
+}
+
 /**
  * Гардрейлы (brand-safety) — конфигурируемый движок правил.
  * Заменяет захардкоженные «красные линии» на набор правил, который пользователь может менять.
@@ -62,22 +74,24 @@ const NESTED_QUANTIFIER = /\((?:[^()\\]|\\.)*(?:[*+]|\{\d+,\d*\})(?:[^()\\]|\\.)
  * Три барьера: длина, компиляция, эвристика вложенных квантификаторов + таймин-проба
  * на длинной строке без совпадения (худший случай для backtracking).
  */
-export function validatePattern(pattern: string): string | null {
+export function validatePattern(pattern: string, labels?: GuardrailsLabels): string | null {
   const p = (pattern || '').trim();
-  if (!p) return 'Пустой паттерн';
-  if (p.length > MAX_PATTERN_LENGTH) return `Паттерн длиннее ${MAX_PATTERN_LENGTH} символов`;
+  if (!p) return labels?.patEmpty || 'Пустой паттерн';
+  if (p.length > MAX_PATTERN_LENGTH)
+    return labels?.patTooLong(MAX_PATTERN_LENGTH) || `Паттерн длиннее ${MAX_PATTERN_LENGTH} символов`;
   let re: RegExp;
   try {
     re = new RegExp(foldYo(p), 'iu');
   } catch (e) {
-    return 'Некорректное регулярное выражение: ' + (e as Error).message;
+    return labels?.patBadRegex((e as Error).message) || 'Некорректное регулярное выражение: ' + (e as Error).message;
   }
   if (NESTED_QUANTIFIER.test(p))
-    return 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)';
+    return labels?.patNestedQuant || 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)';
   const probe = 'а'.repeat(3000) + '!';
   const t0 = performance.now();
   re.test(probe);
-  if (performance.now() - t0 > 50) return 'Паттерн слишком медленный на длинном тексте — упростите его';
+  if (performance.now() - t0 > 50)
+    return labels?.patSlow || 'Паттерн слишком медленный на длинном тексте — упростите его';
   return null;
 }
 
@@ -108,13 +122,15 @@ export function validateIdea(idea: Pick<Idea, 'title' | 'hook'>, rules: Rule[] =
  * Для экспортов: запрещённый термин не должен покидать устройство даже внутри
  * текста поста. Матчим паттерн как написан и его ё→е вариант.
  */
-export function redactHard(text: string, rules: Rule[] = DEFAULT_RULES): string {
+export function redactHard(text: string, rules: Rule[] = DEFAULT_RULES, labels?: GuardrailsLabels): string {
   let out = text || '';
   for (const r of rules) {
     if (!r.enabled || r.severity !== 'hard') continue;
+    const label = labels?.ruleLabels[r.id]?.label || r.label;
+    const replacement = (labels?.redactedA || '[удалено: ') + label + (labels?.redactedB || ']');
     for (const pat of new Set([r.pattern, foldYo(r.pattern)])) {
       try {
-        out = out.replace(new RegExp(pat, 'giu'), '[удалено: ' + r.label + ']');
+        out = out.replace(new RegExp(pat, 'giu'), replacement);
       } catch {
         continue; // битый пользовательский паттерн — пропускаем
       }

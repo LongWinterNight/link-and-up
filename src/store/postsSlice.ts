@@ -2,10 +2,44 @@ import type { StateCreator } from 'zustand';
 import type { Post, Tags } from '@/types';
 import { enrichAll, tagPost } from '@/lib/enrich';
 import { assignCluster } from '@/lib/autoCluster';
-import { analyzeIngest, analyzeIngestChunked, mergeIngest, type IngestProgress, type IngestReport } from '@/lib/dedup';
-import { tr } from '@/i18n';
+import {
+  analyzeIngest,
+  analyzeIngestChunked,
+  mergeIngest,
+  type IngestProgress,
+  type IngestReport,
+  type DedupLabels,
+} from '@/lib/dedup';
+import { tr, type Locale } from '@/i18n';
 import { DEFAULT_FILTERS, type State } from './types';
 import { audit } from './utils';
+
+/** Локализованные метки для dedup — используются store-слайсами (без хуков). */
+function dedupLabels(locale: Locale): DedupLabels {
+  return {
+    notObject: (idx) => tr(locale, 'dedup.notObject') + (idx + 1) + tr(locale, 'dedup.notObjectEnd'),
+    noAuthorNoText: (idx) => tr(locale, 'dedup.notObject') + (idx + 1) + tr(locale, 'dedup.noAuthorNoText'),
+    emptyText: (idx, author) =>
+      tr(locale, 'dedup.notObject') +
+      (idx + 1) +
+      tr(locale, 'dedup.emptyText') +
+      author +
+      tr(locale, 'dedup.emptyTextEnd'),
+    emptyAuthor: (idx) => tr(locale, 'dedup.notObject') + (idx + 1) + tr(locale, 'dedup.emptyAuthor'),
+    notNumber: (idx, field, value) =>
+      tr(locale, 'dedup.notObject') +
+      (idx + 1) +
+      tr(locale, 'dedup.notNumber') +
+      field +
+      tr(locale, 'dedup.notNumberEnd') +
+      value +
+      ')',
+    nearDup: (idx, author) =>
+      tr(locale, 'dedup.notObject') + (idx + 1) + tr(locale, 'dedup.nearDup') + author + tr(locale, 'dedup.nearDupEnd'),
+    capped: (max, received) =>
+      tr(locale, 'dedup.capped') + max + tr(locale, 'dedup.cappedEnd') + received + tr(locale, 'dedup.cappedEnd2'),
+  };
+}
 
 /** Слайс корпуса постов: демо/импорт/теги. */
 export interface PostsSlice {
@@ -56,7 +90,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
 
   ingestJson: (text) => {
     const arr = parsePostsJson(text);
-    const report = analyzeIngest(get().posts, arr);
+    const report = analyzeIngest(get().posts, arr, dedupLabels(get().locale));
     if (report.added > 0) {
       set({
         posts: mergeIngest(get().posts, report.valid),
@@ -134,14 +168,14 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
     return get().previewImportRaws(parsePostsJson(text), onProgress, signal);
   },
   previewImportRaws: async (raws, onProgress, signal) => {
-    const report = await analyzeIngestChunked(get().posts, raws, { onProgress, signal });
+    const report = await analyzeIngestChunked(get().posts, raws, { onProgress, signal }, dedupLabels(get().locale));
     if (signal.cancelled) return null;
     set({ importPreview: report });
     return report;
   },
   previewImport: (text) => {
     const arr = parsePostsJson(text);
-    const report = analyzeIngest(get().posts, arr);
+    const report = analyzeIngest(get().posts, arr, dedupLabels(get().locale));
     set({ importPreview: report });
     return report;
   },

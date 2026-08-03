@@ -1,5 +1,10 @@
 import type { RawPost } from '@/types';
 
+export interface ImportLabels {
+  empty: string;
+  badFormat: string;
+}
+
 /**
  * Б4: импорт официального self-export LinkedIn (Settings → Get a copy of your data → Shares.csv).
  * Это главный канал РЕАЛЬНЫХ проверяемых данных (директива провенанса): тексты и пермалинки —
@@ -60,16 +65,18 @@ export interface LinkedInImportResult {
 }
 
 /** Маппинг Shares.csv → RawPost[]. Колонки ищутся по заголовкам (регистронезависимо). */
-export function parseLinkedInShares(csvText: string, ownAuthor: string): LinkedInImportResult {
+export function parseLinkedInShares(csvText: string, ownAuthor: string, labels?: ImportLabels): LinkedInImportResult {
   const rows = parseCsv(csvText);
-  if (!rows.length) throw new Error('Файл пуст');
+  if (!rows.length) throw new Error(labels?.empty || 'Файл пуст');
   const header = rows[0].map((h) => h.trim().toLowerCase());
   const col = (name: string) => header.indexOf(name.toLowerCase());
   const iDate = col('date');
   const iLink = col('sharelink');
   const iText = col('sharecommentary');
   if (iText === -1 || iDate === -1) {
-    throw new Error('Это не Shares.csv из экспорта LinkedIn: не найдены колонки Date/ShareCommentary');
+    throw new Error(
+      labels?.badFormat || 'Это не Shares.csv из экспорта LinkedIn: не найдены колонки Date/ShareCommentary',
+    );
   }
   const raws: RawPost[] = [];
   let skipped = 0;

@@ -2,6 +2,10 @@ import { useStore } from '@/store';
 import type { BacktestLabels, ForecastLabels } from '@/lib/forecast';
 import type { DraftLabels } from '@/lib/draft';
 import type { ExportLabels } from '@/lib/exports';
+import type { GuardrailsLabels } from '@/lib/guardrails';
+import type { ImportLabels } from '@/lib/linkedinImport';
+import type { ShareCardLabels } from '@/lib/shareCard';
+import type { BackupLabels } from '@/lib/backup';
 import { clusterLabel, lbl, tr, type DictKey } from './index';
 
 /** Хук перевода: ре-рендерится при смене locale и после догрузки словаря (i18nVersion). */
@@ -144,5 +148,67 @@ export function useExportLabels(): ExportLabels {
       title: t('export.redacted.title'),
       hook: t('export.redacted.hook'),
     },
+  };
+}
+
+/** Локализованные метки для lib/guardrails. */
+export function useGuardrailsLabels(): GuardrailsLabels {
+  const t = useT();
+  return {
+    ruleLabels: {
+      superlative: { label: t('guard.rule.superlative.label'), message: t('guard.rule.superlative.msg') },
+      absolute: { label: t('guard.rule.absolute.label'), message: t('guard.rule.absolute.msg') },
+      'unverified-big': { label: t('guard.rule.unverifiedBig.label'), message: t('guard.rule.unverifiedBig.msg') },
+      hype: { label: t('guard.rule.hype.label'), message: t('guard.rule.hype.msg') },
+    },
+    patEmpty: t('guard.pat.empty'),
+    patTooLong: (max) => t('guard.pat.tooLong') + max + t('guard.pat.tooLongEnd'),
+    patBadRegex: (msg) => t('guard.pat.badRegex') + msg,
+    patNestedQuant: t('guard.pat.nestedQuant'),
+    patSlow: t('guard.pat.slow'),
+    redactedA: t('guard.redacted.a'),
+    redactedB: t('guard.redacted.b'),
+  };
+}
+
+/** Локализованные метки для lib/linkedinImport. */
+export function useImportLabels(): ImportLabels {
+  const t = useT();
+  return {
+    empty: t('import.linkedin.empty'),
+    badFormat: t('import.linkedin.badFormat'),
+  };
+}
+
+/** Локализованные метки для lib/shareCard. */
+export function useShareCardLabels(): ShareCardLabels {
+  const t = useT();
+  return {
+    altPrefix: t('card.alt.prefix'),
+    altCluster: t('card.alt.cluster'),
+    altTechniques: t('card.alt.techniques'),
+    altEngagement: t('card.alt.engagement'),
+    altReactions: t('card.alt.reactions'),
+    altReactionsUnknown: t('card.alt.reactionsUnknown'),
+    altComments: t('card.alt.comments'),
+    altCommentsUnknown: t('card.alt.commentsUnknown'),
+    altMetricsUnknown: t('card.alt.metricsUnknown'),
+    altGenerated: t('card.alt.generated'),
+    heading: t('card.heading'),
+    metricsUnknown: t('card.metricsUnknown'),
+    canvasError: t('card.canvasError'),
+    pngError: t('card.pngError'),
+  };
+}
+
+/** Локализованные метки для lib/backup. */
+export function useBackupLabels(): BackupLabels {
+  const t = useT();
+  return {
+    notJson: t('backup.notJson'),
+    notOurs: t('backup.notOurs'),
+    badSchema: (found, current) =>
+      t('backup.badSchema') + found + t('backup.badSchemaEnd') + current + t('backup.badSchemaEnd2'),
+    corrupt: t('backup.corrupt'),
   };
 }

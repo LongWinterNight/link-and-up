@@ -2,6 +2,23 @@ import type { Post } from '@/types';
 import { nf } from './stats';
 import { PRODUCT_NAME } from './constants';
 
+export interface ShareCardLabels {
+  altPrefix: string;
+  altCluster: string;
+  altTechniques: string;
+  altEngagement: string;
+  altReactions: string;
+  altReactionsUnknown: string;
+  altComments: string;
+  altCommentsUnknown: string;
+  altMetricsUnknown: string;
+  altGenerated: string;
+  heading: string;
+  metricsUnknown: string;
+  canvasError: string;
+  pngError: string;
+}
+
 /**
  * Б8 (P-4): шаримая карточка разбора поста. Резолюции совета: генерация СТРОГО локальная
  * (canvas, ничего не уходит с устройства), водяной знак обязателен (защита от подделки и
@@ -13,26 +30,30 @@ export const CARD_H = 630;
 const WATERMARK = PRODUCT_NAME + ' · link-and-up.vercel.app';
 
 /** Автогенерируемый alt-текст карточки (Accessibility: изображение недоступно скринридеру). */
-export function buildAltText(post: Post, clusterLabel: string): string {
+export function buildAltText(post: Post, clusterLabel: string, labels?: ShareCardLabels): string {
   const metrics = post.has_metrics
-    ? (post.reactions > 0 ? nf(post.reactions) + ' реакций' : 'реакции неизвестны') +
+    ? (post.reactions > 0
+        ? nf(post.reactions) + (labels?.altReactions || ' реакций')
+        : labels?.altReactionsUnknown || 'реакции неизвестны') +
       ', ' +
-      (post.comments > 0 ? nf(post.comments) + ' комментариев' : 'комментарии неизвестны')
-    : 'метрики неизвестны';
+      (post.comments > 0
+        ? nf(post.comments) + (labels?.altComments || ' комментариев')
+        : labels?.altCommentsUnknown || 'комментарии неизвестны')
+    : labels?.altMetricsUnknown || 'метрики неизвестны';
   return (
-    'Карточка разбора поста LinkedIn. Автор: ' +
+    (labels?.altPrefix || 'Карточка разбора поста LinkedIn. Автор: ') +
     post.author +
-    '. Кластер: ' +
+    (labels?.altCluster || '. Кластер: ') +
     clusterLabel +
-    '. Приёмы: ' +
+    (labels?.altTechniques || '. Приёмы: ') +
     post.tags.hook_type +
     ', ' +
     post.tags.structure +
     ', ' +
     post.tags.emotion +
-    '. Вовлечение: ' +
+    (labels?.altEngagement || '. Вовлечение: ') +
     metrics +
-    '. Сгенерировано в ' +
+    (labels?.altGenerated || '. Сгенерировано в ') +
     PRODUCT_NAME +
     '.'
   );
@@ -76,12 +97,12 @@ function pill(ctx: CanvasRenderingContext2D, x: number, y: number, label: string
 }
 
 /** Рисует карточку на canvas и возвращает PNG-blob. Только локально; без сети. */
-export async function drawShareCard(post: Post, clusterLabel: string): Promise<Blob> {
+export async function drawShareCard(post: Post, clusterLabel: string, labels?: ShareCardLabels): Promise<Blob> {
   const canvas = document.createElement('canvas');
   canvas.width = CARD_W;
   canvas.height = CARD_H;
   const ctx = canvas.getContext('2d');
-  if (!ctx) throw new Error('Canvas недоступен в этом браузере');
+  if (!ctx) throw new Error(labels?.canvasError || 'Canvas недоступен в этом браузере');
 
   // фон
   const grad = ctx.createLinearGradient(0, 0, CARD_W, CARD_H);
@@ -96,7 +117,7 @@ export async function drawShareCard(post: Post, clusterLabel: string): Promise<B
   // шапка: разбор поста
   ctx.fillStyle = '#8b93a7';
   ctx.font = '600 26px system-ui, sans-serif';
-  ctx.fillText('РАЗБОР ПОСТА', 64, 84);
+  ctx.fillText(labels?.heading || 'РАЗБОР ПОСТА', 64, 84);
 
   // автор + кластер
   ctx.fillStyle = '#e8ecf4';
@@ -126,7 +147,7 @@ export async function drawShareCard(post: Post, clusterLabel: string): Promise<B
   ctx.font = '700 40px system-ui, sans-serif';
   const metrics = post.has_metrics
     ? '♥ ' + (post.reactions > 0 ? nf(post.reactions) : '—') + '   💬 ' + (post.comments > 0 ? nf(post.comments) : '—')
-    : 'метрики неизвестны';
+    : labels?.metricsUnknown || 'метрики неизвестны';
   ctx.fillText(metrics, 64, 556);
   if (post.rate != null) {
     ctx.fillStyle = '#8b93a7';
@@ -141,6 +162,9 @@ export async function drawShareCard(post: Post, clusterLabel: string): Promise<B
   ctx.fillText(wm, CARD_W - ctx.measureText(wm).width - 48, CARD_H - 36);
 
   return new Promise<Blob>((resolve, reject) => {
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Не удалось сформировать PNG'))), 'image/png');
+    canvas.toBlob(
+      (b) => (b ? resolve(b) : reject(new Error(labels?.pngError || 'Не удалось сформировать PNG'))),
+      'image/png',
+    );
   });
 }

@@ -738,5 +738,51 @@ export const ru = {
   'an.scatter.both.a': 'Показаны посты, где известны обе метрики: ',
   'an.scatter.both.b': ' из ',
   'an.scatter.both.c': ' с метриками; у остальных реакции не были собраны источником (0 = неизвестно).',
+
+  // --- guardrails labels ---
+  'guard.rule.superlative.label': 'Превосходная степень без доказательства',
+  'guard.rule.superlative.msg':
+    'Заявление «первый / лучший / единственный» — приложите доказательство или переформулируйте.',
+  'guard.rule.absolute.label': 'Абсолютные обещания',
+  'guard.rule.absolute.msg': 'Абсолютные обещания снижают доверие — смягчите формулировку.',
+  'guard.rule.unverifiedBig.label': 'Непроверяемая крупная цифра',
+  'guard.rule.unverifiedBig.msg': 'Крупная цифра без источника читается как puffery — добавьте источник или уберите.',
+  'guard.rule.hype.label': 'Хайп / мотивационный шум',
+  'guard.rule.hype.msg': 'Хайп-обороты сжигают доверие — дайте конкретику вместо шума.',
+  'guard.pat.empty': 'Пустой паттерн',
+  'guard.pat.tooLong': 'Паттерн длиннее ',
+  'guard.pat.tooLongEnd': ' символов',
+  'guard.pat.badRegex': 'Некорректное регулярное выражение: ',
+  'guard.pat.nestedQuant': 'Вложенные квантификаторы вида (a+)+ запрещены — риск зависания вкладки (ReDoS)',
+  'guard.pat.slow': 'Паттерн слишком медленный на длинном тексте — упростите его',
+  'guard.redacted.a': '[удалено: ',
+  'guard.redacted.b': ']',
+
+  // --- import labels ---
+  'import.linkedin.empty': 'Файл пуст',
+  'import.linkedin.badFormat': 'Это не Shares.csv из экспорта LinkedIn: не найдены колонки Date/ShareCommentary',
+
+  // --- shareCard labels ---
+  'card.alt.prefix': 'Карточка разбора поста LinkedIn. Автор: ',
+  'card.alt.cluster': '. Кластер: ',
+  'card.alt.techniques': '. Приёмы: ',
+  'card.alt.engagement': '. Вовлечение: ',
+  'card.alt.reactions': ' реакций',
+  'card.alt.reactionsUnknown': 'реакции неизвестны',
+  'card.alt.comments': ' комментариев',
+  'card.alt.commentsUnknown': 'комментарии неизвестны',
+  'card.alt.metricsUnknown': 'метрики неизвестны',
+  'card.alt.generated': '. Сгенерировано в ',
+  'card.heading': 'РАЗБОР ПОСТА',
+  'card.metricsUnknown': 'метрики неизвестны',
+  'card.canvasError': 'Canvas недоступен в этом браузере',
+  'card.pngError': 'Не удалось сформировать PNG',
+
+  // --- error boundary ---
+  'error.title': 'Что-то сломалось в интерфейсе',
+  'error.body':
+    'Ваши данные целы — они сохраняются локально независимо от интерфейса. Перезагрузите страницу; если повторится — скопируйте отчёт и приложите его к issue.',
+  'error.reload': 'Перезагрузить',
+  'error.copyReport': 'Скопировать отчёт',
 };
 export type DictKey = keyof typeof ru;

@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { tr, type Locale } from '@/i18n';
 
 /**
  * М42 (Б10): ошибка рендера не должна ронять всё приложение и терять работу пользователя
@@ -6,6 +7,20 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
  * (инвариант Governance); «Скопировать отчёт» — для ручной отправки при желании пользователя.
  */
 const ERR_KEY = 'lidb_errors';
+
+/** Class-компонент не может использовать useT() — читаем locale из persist напрямую. */
+function getLocale(): Locale {
+  try {
+    const raw = localStorage.getItem('lidb');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed?.state?.locale) return parsed.state.locale as Locale;
+    }
+  } catch {
+    // ignore
+  }
+  return 'ru';
+}
 
 interface ErrEntry {
   t: string;
@@ -49,6 +64,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
 
   render() {
     if (!this.state.error) return this.props.children;
+    const l = getLocale();
     return (
       <div
         role="alert"
@@ -61,11 +77,8 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
           borderRadius: 'var(--radius-card)',
         }}
       >
-        <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>Что-то сломалось в интерфейсе</h2>
-        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55, marginBottom: 6 }}>
-          Ваши данные целы — они сохраняются локально независимо от интерфейса. Перезагрузите страницу; если повторится
-          — скопируйте отчёт и приложите его к issue.
-        </p>
+        <h2 style={{ fontSize: 16, fontWeight: 700, marginBottom: 8 }}>{tr(l, 'error.title')}</h2>
+        <p style={{ fontSize: 13, color: 'var(--text-2)', lineHeight: 1.55, marginBottom: 6 }}>{tr(l, 'error.body')}</p>
         <pre
           style={{
             fontSize: 11.5,
@@ -92,7 +105,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
               fontSize: 13,
             }}
           >
-            Перезагрузить
+            {tr(l, 'error.reload')}
           </button>
           <button
             type="button"
@@ -107,7 +120,7 @@ export class ErrorBoundary extends Component<{ children: ReactNode }, { error: E
               fontSize: 13,
             }}
           >
-            Скопировать отчёт
+            {tr(l, 'error.copyReport')}
           </button>
         </div>
       </div>

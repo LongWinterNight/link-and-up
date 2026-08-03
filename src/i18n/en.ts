@@ -732,4 +732,49 @@ export const en: Record<DictKey, string> = {
   'an.scatter.both.a': 'Showing posts where both metrics are known: ',
   'an.scatter.both.b': ' of ',
   'an.scatter.both.c': ' with metrics; for the rest, reactions were not captured by the source (0 = unknown).',
+
+  // --- guardrails labels ---
+  'guard.rule.superlative.label': 'Superlative without proof',
+  'guard.rule.superlative.msg': 'Claims like "first / best / only" — provide proof or rephrase.',
+  'guard.rule.absolute.label': 'Absolute promises',
+  'guard.rule.absolute.msg': 'Absolute promises erode trust — soften the wording.',
+  'guard.rule.unverifiedBig.label': 'Unverifiable large number',
+  'guard.rule.unverifiedBig.msg': 'A large number without a source reads as puffery — add a source or remove it.',
+  'guard.rule.hype.label': 'Hype / motivational noise',
+  'guard.rule.hype.msg': 'Hype phrasing burns trust — give specifics instead of noise.',
+  'guard.pat.empty': 'Empty pattern',
+  'guard.pat.tooLong': 'Pattern longer than ',
+  'guard.pat.tooLongEnd': ' characters',
+  'guard.pat.badRegex': 'Invalid regular expression: ',
+  'guard.pat.nestedQuant': 'Nested quantifiers like (a+)+ are forbidden — risk of tab freeze (ReDoS)',
+  'guard.pat.slow': 'Pattern too slow on long text — simplify it',
+  'guard.redacted.a': '[redacted: ',
+  'guard.redacted.b': ']',
+
+  // --- import labels ---
+  'import.linkedin.empty': 'File is empty',
+  'import.linkedin.badFormat': 'Not a LinkedIn Shares.csv export: Date/ShareCommentary columns not found',
+
+  // --- shareCard labels ---
+  'card.alt.prefix': 'LinkedIn post analysis card. Author: ',
+  'card.alt.cluster': '. Cluster: ',
+  'card.alt.techniques': '. Techniques: ',
+  'card.alt.engagement': '. Engagement: ',
+  'card.alt.reactions': ' reactions',
+  'card.alt.reactionsUnknown': 'reactions unknown',
+  'card.alt.comments': ' comments',
+  'card.alt.commentsUnknown': 'comments unknown',
+  'card.alt.metricsUnknown': 'metrics unknown',
+  'card.alt.generated': '. Generated in ',
+  'card.heading': 'POST ANALYSIS',
+  'card.metricsUnknown': 'metrics unknown',
+  'card.canvasError': 'Canvas unavailable in this browser',
+  'card.pngError': 'Failed to generate PNG',
+
+  // --- error boundary ---
+  'error.title': 'Something went wrong',
+  'error.body':
+    'Your data is safe — it is stored locally independent of the interface. Reload the page; if it recurs — copy the report and attach it to an issue.',
+  'error.reload': 'Reload',
+  'error.copyReport': 'Copy report',
 };
