@@ -1,7 +1,32 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { toPersistedSlice } from './persistCore';
 import type { State } from './types';
+import type { PersistedSlice } from './types';
+import type { StorageValue } from 'zustand/middleware';
 import { DEFAULT_FILTERS } from '@/store';
+
+const mockStorageValue: StorageValue<PersistedSlice> = {
+  state: {
+    version: 1,
+    posts: [],
+    ideas: [],
+    theme: 'dark',
+    locale: 'ru',
+    calibration: 1,
+    calibrationCount: 0,
+    isDemo: true,
+    onboarded: false,
+    readOnly: false,
+    auditLog: [],
+    rules: [],
+    ownAuthor: '',
+    cadenceGoal: 2,
+    presets: [],
+    niche: '',
+    clusters: [],
+  },
+  version: 0,
+};
 
 // --- helpers ---
 const makeState = (): State =>
@@ -53,12 +78,12 @@ describe('toPersistedSlice', () => {
     expect(slice.niche).toBe('');
     expect(slice.clusters).toEqual([]);
     // не-persisted поля не попадают
-    expect((slice as Record<string, unknown>).search).toBeUndefined();
-    expect((slice as Record<string, unknown>).toast).toBeUndefined();
-    expect((slice as Record<string, unknown>).filters).toBeUndefined();
-    expect((slice as Record<string, unknown>).selectedPostId).toBeUndefined();
-    expect((slice as Record<string, unknown>).confirmMsg).toBeUndefined();
-    expect((slice as Record<string, unknown>).lastDeletedIdea).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).search).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).toast).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).filters).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).selectedPostId).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).confirmMsg).toBeUndefined();
+    expect((slice as unknown as Record<string, unknown>).lastDeletedIdea).toBeUndefined();
   });
 
   it('включает все 17 persisted-полей', () => {
@@ -125,7 +150,7 @@ describe('debouncedStorage: модульные тесты', () => {
     const { debouncedStorage } = await import('./persistCore');
 
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     vi.advanceTimersByTime(500);
     vi.useRealTimers();
 
@@ -154,7 +179,7 @@ describe('debouncedStorage: модульные тесты', () => {
 
     markPersistWritable();
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     vi.advanceTimersByTime(400);
     vi.useRealTimers();
 
@@ -176,13 +201,13 @@ describe('debouncedStorage: модульные тесты', () => {
 
     markPersistWritable();
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     vi.advanceTimersByTime(400);
     // flushPersist вызывает kvSet асинхронно — нужно подождать микротаски
     await vi.runAllTimersAsync();
     vi.useRealTimers();
 
-    expect(kvSetSpy).toHaveBeenCalledWith('lidb', { state: { version: 1 }, version: 0 });
+    expect(kvSetSpy).toHaveBeenCalledWith('lidb', mockStorageValue);
   });
 
   it('removeItem очищает pending и удаляет', async () => {
@@ -207,7 +232,7 @@ describe('debouncedStorage: модульные тесты', () => {
 
     markPersistWritable();
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     debouncedStorage.removeItem('lidb');
     vi.advanceTimersByTime(500);
     vi.useRealTimers();
@@ -232,7 +257,7 @@ describe('debouncedStorage: модульные тесты', () => {
     markPersistWritable();
 
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     vi.advanceTimersByTime(400);
     await vi.runAllTimersAsync();
     vi.useRealTimers();
@@ -268,7 +293,7 @@ describe('debouncedStorage: модульные тесты', () => {
     markPersistWritable();
 
     vi.useFakeTimers();
-    debouncedStorage.setItem('lidb', { state: { version: 1 }, version: 0 });
+    debouncedStorage.setItem('lidb', mockStorageValue);
     vi.advanceTimersByTime(400);
     vi.useRealTimers();
 

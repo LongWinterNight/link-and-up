@@ -12,7 +12,7 @@ export default function ToastHost() {
   return (
     <div
       className="no-print"
-      aria-live="polite"
+      role="status"
       style={{
         position: 'fixed',
         bottom: 20,

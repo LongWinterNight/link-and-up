@@ -238,6 +238,7 @@ export default function PostModal() {
                 <button
                   key={f}
                   type="button"
+                  aria-pressed={on}
                   onClick={() => updatePostTag(post.id, 'flags', f)}
                   style={{
                     fontSize: 11,
