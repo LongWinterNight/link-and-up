@@ -57,7 +57,13 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
   setReadOnly: (readOnly) => set({ readOnly }),
   setNiche: (id) => {
     const opt = NICHES.find((n) => n.id === id);
-    set({ niche: id, auditLog: audit(get().auditLog, 'Выбрана ниша: ' + (id || '—')) });
+    set({
+      niche: id,
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.nicheSelected') + (id || tr(get().locale, 'audit.nicheNone')),
+      ),
+    });
     // если для ниши есть пакет правил и он ещё не подключён — подключаем
     if (opt?.packId && !get().rules.some((r) => r.pack === opt.packId)) {
       get().toggleNichePack(opt.packId);
@@ -76,7 +82,12 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
     const rest = get().rules.filter((r) => r.pack !== packId);
     set({
       rules: active ? rest : [...rest, ...pack.rules.map((r) => ({ ...r }))],
-      auditLog: audit(get().auditLog, (active ? 'Отключён' : 'Подключён') + ' пакет правил «' + pack.label + '»'),
+      auditLog: audit(
+        get().auditLog,
+        (active ? tr(get().locale, 'audit.packOff') : tr(get().locale, 'audit.packOn')) +
+          pack.label +
+          tr(get().locale, 'audit.packLabelEnd'),
+      ),
     });
   },
 
@@ -87,7 +98,10 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
     set({
       clusters: [...defs, other],
       posts: posts.map((p) => ({ ...p, meta_cluster: assignments.get(p.id) || 'other' })),
-      auditLog: audit(get().auditLog, 'Кластеры пересобраны из корпуса: ' + defs.length + ' тем'),
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.clustersRebuilt') + defs.length + tr(get().locale, 'audit.clustersRebuiltEnd'),
+      ),
     });
     get().flash(tr(get().locale, 'st.clustersRebuilt') + defs.length);
   },
@@ -95,7 +109,7 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
     set({
       clusters: DEFAULT_CLUSTER_DEFS.map((c) => ({ ...c })),
       posts: get().posts.map((p) => ({ ...p, meta_cluster: clusterOf((p.query || '') + ' ' + (p.text || '')) })),
-      auditLog: audit(get().auditLog, 'Кластеры сброшены к встроенным'),
+      auditLog: audit(get().auditLog, tr(get().locale, 'audit.clustersReset')),
     });
   },
   updateCluster: (id, patch) => {
@@ -124,7 +138,10 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
     if (get().clusters.some((c) => c.id === def.id)) return;
     set({
       clusters: [...get().clusters, def],
-      auditLog: audit(get().auditLog, 'Добавлен кластер «' + def.label + '»'),
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.clusterAdded') + def.label + tr(get().locale, 'audit.clusterAddedEnd'),
+      ),
     });
   },
   deleteCluster: (id) => {
@@ -133,11 +150,14 @@ export const createSettingsSlice: StateCreator<State, [], [], SettingsSlice> = (
     set({
       clusters: get().clusters.filter((c) => c.id !== id),
       posts: get().posts.map((p) => (p.meta_cluster === id ? { ...p, meta_cluster: 'other' } : p)),
-      auditLog: audit(get().auditLog, 'Удалён кластер «' + def.label + '»'),
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.clusterDeleted') + def.label + tr(get().locale, 'audit.clusterDeletedEnd'),
+      ),
     });
   },
 
-  logTeamSignal: () => set({ auditLog: audit(get().auditLog, 'Запрошен 3-й воркспейс — сигнал Team-тарифа') }),
+  logTeamSignal: () => set({ auditLog: audit(get().auditLog, tr(get().locale, 'audit.teamSignal')) }),
 
   applyBackup: (slice) => {
     set({

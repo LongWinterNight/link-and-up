@@ -74,10 +74,10 @@ export interface PostsSlice {
   clearImport: () => void;
 }
 
-function parsePostsJson(text: string): unknown[] {
+function parsePostsJson(text: string, locale: Locale): unknown[] {
   const parsed = JSON.parse(text);
   const arr = Array.isArray(parsed) ? parsed : Array.isArray(parsed?.posts) ? parsed.posts : null;
-  if (!arr) throw new Error('Ожидался JSON-массив постов (или объект с полем posts)');
+  if (!arr) throw new Error(tr(locale, 'audit.parseNotArray'));
   return arr;
 }
 
@@ -89,13 +89,16 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
   importPreview: null,
 
   ingestJson: (text) => {
-    const arr = parsePostsJson(text);
+    const arr = parsePostsJson(text, get().locale);
     const report = analyzeIngest(get().posts, arr, dedupLabels(get().locale));
     if (report.added > 0) {
       set({
         posts: mergeIngest(get().posts, report.valid),
         isDemo: false,
-        auditLog: audit(get().auditLog, 'Импорт: добавлено ' + report.added + ' постов'),
+        auditLog: audit(
+          get().auditLog,
+          tr(get().locale, 'audit.importAdded') + report.added + tr(get().locale, 'audit.importAddedEnd'),
+        ),
       });
     }
     return report;
@@ -114,7 +117,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
         isDemo: false,
         onboarded: true,
         importOpen: true,
-        auditLog: audit(get().auditLog, 'Старт с чистого корпуса'),
+        auditLog: audit(get().auditLog, tr(get().locale, 'audit.freshStart')),
       });
     } else {
       if (get().posts.length === 0) void get().loadDemo();
@@ -165,7 +168,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
 
   setImportOpen: (importOpen) => set({ importOpen, importPreview: null }),
   previewImportChunked: async (text, onProgress, signal) => {
-    return get().previewImportRaws(parsePostsJson(text), onProgress, signal);
+    return get().previewImportRaws(parsePostsJson(text, get().locale), onProgress, signal);
   },
   previewImportRaws: async (raws, onProgress, signal) => {
     const report = await analyzeIngestChunked(get().posts, raws, { onProgress, signal }, dedupLabels(get().locale));
@@ -174,7 +177,7 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
     return report;
   },
   previewImport: (text) => {
-    const arr = parsePostsJson(text);
+    const arr = parsePostsJson(text, get().locale);
     const report = analyzeIngest(get().posts, arr, dedupLabels(get().locale));
     set({ importPreview: report });
     return report;
@@ -195,7 +198,10 @@ export const createPostsSlice: StateCreator<State, [], [], PostsSlice> = (set, g
       importPreview: null,
       importOpen: false,
       isDemo: false,
-      auditLog: audit(get().auditLog, 'Импорт: добавлено ' + pv.added + ' постов'),
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.importAdded') + pv.added + tr(get().locale, 'audit.importAddedEnd'),
+      ),
     });
     get().flash(tr(get().locale, 'st.added') + pv.added);
   },

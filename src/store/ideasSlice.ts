@@ -47,7 +47,15 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
     if (get().readOnly) return;
     const exists = get().ideas.some((x) => x.id === idea.id);
     const ideas = exists ? get().ideas.map((x) => (x.id === idea.id ? idea : x)) : [...get().ideas, idea];
-    set({ ideas, auditLog: audit(get().auditLog, (exists ? 'Изменена' : 'Создана') + ' идея «' + idea.title + '»') });
+    set({
+      ideas,
+      auditLog: audit(
+        get().auditLog,
+        (exists ? tr(get().locale, 'audit.ideaChanged') : tr(get().locale, 'audit.ideaCreated')) +
+          idea.title +
+          tr(get().locale, 'audit.ideaLabelEnd'),
+      ),
+    });
   },
   delIdea: (id) => {
     if (get().readOnly) return;
@@ -55,7 +63,10 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
     set({
       ideas: get().ideas.filter((x) => x.id !== id),
       lastDeletedIdea: it || null, // М12: undo доступен, пока виден тост
-      auditLog: audit(get().auditLog, 'Удалена идея «' + (it?.title || '?') + '»'),
+      auditLog: audit(
+        get().auditLog,
+        tr(get().locale, 'audit.ideaDeleted') + (it?.title || '?') + tr(get().locale, 'audit.ideaDeletedEnd'),
+      ),
     });
     get().flash(tr(get().locale, 'toast.idea.deleted'));
   },
@@ -103,7 +114,7 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
       reactions: real.reactions,
       comments: real.comments,
       reposts: 0,
-      text: idea.hook + '\n\nФормат: ' + formulaTitle + '.',
+      text: idea.hook + '\n\n' + tr(get().locale, 'audit.formatLabel') + formulaTitle + '.',
       url: '',
       collected_at: real.date || new Date().toISOString().slice(0, 10),
       is_own: true,
@@ -120,7 +131,13 @@ export const createIdeasSlice: StateCreator<State, [], [], IdeasSlice> = (set, g
       calibrationCount: cal.count,
       auditLog: audit(
         get().auditLog,
-        'Опубликован пост «' + (idea.title || '?') + '»: ' + real.comments + ' комм., ' + real.reactions + ' реакц.',
+        tr(get().locale, 'audit.published') +
+          (idea.title || '?') +
+          tr(get().locale, 'audit.publishedMid') +
+          real.comments +
+          tr(get().locale, 'audit.publishedComments') +
+          real.reactions +
+          tr(get().locale, 'audit.publishedReactions'),
       ),
     });
     get().flash(tr(get().locale, 'st.factSaved') + cal.calibration.toFixed(2));

@@ -53,7 +53,7 @@
 
 ---
 
-### 2.3 Audit-строки через tr() (S)
+### 2.3 Audit-строки через tr() (S) ✅
 
 **Файлы:** `src/store/postsSlice.ts`, `src/store/ideasSlice.ts`, `src/store/settingsSlice.ts`
 
