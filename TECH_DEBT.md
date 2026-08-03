@@ -121,8 +121,8 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ## Фаза 3: Тестовое покрытие → блокирует уверенность в качестве
 
-> Текущее покрытие: 95.29% lines / 86.60% branches / 87.09% functions.
-> Слабые места: persistCore (0 тестов), exports branches (73%), guardrails branches (78%).
+> Текущее покрытие: 95.54% lines / 86.82% branches / 87.41% functions.
+> Слабые места: postsSlice (72.72%), settingsSlice (82.58%), guardrails branches (77.77%).
 
 ### 3.1 drawShareCard — mock-canvas тест (M) ✅
 
@@ -147,17 +147,18 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ---
 
-### 3.3 persistCore.ts — debounce, IDB, errors (M)
+### 3.3 persistCore.ts — debounce, IDB, errors (M) ✅
 
-**Файл:** `src/store/persistCore.ts` (86.17% statements, нет отдельного теста)
+**Файл:** `src/store/persistCore.test.ts` (9 тестов, 95.74% statements / 86.36% branches)
 
-Критическая логика без тестов:
+Покрыто:
 - Debounce 300мс (batch-запись)
 - Pre-hydration gate (не писать до гидратации)
 - IDB-fallback (localStorage → IndexedDB)
 - Error handling (quota, write failure)
+- removeItem (очистка pending + удаление)
 
-**Подход:** `persistCore.test.ts` с fake-indexeddb и fake timers.
+**Подход:** `vi.stubGlobal('localStorage', mockLS)` ДО динамического импорта — `rawLS` захватывается при оценке модуля, поэтому mock нужно ставить раньше.
 
 ---
 
