@@ -121,8 +121,8 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ## Фаза 3: Тестовое покрытие → блокирует уверенность в качестве
 
-> Текущее покрытие: 91.22% lines / 84.47% branches / 84.51% functions.
-> Слабые места: shareCard (42%), exports branches (47%), ideasSlice (70%), persistCore (0 тестов).
+> Текущее покрытие: 92.98% lines / 86.16% branches / 85.80% functions.
+> Слабые места: shareCard (42%), persistCore (0 тестов), exports branches (73%).
 
 ### 3.1 drawShareCard — mock-canvas тест (M)
 
@@ -135,7 +135,7 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ---
 
-### 3.2 exports.ts — ветки с labels (S)
+### 3.2 exports.ts — ветки с labels (S) ✅
 
 **Файл:** `src/lib/exports.ts` (90.57% statements, 46.96% branches)
 
@@ -161,7 +161,7 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ---
 
-### 3.4 ideasSlice — edge cases (S)
+### 3.4 ideasSlice — edge cases (S) ✅
 
 **Файл:** `src/store/ideasSlice.ts` (74.21%)
 

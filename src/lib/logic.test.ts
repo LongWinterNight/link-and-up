@@ -20,7 +20,8 @@ import {
   MAX_PATTERN_LENGTH,
 } from './guardrails';
 import { redactHard } from './guardrails';
-import { csvCell, exportAuditCsv, exportIdeasCsv, exportPostsCsv, redactIdea } from './exports';
+import { csvCell, exportAuditCsv, exportIdeasCsv, exportPostsCsv, exportPostsJson, redactIdea } from './exports';
+import type { ExportLabels } from './exports';
 import type { Rule } from '@/types';
 import type { Idea, Post, RawPost } from '@/types';
 
@@ -650,5 +651,186 @@ describe('SEC-1: CSV formula injection нейтрализуется', () => {
     expect(csvCell(12400)).toBe('12400');
     expect(csvCell('12.5%')).toBe('12.5%');
     expect(csvCell('')).toBe('');
+  });
+});
+
+describe('exports: labels-параметры', () => {
+  const enLabels: ExportLabels = {
+    col: {
+      author: 'Author',
+      headline: 'Headline',
+      lang: 'Lang',
+      cluster: 'Cluster',
+      hook: 'Hook',
+      structure: 'Structure',
+      cta: 'CTA',
+      emotion: 'Emotion',
+      flags: 'Flags',
+      reactions: 'Reactions',
+      comments: 'Comments',
+      reposts: 'Reposts',
+      followers: 'Followers',
+      er: 'ER',
+      metrics: 'Metrics',
+      own: 'Own',
+      date: 'Date',
+      url: 'URL',
+      angle: 'Angle',
+      yes: 'yes',
+      no: 'no',
+    },
+    idea: {
+      title: 'Title',
+      hook: 'Hook',
+      cluster: 'Cluster',
+      formula: 'Formula',
+      source: 'Source',
+      channel: 'Channel',
+      status: 'Status',
+      date: 'Date',
+      ref: 'Ref',
+      forecast: 'Forecast',
+      actual: 'Actual',
+      redaction: 'Redaction',
+    },
+    audit: { time: 'Time (ISO)', event: 'Event' },
+    redacted: { title: '[hidden: blocking guardrails]', hook: 'Idea contains blocking guardrail violations. Fix: ' },
+  };
+
+  const makePost = () =>
+    enrich({
+      author: 'Test Author',
+      headline: 'Test Headline',
+      text: 'Test text body',
+      reactions: 10,
+      comments: 5,
+      reposts: 2,
+      followers: 1000,
+    });
+
+  const makeIdea = (): Idea => ({
+    id: 'idea-1',
+    title: 'Test Idea',
+    hook: 'Test hook',
+    cluster: 'spec',
+    formula: 'arch',
+    source: 'Test source',
+    channel: 'LinkedIn',
+    status: 'draft',
+    date: '2026-07-16',
+    refPostId: '',
+    predicted: 0,
+    actual: null,
+  });
+
+  it('exportPostsCsv с labels — английские заголовки', () => {
+    const p = makePost();
+    const csv = exportPostsCsv([p], undefined, undefined, enLabels);
+    expect(csv).toContain('Author');
+    expect(csv).toContain('Headline');
+    expect(csv).toContain('Metrics');
+    expect(csv).toContain('yes');
+    expect(csv).not.toContain('Автор');
+    expect(csv).not.toContain('да');
+  });
+
+  it('exportPostsCsv без labels — русские заголовки (fallback)', () => {
+    const p = makePost();
+    const csv = exportPostsCsv([p]);
+    expect(csv).toContain('Автор');
+    expect(csv).toContain('да');
+  });
+
+  it('exportPostsCsv с clusterName-коллбеком', () => {
+    const p = makePost();
+    const csv = exportPostsCsv([p], undefined, (id) => 'Custom:' + id);
+    expect(csv).toContain('Custom:');
+  });
+
+  it('exportPostsJson — корректный JSON с полями поста', () => {
+    const p = makePost();
+    const json = exportPostsJson([p]);
+    const parsed = JSON.parse(json);
+    expect(parsed).toHaveLength(1);
+    expect(parsed[0].author).toBe('Test Author');
+    expect(parsed[0].schema_version).toBeDefined();
+  });
+
+  it('exportPostsJson с rules — редactHard применяется', () => {
+    const rules: Rule[] = [
+      { id: 'nda', label: 'NDA', pattern: 'СекретныйКлиент', severity: 'hard', message: 'NDA', enabled: true },
+    ];
+    const p = enrich({
+      author: 'A',
+      headline: 'СекретныйКлиент в заголовке',
+      text: 'СекретныйКлиент в тексте',
+      reactions: 1,
+      comments: 1,
+    });
+    const json = exportPostsJson([p], rules);
+    expect(json).not.toContain('СекретныйКлиент');
+    expect(json).toContain('[удалено: NDA]');
+  });
+
+  it('exportIdeasCsv с labels — английские заголовки', () => {
+    const idea = makeIdea();
+    const csv = exportIdeasCsv([idea], [], undefined, undefined, enLabels);
+    expect(csv).toContain('Title');
+    expect(csv).toContain('Formula');
+    expect(csv).toContain('Source');
+    expect(csv).not.toContain('Заголовок');
+  });
+
+  it('exportIdeasCsv без labels — русские заголовки (fallback)', () => {
+    const idea = makeIdea();
+    const csv = exportIdeasCsv([idea], []);
+    expect(csv).toContain('Заголовок');
+    expect(csv).toContain('Формула');
+  });
+
+  it('exportIdeasCsv с clusterName-коллбеком', () => {
+    const idea = makeIdea();
+    const csv = exportIdeasCsv([idea], [], undefined, (id) => 'Custom:' + id);
+    expect(csv).toContain('Custom:spec');
+  });
+
+  it('exportAuditCsv с labels — английские заголовки', () => {
+    const csv = exportAuditCsv([{ t: '2026-07-16T10:00:00Z', msg: 'Test event' }], enLabels);
+    expect(csv).toContain('Time (ISO)');
+    expect(csv).toContain('Event');
+    expect(csv).toContain('Test event');
+  });
+
+  it('redactIdea с labels — английский текст при блокировке', () => {
+    const rules: Rule[] = [
+      { id: 'nda', label: 'NDA', pattern: 'СекретныйКлиент', severity: 'hard', message: 'NDA', enabled: true },
+    ];
+    const idea: Idea = {
+      id: 'x',
+      title: 'Чистый заголовок',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: 'кейс СекретныйКлиент',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    const r = redactIdea(idea, rules, enLabels);
+    expect(r.redacted).toBe(true);
+    expect(r.title).toBe('[hidden: blocking guardrails]');
+    expect(r.hook).toContain('Idea contains blocking guardrail violations');
+  });
+
+  it('redactIdea без блокировки — возвращает оригинальные данные', () => {
+    const idea = makeIdea();
+    const r = redactIdea(idea, undefined, enLabels);
+    expect(r.redacted).toBe(false);
+    expect(r.title).toBe('Test Idea');
+    expect(r.hook).toBe('Test hook');
+    expect(r.note).toBe('');
   });
 });

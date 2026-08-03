@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach, vi } from 'vitest';
 import { useStore, DEFAULT_FILTERS } from './store';
 import { DEFAULT_RULES } from './lib/guardrails';
-import type { ClusterDef, Rule } from './types';
+import type { ClusterDef, Idea, Rule } from './types';
 
 const S = () => useStore.getState();
 
@@ -251,5 +251,210 @@ describe('uiSlice: askConfirm / resolveConfirm', () => {
     expect(await p1).toBe(false);
     S().resolveConfirm(true);
     expect(await p2).toBe(true);
+  });
+});
+
+// --- ideasSlice ---
+
+describe('ideasSlice: saveIdea / delIdea / restoreLastIdea', () => {
+  const idea: Idea = {
+    id: 'idea-1',
+    title: 'Тестовая идея',
+    hook: 'Хук',
+    cluster: 'spec',
+    formula: 'arch',
+    source: 'Источник',
+    channel: 'LinkedIn',
+    status: 'draft',
+    date: '',
+    refPostId: '',
+    predicted: 0,
+    actual: null,
+  };
+
+  it('saveIdea создаёт новую идею', () => {
+    S().saveIdea(idea);
+    expect(S().ideas).toHaveLength(1);
+    expect(S().ideas[0].title).toBe('Тестовая идея');
+    expect(S().auditLog.some((e) => e.msg.includes('Создана'))).toBe(true);
+  });
+
+  it('saveIdea обновляет существующую идею', () => {
+    S().saveIdea(idea);
+    S().saveIdea({ ...idea, title: 'Обновлённая' });
+    expect(S().ideas).toHaveLength(1);
+    expect(S().ideas[0].title).toBe('Обновлённая');
+    expect(S().auditLog.some((e) => e.msg.includes('Изменена'))).toBe(true);
+  });
+
+  it('delIdea удаляет идею и сохраняет lastDeletedIdea', () => {
+    S().saveIdea(idea);
+    S().delIdea('idea-1');
+    expect(S().ideas).toHaveLength(0);
+    expect(S().lastDeletedIdea?.id).toBe('idea-1');
+    expect(S().auditLog.some((e) => e.msg.includes('Удалена'))).toBe(true);
+  });
+
+  it('delIdea для несуществующей идеи — lastDeletedIdea = null', () => {
+    S().delIdea('nonexistent');
+    expect(S().lastDeletedIdea).toBeNull();
+  });
+
+  it('restoreLastIdea восстанавливает последнюю удалённую', () => {
+    S().saveIdea(idea);
+    S().delIdea('idea-1');
+    expect(S().ideas).toHaveLength(0);
+    S().restoreLastIdea();
+    expect(S().ideas).toHaveLength(1);
+    expect(S().ideas[0].id).toBe('idea-1');
+    expect(S().lastDeletedIdea).toBeNull();
+  });
+
+  it('restoreLastIdea без lastDeletedIdea — нет эффекта', () => {
+    S().restoreLastIdea();
+    expect(S().ideas).toHaveLength(0);
+  });
+
+  it('saveIdea и delIdea в readOnly — игнорируются', () => {
+    S().setReadOnly(true);
+    S().saveIdea(idea);
+    expect(S().ideas).toHaveLength(0);
+    S().delIdea('idea-1');
+    expect(S().lastDeletedIdea).toBeNull();
+  });
+});
+
+describe('ideasSlice: moveIdeaStatus', () => {
+  it('меняет статус идеи', () => {
+    const idea: Idea = {
+      id: 'ms-1',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    S().moveIdeaStatus('ms-1', 'inwork');
+    expect(S().ideas[0].status).toBe('inwork');
+  });
+
+  it('не меняет статус, если он тот же', () => {
+    const idea: Idea = {
+      id: 'ms-2',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    const before = S().ideas[0];
+    S().moveIdeaStatus('ms-2', 'draft');
+    expect(S().ideas[0]).toBe(before);
+  });
+
+  it('не меняет статус для несуществующей идеи', () => {
+    S().moveIdeaStatus('nonexistent', 'published');
+    expect(S().ideas).toHaveLength(0);
+  });
+
+  it('в readOnly — игнорируется', () => {
+    const idea: Idea = {
+      id: 'ms-3',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    S().setReadOnly(true);
+    S().moveIdeaStatus('ms-3', 'published');
+    expect(S().ideas[0].status).toBe('draft');
+  });
+});
+
+describe('ideasSlice: scheduleIdea', () => {
+  it('устанавливает дату и меняет draft → inwork', () => {
+    const idea: Idea = {
+      id: 'sch-1',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    S().scheduleIdea('sch-1');
+    const updated = S().ideas[0];
+    expect(updated.date).toBeTruthy();
+    expect(updated.status).toBe('inwork');
+  });
+
+  it('не меняет статус, если он не draft', () => {
+    const idea: Idea = {
+      id: 'sch-2',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'published',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    S().scheduleIdea('sch-2');
+    expect(S().ideas[0].status).toBe('published');
+    expect(S().ideas[0].date).toBeTruthy();
+  });
+
+  it('в readOnly — игнорируется', () => {
+    const idea: Idea = {
+      id: 'sch-3',
+      title: 'Тест',
+      hook: '',
+      cluster: 'spec',
+      formula: 'arch',
+      source: '',
+      channel: 'LinkedIn',
+      status: 'draft',
+      date: '',
+      refPostId: '',
+      predicted: 0,
+      actual: null,
+    };
+    S().saveIdea(idea);
+    S().setReadOnly(true);
+    S().scheduleIdea('sch-3');
+    expect(S().ideas[0].date).toBe('');
   });
 });
