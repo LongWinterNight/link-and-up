@@ -175,41 +175,41 @@ DedupLabels и BackupLabels интерфейсы уже существуют, н
 
 ## Фаза 4: A11y + код-качество → блокирует WCAG-AA
 
-### 4.1 FormatFlag aria-pressed (S)
+### 4.1 FormatFlag aria-pressed (S) ✅
 
 **Файл:** `src/components/PostModal.tsx`
 
 Кнопки FormatFlag (has_numbers, personal_story, contrarian, list_format, save_bait) — toggle-кнопки без `aria-pressed`. Скринридер не может определить состояние.
 
-**Исправление:** добавить `aria-pressed={flag}` на каждую кнопку.
+**Исправление:** добавлен `aria-pressed={on}` на каждую кнопку.
 
 ---
 
-### 4.2 ToastHost role="status" (S)
+### 4.2 ToastHost role="status" (S) ✅
 
 **Файл:** `src/components/ToastHost.tsx`
 
-Используется `aria-live="polite"`, но нет `role="status"`. По WCAG 2.1 toast-уведомления должны иметь `role="status"`.
+Использовался `aria-live="polite"`, но нет `role="status"`. По WCAG 2.1 toast-уведомления должны иметь `role="status"`.
 
-**Исправление:** заменить `aria-live="polite"` на `role="status"`.
+**Исправление:** заменён `aria-live="polite"` на `role="status"`.
 
 ---
 
-### 4.3 Close-кнопка в Modal — унификация (S)
+### 4.3 Close-кнопка в Modal — унификация (S) ✅
 
-**Файлы:** ShareCardModal.tsx, ImportModal.tsx, SettingsModal.tsx, PostModal.tsx
+**Файлы:** ShareCardModal.tsx, ImportModal.tsx, SettingsModal.tsx, PostModal.tsx, Modal.tsx
 
 В каждой модалке вручную прописан идентичный close-кнопка с inline-стилями (~30 строк × 4).
 
-**Исправление:** вынести close-кнопку в Modal.tsx как опциональный `showClose` prop.
+**Исправление:** вынесена close-кнопка + заголовок в Modal.tsx через `title`/`titleNode`/`closeLabel` пропы.
 
 ---
 
-### 4.4 hdrBtn/ctl дедупликация стилей (S)
+### 4.4 hdrBtn/ctl дедупликация стилей (S) ✅
 
-**Файлы:** App.tsx, ExportMenu.tsx (дубль hdrBtn); SettingsModal.tsx, ui.tsx (дубль inp/ctl)
+**Файлы:** App.tsx, ExportMenu.tsx (дубль hdrBtn); SettingsModal.tsx, Ideas.tsx, Forecast.tsx (дубль inp)
 
-**Исправление:** вынести hdrBtn в ui.tsx; использовать ctl из ui.tsx вместо inp.
+**Исправление:** `hdrBtn` и `ctl` экспортируются из `ui.tsx`; локальные `inp`/`hdrBtn` удалены.
 
 ---
 

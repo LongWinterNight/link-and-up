@@ -1,7 +1,7 @@
 import type { CSSProperties, InputHTMLAttributes, ReactNode, SelectHTMLAttributes } from 'react';
 
 /* FE-6: единый стиль контролов — вместо дублей inp/selStyle по вкладкам */
-const ctl: CSSProperties = {
+export const ctl: CSSProperties = {
   background: 'var(--surface-2)',
   border: '1px solid var(--border)',
   borderRadius: 'var(--radius-ctl)',
@@ -9,6 +9,16 @@ const ctl: CSSProperties = {
   color: 'var(--text-1)',
   fontSize: 'var(--fs-md)',
   width: '100%',
+};
+
+export const hdrBtn: CSSProperties = {
+  background: 'var(--surface-2)',
+  border: '1px solid var(--border)',
+  borderRadius: 'var(--radius-ctl)',
+  padding: '8px 12px',
+  cursor: 'pointer',
+  color: 'var(--text-1)',
+  fontSize: 13,
 };
 
 const fieldLabel: CSSProperties = {

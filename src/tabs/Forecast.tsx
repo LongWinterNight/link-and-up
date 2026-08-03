@@ -11,18 +11,8 @@ import {
 import { corpusFreshness } from '@/lib/derive';
 import { nf } from '@/lib/stats';
 import type { IdeaActual } from '@/types';
-import { Btn, EmptyState, Kpi, Panel } from '@/components/ui';
+import { Btn, ctl, EmptyState, Kpi, Panel } from '@/components/ui';
 import { useClusterLabel, useForecastLabels, useT } from '@/i18n/useT';
-
-const inp: React.CSSProperties = {
-  background: 'var(--surface-2)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-ctl)',
-  padding: '8px 10px',
-  color: 'var(--text-1)',
-  fontSize: 13,
-  width: '100%',
-};
 
 function NumField({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
@@ -33,7 +23,7 @@ function NumField({ label, value, onChange }: { label: string; value: string; on
         min={0}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        style={inp}
+        style={ctl}
         aria-label={label}
       />
     </label>
@@ -211,7 +201,7 @@ export default function Forecast() {
             value={forecastId}
             onChange={(e) => setForecastId(e.target.value)}
             aria-label={t('fc.idea.aria')}
-            style={{ ...inp, width: 'auto' }}
+            style={{ ...ctl, width: 'auto' }}
           >
             <option value="">{t('fc.idea.select')}</option>
             {ideas.map((i) => (
@@ -395,7 +385,7 @@ export default function Forecast() {
                     type="date"
                     value={form.date}
                     onChange={(e) => set('date', e.target.value)}
-                    style={inp}
+                    style={ctl}
                     aria-label={t('fc.loop.date.aria')}
                   />
                 </label>

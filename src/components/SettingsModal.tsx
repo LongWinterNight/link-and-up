@@ -8,18 +8,8 @@ import type { DictKey } from '@/i18n';
 import { exportAuditCsv } from '@/lib/exports';
 import { download } from '@/lib/download';
 import type { Rule } from '@/types';
-import { Btn } from './ui';
+import { Btn, ctl } from './ui';
 import { Modal } from './Modal';
-
-const inp: React.CSSProperties = {
-  background: 'var(--surface-2)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-ctl)',
-  padding: '8px 10px',
-  color: 'var(--text-1)',
-  fontSize: 13,
-  width: '100%',
-};
 
 function RuleRow({ rule }: { rule: Rule }) {
   const t = useT();
@@ -62,7 +52,7 @@ function RuleRow({ rule }: { rule: Rule }) {
         value={rule.severity}
         onChange={(e) => updateRule(rule.id, { severity: e.target.value as Rule['severity'] })}
         aria-label={t('se.rule.severity')}
-        style={{ ...inp, width: 'auto', color: rule.severity === 'hard' ? 'var(--critical)' : 'var(--warning)' }}
+        style={{ ...ctl, width: 'auto', color: rule.severity === 'hard' ? 'var(--critical)' : 'var(--warning)' }}
       >
         <option value="soft">{t('se.rule.soft')}</option>
         <option value="hard">{t('se.rule.hard')}</option>
@@ -213,7 +203,7 @@ export default function SettingsModal() {
             name="own-author"
             value={ownAuthor}
             onChange={(e) => setOwnAuthor(e.target.value)}
-            style={{ ...inp, marginTop: 4 }}
+            style={{ ...ctl, marginTop: 4 }}
           />
         </label>
         <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="cadence-goal">
@@ -226,7 +216,7 @@ export default function SettingsModal() {
             max={14}
             value={cadenceGoal}
             onChange={(e) => setCadenceGoal(Number(e.target.value))}
-            style={{ ...inp, marginTop: 4 }}
+            style={{ ...ctl, marginTop: 4 }}
           />
         </label>
         <label style={{ fontSize: 11, color: 'var(--text-3)' }} htmlFor="settings-niche">
@@ -236,7 +226,7 @@ export default function SettingsModal() {
             name="settings-niche"
             value={niche || ''}
             onChange={(e) => setNiche(e.target.value)}
-            style={{ ...inp, marginTop: 4 }}
+            style={{ ...ctl, marginTop: 4 }}
           >
             <option value="">{t('onb.niche.none')}</option>
             {NICHES.map((n) => (
@@ -326,7 +316,7 @@ export default function SettingsModal() {
             value={nLabel}
             onChange={(e) => setNLabel(e.target.value)}
             placeholder={t('se.add.name.ph')}
-            style={inp}
+            style={ctl}
             aria-label={t('se.add.name.aria')}
           />
           <input
@@ -339,7 +329,7 @@ export default function SettingsModal() {
               setPatternErr('');
             }}
             placeholder={t('se.add.pattern.ph')}
-            style={{ ...inp, fontFamily: 'var(--mono)' }}
+            style={{ ...ctl, fontFamily: 'var(--mono)' }}
             aria-label={t('se.add.pattern.aria')}
           />
           <input
@@ -349,13 +339,13 @@ export default function SettingsModal() {
             value={nMsg}
             onChange={(e) => setNMsg(e.target.value)}
             placeholder={t('se.add.msg.ph')}
-            style={inp}
+            style={ctl}
             aria-label={t('se.add.msg.aria')}
           />
           <select
             value={nSev}
             onChange={(e) => setNSev(e.target.value as Rule['severity'])}
-            style={inp}
+            style={ctl}
             aria-label={t('se.add.sev.aria')}
           >
             <option value="soft">{t('se.rule.soft')}</option>

@@ -25,15 +25,7 @@ import { PRODUCT_NAME } from './lib/constants';
 import { ensureLocale, intlLocale } from './i18n';
 import { useT } from './i18n/useT';
 
-const hdrBtn: React.CSSProperties = {
-  background: 'var(--surface-2)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-ctl)',
-  padding: '8px 12px',
-  cursor: 'pointer',
-  color: 'var(--text-1)',
-  fontSize: 13,
-};
+import { hdrBtn } from './components/ui';
 
 export default function App() {
   const theme = useStore((s) => s.theme);

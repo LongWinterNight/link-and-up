@@ -4,16 +4,7 @@ import { download } from '@/lib/download';
 import { exportPostsJson, exportPostsCsv, exportIdeasCsv, exportObsidian } from '@/lib/exports';
 import { useClusterLabel, useExportLabels, useT } from '@/i18n/useT';
 import type { DictKey } from '@/i18n';
-
-const hdrBtn: React.CSSProperties = {
-  background: 'var(--surface-2)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-ctl)',
-  padding: '8px 12px',
-  cursor: 'pointer',
-  color: 'var(--text-1)',
-  fontSize: 13,
-};
+import { hdrBtn } from './ui';
 
 export default function ExportMenu() {
   const t = useT();

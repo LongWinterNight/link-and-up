@@ -5,20 +5,10 @@ import { validateIdea, hasHardFlag } from '@/lib/guardrails';
 import { generateDraft } from '@/lib/draft';
 import { download } from '@/lib/download';
 import type { ClusterId, Idea, IdeaStatus } from '@/types';
-import { Btn, EmptyState, Panel, Pill } from '@/components/ui';
+import { Btn, ctl, EmptyState, Panel, Pill } from '@/components/ui';
 import { Modal } from '@/components/Modal';
 import { useClusterLabel, useDraftLabels, useLbl, useT } from '@/i18n/useT';
 import { intlLocale, type DictKey } from '@/i18n';
-
-const inp: React.CSSProperties = {
-  background: 'var(--surface-2)',
-  border: '1px solid var(--border)',
-  borderRadius: 'var(--radius-ctl)',
-  padding: '8px 10px',
-  color: 'var(--text-1)',
-  fontSize: 13,
-  width: '100%',
-};
 
 const emptyIdea = (): Idea => ({
   id: 'i' + Date.now(),
@@ -171,7 +161,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
           <input
             value={idea.title}
             onChange={(e) => upd({ title: e.target.value })}
-            style={{ ...inp, marginTop: 4 }}
+            style={{ ...ctl, marginTop: 4 }}
             autoFocus
           />
         </label>
@@ -181,7 +171,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             value={idea.hook}
             onChange={(e) => upd({ hook: e.target.value })}
             rows={2}
-            style={{ ...inp, marginTop: 4, resize: 'vertical' }}
+            style={{ ...ctl, marginTop: 4, resize: 'vertical' }}
           />
         </label>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px,1fr))', gap: 12 }}>
@@ -190,7 +180,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             <select
               value={idea.cluster}
               onChange={(e) => upd({ cluster: e.target.value as ClusterId })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             >
               {clusterDefs.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -204,7 +194,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             <select
               value={idea.formula}
               onChange={(e) => upd({ formula: e.target.value })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             >
               {FORMULAS.map((f) => (
                 <option key={f.id} value={f.id}>
@@ -219,7 +209,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
               value={idea.source}
               onChange={(e) => upd({ source: e.target.value })}
               placeholder={t('id.form.source.ph')}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-3)' }}>
@@ -227,7 +217,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             <select
               value={idea.channel}
               onChange={(e) => upd({ channel: e.target.value })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             >
               {CHANNELS.map((c) => (
                 <option key={c} value={c}>
@@ -241,7 +231,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             <select
               value={idea.status}
               onChange={(e) => upd({ status: e.target.value as IdeaStatus })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             >
               {STATUS.map(([v]) => (
                 <option key={v} value={v}>
@@ -256,7 +246,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
               type="date"
               value={idea.date}
               onChange={(e) => upd({ date: e.target.value })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             />
           </label>
           <label style={{ fontSize: 11, color: 'var(--text-3)', gridColumn: '1 / -1' }}>
@@ -264,7 +254,7 @@ function IdeaForm({ initial, onClose }: { initial: Idea; onClose: () => void }) 
             <select
               value={idea.refPostId}
               onChange={(e) => upd({ refPostId: e.target.value })}
-              style={{ ...inp, marginTop: 4 }}
+              style={{ ...ctl, marginTop: 4 }}
             >
               <option value="">{t('id.form.ref.none')}</option>
               {posts
