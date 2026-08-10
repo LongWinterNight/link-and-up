@@ -25,7 +25,7 @@
     "@fontsource/ibm-plex-sans": "^5.3.0",
     "@tanstack/react-virtual": "^3.14.9",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react-dom": "^19.2.8",
     "zustand": "^4.5.5"
   },
   "devDependencies": {
@@ -34,7 +34,7 @@
     "@testing-library/react": "^16.0.1",
     "@types/node": "^26.1.1",
     "@types/react": "^18.3.11",
-    "@types/react-dom": "^18.3.0",
+    "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^4.3.2",
     "@vitest/coverage-v8": "^2.1.9",
     "axe-core": "^4.12.1",
