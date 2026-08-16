@@ -8,8 +8,8 @@ import { seedPosts } from './seed';
  * (ручные правки, чистки, миграции формата).
  */
 describe('демо-корпус (seed_posts.json)', () => {
-  it('canary: ровно 480 записей (289 исходных + 191 верифицированный новый)', () => {
-    expect(seedPosts).toHaveLength(480);
+  it('canary: ровно 541 запись (289 исходных + 252 верифицированных новых)', () => {
+    expect(seedPosts).toHaveLength(541);
   });
 
   it('каждая запись проходит validateRecord', () => {
