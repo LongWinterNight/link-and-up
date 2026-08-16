@@ -448,7 +448,7 @@ export const en: Record<DictKey, string> = {
   'pm.openSource': 'Open source ↗',
   'pm.findSearch': 'Find the post via search ↗',
   'pm.demoNote':
-    'The demo corpus was collected via search sampling: direct links were not stored (they were not verified) — the source is found by exact quote.',
+    'The direct link for this post was not confirmed during collection — the source is found by exact quote. Most corpus posts have verified links (the “Open source” button).',
 
   // --- import (ImportModal) ---
   'im.aria': 'Load posts',

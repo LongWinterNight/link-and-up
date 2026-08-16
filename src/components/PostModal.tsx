@@ -267,8 +267,8 @@ export default memo(function PostModal() {
             {t('pm.openSource')}
           </a>
         )}
-        {/* пермалинки демо-корпуса реконструированы при сборе и могут не открываться —
-              поиск по точной цитате находит пост надёжнее прямой ссылки */}
+        {/* fallback-поиск по точной цитате — для постов без подтверждённого пермалинка
+              и как запасной путь, если прямая ссылка со временем протухла */}
         <a href={buildPostSearchUrl(post)} target="_blank" rel="noopener noreferrer">
           {t('pm.findSearch')}
         </a>
@@ -287,7 +287,9 @@ export default memo(function PostModal() {
           {t('sc.open')} ↗
         </button>
       </div>
-      {isDemo && <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>{t('pm.demoNote')}</div>}
+      {isDemo && !post.url && (
+        <div style={{ fontSize: 11, color: 'var(--text-3)', marginTop: 8 }}>{t('pm.demoNote')}</div>
+      )}
       {shareOpen && <ShareCardModal post={post} onClose={() => setShareOpen(false)} />}
     </Modal>
   );
