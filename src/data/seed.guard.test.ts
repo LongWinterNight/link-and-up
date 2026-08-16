@@ -8,8 +8,8 @@ import { seedPosts } from './seed';
  * (ручные правки, чистки, миграции формата).
  */
 describe('демо-корпус (seed_posts.json)', () => {
-  it('canary: ровно 541 запись (289 исходных + 252 верифицированных новых)', () => {
-    expect(seedPosts).toHaveLength(541);
+  it('canary: ровно 522 записи (после чистки не-постов и переносов)', () => {
+    expect(seedPosts).toHaveLength(522);
   });
 
   it('каждая запись проходит validateRecord', () => {
@@ -56,6 +56,14 @@ describe('демо-корпус (seed_posts.json)', () => {
     expect(suffixed.map((p) => p.author)).toEqual([]);
     // ≥113 EN-оригиналов (113 из чистки пометок + EN-посты новых волн сбора)
     expect(seedPosts.filter((p) => p.lang === 'EN').length).toBeGreaterThanOrEqual(113);
+  });
+
+  it('авторы — реальные имена, без пометок сборщика (перенос/разбор/UI-подписи)', () => {
+    // ловит регресс вида «Автор (Habr-перенос)», «разбор (Pulse)», «Рекомендуем для вас»
+    const junk = seedPosts.filter((p) =>
+      /перенос|разбор|рекомендуем для вас|habr|medium|pulse|reddit|youtube-|\bинтервью\b/i.test(p.author || ''),
+    );
+    expect(junk.map((p) => p.author)).toEqual([]);
   });
 
   it('enrichAll обрабатывает корпус без исключений и без личных аннотаций', () => {
